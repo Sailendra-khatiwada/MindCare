@@ -1,0 +1,129 @@
+/* General Reset */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+/* Login Container */
+.login-container {
+    background-image: url(BG.jpg);
+    height: 100vh;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+/* Login Form */
+#login-form {
+    position: absolute;
+    width: 25%;
+    top: 120px;
+    left: 37.5%;
+    padding: 20px;
+    border: 2px solid cadetblue;
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+/* Form Elements */
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.login-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-container label {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.login-container input {
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.login-container button {
+    background-color: cadetblue;
+    border: none;
+    padding: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.login-container button:hover {
+    background-color: rgb(37, 233, 239);
+    transition: 0.5s;
+}
+
+/* Error Message */
+.error {
+    color: red;
+    background-color: #fdd;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid red;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #login-form {
+        width: 80%;
+        left: 10%;
+        top: 250px;
+    }
+
+    .login-container h2 {
+        font-size: 18px;
+    }
+
+    .login-container input {
+        font-size: 14px;
+    }
+
+    .login-container button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    #login-form {
+        width: 80%;
+        left: 5%;
+        top: 250px;
+        padding: 15px;
+    }
+
+    .login-container h2 {
+        font-size: 16px;
+    }
+
+    .login-container input {
+        font-size: 14px;
+        padding: 6px;
+    }
+
+    .login-container button {
+        font-size: 14px;
+        padding: 8px;
+    }
+}

@@ -1,0 +1,174 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f0f2f5;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Chat wrapper */
+.chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 900px;
+    margin: auto;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    background: white;
+}
+
+/* Header */
+.chat-header {
+    background: #1877F2;
+    color: white;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    gap: 15px;
+}
+
+.back-btn {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    background: rgba(255,255,255,0.25);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.back-btn:hover {
+    background: rgba(255,255,255,0.35);
+}
+
+/* Chat box */
+.chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    background: #e9f0fb;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Messages */
+.msg {
+    display: inline-block;
+    max-width: 65%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+}
+
+/* USER SIDE COLORS (DEFAULT) */
+/* User bubble = blue right side */
+.user-msg {
+    background: #0084ff;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+/* Psych bubble = white left side */
+.psych-msg {
+    background: white;
+    color: #111;
+    border: 1px solid #dcdcdc;
+    margin-right: auto;
+    border-bottom-left-radius: 4px;
+}
+
+/* ✨ OVERRIDE FOR PSYCHOLOGIST CHAT (swap bubbles) */
+body.psychologist .user-msg {
+    /* USER message should appear on LEFT side */
+    margin-left: 0;
+    margin-right: auto;
+    background: white;
+    color: #111;
+    border: 1px solid #dcdcdc;
+    border-bottom-left-radius: 4px;
+}
+
+body.psychologist .psych-msg {
+    /* PSYCHOLOGIST message should be on RIGHT side */
+    margin-right: 0;
+    margin-left: auto;
+    background: #0084ff;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.seen {
+    font-size: 11px;
+    color: #4a90e2;
+    margin-top: 3px;
+    text-align: right;
+}
+
+.delivered {
+    font-size: 11px;
+    color: #888;
+    margin-top: 3px;
+    text-align: right;
+}
+
+
+/* Input area */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: #ffffff;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input textarea {
+    flex: 1;
+    height: 48px;
+    padding: 10px;
+    resize: none;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 14px;
+    background: #f7f7f7;
+}
+
+.chat-input button {
+    width: 50px;
+    margin-left: 10px;
+    background: #1877F2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chat-input button:hover {
+    background: #0f60c9;
+}
+
+/* .status {
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+.status.delivered {
+    color: #808080;
+}
+
+.status.seen {
+    color: #4a6cf7;
+    font-weight: bold;
+} */
