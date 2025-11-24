@@ -56,7 +56,7 @@ function loadChat() {
 
             let atBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 5;
 
-            box.innerHTML = ""; // Refresh full chat
+            box.innerHTML = "";
 
             messages.forEach(m => {
                 let bubble = document.createElement("div");
@@ -65,25 +65,34 @@ function loadChat() {
                 if (m.sender_type === "user") {
                     bubble.classList.add("user-msg");
 
-                    // Add SEEN indicator if available
                     if (m.seen == 1) {
-                        bubble.innerHTML = m.message + "<div class='seen'>Seen</div>";
+                        bubble.innerHTML = `
+                            ${m.message}
+                            <div class="seen">Seen</div>
+                        `;
+                    } else if (m.delivered == 1) {
+                        bubble.innerHTML = `
+                            ${m.message}
+                            <div class="delivered">Delivered</div>
+                        `;
                     } else {
-                        bubble.innerHTML = m.message + "<div class='delivered'>Delivered</div>";
+                        bubble.innerHTML = `
+                            ${m.message}
+                            <div class="delivered">Sending...</div>
+                        `;
                     }
 
                 } else {
                     bubble.classList.add("psych-msg");
-                    bubble.innerText = m.message;
+                    bubble.innerHTML = m.message;
                 }
 
                 box.appendChild(bubble);
             });
 
-            // Scroll logic
             if (atBottom) box.scrollTop = box.scrollHeight;
 
-            // Mark messages as seen
+            // Mark psychologist messages as seen
             fetch("mark_seen.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -108,6 +117,7 @@ function sendMsg() {
 
     document.getElementById("msg").value = "";
 }
+
 </script>
 
 

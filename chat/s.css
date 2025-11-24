@@ -159,7 +159,7 @@ body.psychologist .psych-msg {
     background: #0f60c9;
 }
 
-/* .status {
+.status {
     font-size: 11px;
     margin-top: 3px;
 }
@@ -171,4 +171,5 @@ body.psychologist .psych-msg {
 .status.seen {
     color: #4a6cf7;
     font-weight: bold;
-} */
+}
+

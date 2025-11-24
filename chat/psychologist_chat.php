@@ -3,8 +3,13 @@ session_start();
 include '../db_connect.php';
 include 'check_appointment.php';
 
-if (!isset($_SESSION['p_id'])) { header("Location: ../login.php"); exit; }
-if (!isset($_GET['appointment_id'])) { die("Appointment missing."); }
+if (!isset($_SESSION['p_id'])) {
+    header("Location: ../login.php");
+    exit;
+}
+if (!isset($_GET['appointment_id'])) {
+    die("Appointment missing.");
+}
 
 $appointment_id = $_GET['appointment_id'];
 $p_id = $_SESSION['p_id'];
@@ -15,87 +20,104 @@ if (!checkAppointment($conn, $appointment_id, null, $p_id)) {
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Psychologist Chat</title>
-<link rel="stylesheet" href="style.css">
+    <title>Psychologist Chat</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="chat-wrapper">
+    <div class="chat-wrapper">
 
-    <div class="chat-header">
-        <a href="../psychologist_dashboard.php" class="back-btn">⬅ Back</a>
-        Chat With User
+        <div class="chat-header">
+            <a href="../psychologist_dashboard.php" class="back-btn">⬅ Back</a>
+            Chat With User
+        </div>
+
+        <div id="chatBox" class="chat-box"></div>
+
+        <div class="chat-input">
+            <textarea id="msg" placeholder="Write a reply..."></textarea>
+            <button onclick="sendMsg()">➤</button>
+        </div>
+
     </div>
 
-    <div id="chatBox" class="chat-box"></div>
+    <script>
+        function loadChat() {
+            fetch("load_messages.php?appointment_id=<?php echo $appointment_id; ?>")
+                .then(res => res.json())
+                .then(messages => {
 
-    <div class="chat-input">
-        <textarea id="msg" placeholder="Write a reply..."></textarea>
-        <button onclick="sendMsg()">➤</button>
-    </div>
+                    let box = document.getElementById("chatBox");
+                    let atBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 5;
 
-</div>
+                    box.innerHTML = "";
 
-<script>
-let lastMessageCount = 0;
+                    messages.forEach(m => {
+                        let bubble = document.createElement("div");
+                        bubble.classList.add("msg");
 
-function loadChat() {
-    fetch("load_messages.php?appointment_id=<?php echo $appointment_id; ?>")
-        .then(res => res.json())
-        .then(messages => {
-            let box = document.getElementById("chatBox");
+                        if (m.sender_type === "psychologist") {
+                            bubble.classList.add("user-msg");
 
-            let atBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 5;
+                            if (m.seen == 1) {
+                                bubble.innerHTML = `
+                            ${m.message}
+                            <div class="seen">Seen</div>
+                        `;
+                            } else if (m.delivered == 1) {
+                                bubble.innerHTML = `
+                            ${m.message}
+                            <div class="delivered">Delivered</div>
+                        `;
+                            } else {
+                                bubble.innerHTML = `
+                            ${m.message}
+                            <div class="delivered">Sending...</div>
+                        `;
+                            }
 
-            for (let i = lastMessageCount; i < messages.length; i++) {
-                let m = messages[i];
+                        } else {
+                            bubble.classList.add("psych-msg");
+                            bubble.innerHTML = m.message;
+                        }
 
-                let bubble = document.createElement("div");
-                bubble.classList.add("msg");
+                        box.appendChild(bubble);
+                    });
 
-                if (m.sender_type === "psychologist") {
-                    bubble.classList.add("user-msg");
-                } else {
-                    bubble.classList.add("psych-msg");
-                }
+                    if (atBottom) box.scrollTop = box.scrollHeight;
 
-                bubble.innerText = m.message;
-                box.appendChild(bubble);
-            }
+                    fetch("mark_seen_psych.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: "appointment_id=<?= $appointment_id ?>"
+                    });
 
-            lastMessageCount = messages.length;
+                });
+        }
 
-            if (atBottom) box.scrollTop = box.scrollHeight;
+        setInterval(loadChat, 400);
 
-            markSeen(); 
-        });
-}
+        function sendMsg() {
+            let message = document.getElementById("msg").value;
+            if (message.trim() === "") return;
 
-function markSeen() {
-    fetch("mark_seen_psych.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "appointment_id=<?php echo $appointment_id; ?>"
-    });
-}
+            fetch("send_message.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "appointment_id=<?php echo $appointment_id; ?>&sender=psychologist&message=" + encodeURIComponent(message)
+            });
 
-setInterval(loadChat, 400);
-
-function sendMsg() {
-    let message = document.getElementById("msg").value;
-    if (message.trim() === "") return;
-
-    fetch("send_message.php", {
-        method: "POST",
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-        body: "appointment_id=<?php echo $appointment_id; ?>&sender=psychologist&message=" + encodeURIComponent(message)
-    });
-
-    document.getElementById("msg").value = "";
-}
-</script>
-
+            document.getElementById("msg").value = "";
+        }
+    </script>
 
 </body>
+
 </html>
