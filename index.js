@@ -1,37 +1,50 @@
-//Header toggle
-let MenuBtn = document.getElementById('MenuBtn');
+// =========================
+// MOBILE MENU TOGGLE
+// =========================
+const MenuBtn = document.getElementById("MenuBtn");
+const navMenu = document.querySelector("nav ul");
 
-MenuBtn.addEventListener('click', function () {
-    document.querySelector('body').classList.toggle('mobile-nav-active');
+if (MenuBtn) {
+    MenuBtn.addEventListener("click", () => {
+        document.body.classList.toggle("mobile-nav-active");
+    });
 }
 
-);
-
-window.addEventListener('click', function (e) {
-    if (!MenuBtn.contains(e.target) && !document.querySelector('nav ul').contains(e.target)) {
-        document.body.classList.remove('mobile-nav-active');
+// Close menu when clicking outside
+document.addEventListener("click", (event) => {
+    if (
+        MenuBtn &&
+        !MenuBtn.contains(event.target) &&
+        navMenu &&
+        !navMenu.contains(event.target)
+    ) {
+        document.body.classList.remove("mobile-nav-active");
     }
 });
 
-// Login modal
-var modal = document.getElementById("login-modal");
 
-var searchField = document.getElementById("search-field");
+// =========================
+// LOGIN MODAL
+// =========================
+const modal = document.getElementById("login-modal");
+const searchField = document.getElementById("search-field");
+const closeModalBtn = document.querySelector(".modal-close");
 
-var closeModal = document.getElementsByClassName("close")[0];
+if (searchField && modal) {
+    searchField.addEventListener("click", () => {
+        modal.style.display = "flex";
+    });
+}
 
-searchField.addEventListener('click', function () {
-    modal.style.display = "flex";
-});
+if (closeModalBtn && modal) {
+    closeModalBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+}
 
-closeModal.addEventListener('click', function () {
-    modal.style.display = "none";
-});
-
-window.onclick = function (event) {
-    if (event.target == modal) {
+// Close modal by clicking outside
+document.addEventListener("click", (event) => {
+    if (modal && event.target === modal) {
         modal.style.display = "none";
     }
-};
-
-
+});
