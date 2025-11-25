@@ -6,7 +6,6 @@ if (!isset($_SESSION['p_id'])) exit;
 
 $appointment_id = $_POST['appointment_id'];
 
-// Psychologist sees chat → mark USER messages as seen
 $sql = "UPDATE messages
         SET seen = 1
         WHERE appointment_id = ?

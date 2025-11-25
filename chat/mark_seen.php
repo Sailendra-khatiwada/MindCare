@@ -9,18 +9,16 @@ if (!isset($_SESSION['user_id'])) exit;
 if (!isset($_POST['appointment_id'])) exit;
 $appointment_id = (int)$_POST['appointment_id'];
 
-// 1️⃣ Mark psychologist messages as delivered (if not already)
 $sql = "UPDATE messages
         SET delivered = 1
         WHERE appointment_id = ?
-        AND sender_type = 'psychologist'";
+        AND sender_type = 'user'";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $appointment_id);
 $stmt->execute();
 $stmt->close();
 
-// 2️⃣ Mark psychologist messages as SEEN
 $sql2 = "UPDATE messages
          SET seen = 1
          WHERE appointment_id = ?

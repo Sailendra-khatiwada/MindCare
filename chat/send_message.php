@@ -23,7 +23,7 @@ else {
     die("Invalid sender");
 }
 
-// INSERT MESSAGE
+// INSERT MESSAGE — delivered=0, seen=0
 $sql = "INSERT INTO messages (appointment_id, sender_type, message, delivered, seen)
         VALUES (?, ?, ?, 0, 0)";
 
@@ -35,4 +35,3 @@ if ($stmt->execute()) {
 } else {
     echo "ERROR: " . $stmt->error;
 }
-?>
