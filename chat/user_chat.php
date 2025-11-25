@@ -45,9 +45,7 @@ if (!checkAppointment($conn, $appointment_id, $user_id, null)) {
 
     </div>
 
- <script>
-let lastMessageCount = 0;
-
+<script>
 function loadChat() {
     fetch("load_messages.php?appointment_id=<?php echo $appointment_id; ?>")
         .then(res => res.json())
@@ -59,35 +57,32 @@ function loadChat() {
             box.innerHTML = "";
 
             messages.forEach(m => {
-                let bubble = document.createElement("div");
-                bubble.classList.add("msg");
+
+                // WRAPPER (aligns left/right)
+                let wrapper = document.createElement("div");
+                wrapper.classList.add("message-wrapper");
 
                 if (m.sender_type === "user") {
-                    bubble.classList.add("user-msg");
+                    wrapper.classList.add("user");  // aligns right
 
-                    if (m.seen == 1) {
-                        bubble.innerHTML = `
+                    wrapper.innerHTML = `
+                        <div class="msg user-msg">
                             ${m.message}
-                            <div class="seen">Seen</div>
-                        `;
-                    } else if (m.delivered == 1) {
-                        bubble.innerHTML = `
-                            ${m.message}
-                            <div class="delivered">Delivered</div>
-                        `;
-                    } else {
-                        bubble.innerHTML = `
-                            ${m.message}
-                            <div class="delivered">Sending...</div>
-                        `;
-                    }
+                        </div>
 
+                        <div class="status ${m.seen==1?"seen":m.delivered==1?"delivered":"sending"}">
+                            ${m.seen==1 ? "Seen" : m.delivered==1 ? "Delivered" : "Sending..."}
+                        </div>
+                    `;
                 } else {
-                    bubble.classList.add("psych-msg");
-                    bubble.innerHTML = m.message;
+                    wrapper.classList.add("psych"); // aligns left
+
+                    wrapper.innerHTML = `
+                        <div class="msg psych-msg">${m.message}</div>
+                    `;
                 }
 
-                box.appendChild(bubble);
+                box.appendChild(wrapper);
             });
 
             if (atBottom) box.scrollTop = box.scrollHeight;
@@ -117,8 +112,8 @@ function sendMsg() {
 
     document.getElementById("msg").value = "";
 }
-
 </script>
+
 
 
 </body>

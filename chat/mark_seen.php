@@ -2,10 +2,8 @@
 session_start();
 include '../db_connect.php';
 
-// USER must be logged in
 if (!isset($_SESSION['user_id'])) exit;
 
-// Ensure appointment ID exists
 if (!isset($_POST['appointment_id'])) exit;
 $appointment_id = (int)$_POST['appointment_id'];
 
