@@ -8,13 +8,11 @@ if (!isset($_SESSION['username']) || $_SESSION['username'] != 'admin') {
     exit;
 }
 
-// Fetch data from the database
+// Fetch data
 $users = $conn->query("SELECT * FROM users");
-$psychologists = $conn->query("SELECT *FROM psychologist");
+$psychologists = $conn->query("SELECT * FROM psychologist");
 $hospitals = $conn->query("SELECT * FROM hospitals");
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,148 +20,139 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="admin_dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div>
-            <h2>Admin Panel</h2>
-            <nav>
-                <a href="admin_dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
-                <a href="#psychologist"><i class="fas fa-users"></i> Add Psychologist</a>
-                <a href="#hospital"><i class="fas fa-hospital"></i> Manage Hospital</a>
-                <a href="#users"><i class="fas fa-users"></i> Manage Users</a>
-                <a href="#view-psychologist"><i class="fas fa-users"></i> View Psychologists</a>
-                <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </nav>
-        </div>
-        <div class="footer">
-           <?php echo '&copy; ' . date('Y') . ' Admin Dashboard'; ?><br>All Rights Reserved
-        </div>
-    </div>
-    <i class="fas fa-bars" id="MenuBtn"></i>
 
-    <script>
-        function confirmAddPsychologist() {
-            return confirm("Are you sure you want to Add Psychologist?");
-        }
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">ADMIN PANEL</div>
 
-        function confirmAddHospital() {
-            return confirm("Are you sure you want to add Hospital?");
-        }
+        <nav>
+            <a href="admin_dashboard.php" class="active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="#add-psychologist"><i class="fas fa-user-plus"></i> Add Psychologist</a>
+            <a href="#hospital"><i class="fas fa-hospital"></i> Hospitals</a>
+            <a href="#users"><i class="fas fa-users"></i> Users</a>
+            <a href="#view-psychologist"><i class="fas fa-user-md"></i> Psychologists</a>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
 
+        <footer>
+            &copy; <?= date('Y') ?> Admin
+        </footer>
+    </aside>
 
-        let MenuBtn = document.getElementById('MenuBtn');
+    <!-- MOBILE TOGGLE -->
+    <i class="fas fa-bars menu-btn" id="MenuBtn"></i>
 
-        MenuBtn.addEventListener('click', function() {
-                document.querySelector('body').classList.toggle('mobile-nav-active');
-            }
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        <header class="main-header">
+            <h1>Welcome, Admin</h1>
+        </header>
 
-        );
-        window.addEventListener('click', function(e) {
-            if (!MenuBtn.contains(e.target) && !document.querySelector('nav ').contains(e.target)) {
-                document.body.classList.remove('mobile-nav-active');
-            }
-        });
-    </script>
+        <!-- ========== ADD PSYCHOLOGIST ========== -->
+        <section id="add-psychologist" class="card">
+            <h2>Add Psychologist</h2>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="main-header">
-            <h1>Welcome, Admin!</h1>
-        </div>
-        <div id="psychologist">
+            <form action="add_psychologist.php" method="POST" class="form-grid" onsubmit="return confirm('Add this psychologist?')">
 
-            <!-- Section for adding a psychologist -->
-            <form action="add_psychologist.php" method="POST" onsubmit="return confirmAddPsychologist();">
-                <input type="text" name="psychologist_name" placeholder="Psychologist Name" required>
+                <input type="text" name="psychologist_name" placeholder="Full Name" required>
                 <input type="email" name="email" placeholder="Email" required>
                 <input type="password" name="password" placeholder="Password" required>
                 <input type="text" name="specialization" placeholder="Specialization" required>
                 <input type="text" name="location" placeholder="Location" required>
                 <input type="text" name="education" placeholder="Education" required>
-                <input type="number" name="min_fee" placeholder="Minimum Fee" required>
-                <input type="number" name="max_fee" placeholder="Maximum Fee" required><br><br>
-                <input type="time" name="office_start" placeholder="Office Start Time" required>
-                <input type="time" name="office_end" placeholder="Office End Time" required><br><br>
-                <input type="text" name="contact_info" placeholder="Contact Info" pattern="[0-9]{10}" required>
-                <button type="submit">Add Psychologist</button>
-            </form>
+                <input type="number" name="min_fee" placeholder="Min Fee" required>
+                <input type="number" name="max_fee" placeholder="Max Fee" required>
 
-        </div>
-        <!-- Section for managing hospital suggestions -->
-        <div id="hospital">
-            <h2>Hospital Suggestions</h2>
-            <table>
+                <input type="time" name="office_start" required>
+                <input type="time" name="office_end" required>
+
+                <input type="text" name="contact_info" placeholder="Contact Number (10 digits)" pattern="[0-9]{10}" required>
+
+                <button type="submit" class="btn primary">Add Psychologist</button>
+            </form>
+        </section>
+
+        <!-- ========== HOSPITALS ========== -->
+        <section id="hospital" class="card">
+            <h2>Hospital List</h2>
+
+            <table class="styled-table">
                 <thead>
                     <tr>
-                        <th>Hospital Name</th>
+                        <th>Hospital</th>
                         <th>Location</th>
                         <th>Specialization</th>
                         <th>Contact</th>
                         <th>Action</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    <?php while ($hospital = $hospitals->fetch_assoc()): ?>
+                    <?php while ($h = $hospitals->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo $hospital['name']; ?></td>
-                            <td><?php echo $hospital['location']; ?></td>
-                            <td><?php echo $hospital['specialization']; ?></td>
-                            <td><?php echo $hospital['contact_info']; ?></td>
-                            <td><a href="remove_hospital.php?hospital_id=<?php echo $hospital['hospital_id']; ?>">Remove</a>
-                            <a href="update_hospital.php?hospital_id=<?php echo $hospital['hospital_id']; ?>">Edit</a>
-                        </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-
-            <!-- Section for adding a new hospital -->
-            <h3>Add Hospital Suggestion</h3>
-            <form action="add_hospital.php" method="POST" onsubmit="return confirmAddHospital();">
-                <input type="text" name="name" placeholder="Hospital Name" required>
-                <input type="text" name="location" placeholder="Location" required>
-                <input type="text" name="specialization" placeholder="Specilization" required>
-                <input type="number" name="contact" placeholder="Contact_info" required>
-                <button type="submit">Add Hospital</button>
-            </form>
-
-        </div>
-
-        <!-- Registered Users -->
-        <div id="users">
-            <h3>Registered Users</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Appointment</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = $users->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $row['username']; ?></td>
-                            <td><?php echo $row['email']; ?></td>
+                            <td><?= $h['name'] ?></td>
+                            <td><?= $h['location'] ?></td>
+                            <td><?= $h['specialization'] ?></td>
+                            <td><?= $h['contact_info'] ?></td>
                             <td>
-                                <a href="view_users_appointments.php?user_id=<?php echo $row['user_id']; ?>">View Appointments</a>
+                                <a class="table-btn danger" href="remove_hospital.php?hospital_id=<?= $h['hospital_id'] ?>">Remove</a>
+                                <a class="table-btn warning" href="update_hospital.php?hospital_id=<?= $h['hospital_id'] ?>">Edit</a>
                             </td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
-        </div>
 
-        <!-- Psychologists -->
-        <div id="view-psychologist">
-            <h3>Psychologists</h3>
-            <table>
+            <h3>Add Hospital</h3>
+            <form action="add_hospital.php" method="POST" class="form-grid" onsubmit="return confirm('Add this hospital?')">
+                <input type="text" name="name" placeholder="Hospital Name" required>
+                <input type="text" name="location" placeholder="Location" required>
+                <input type="text" name="specialization" placeholder="Specialization" required>
+                <input type="number" name="contact" placeholder="Contact" required>
+                <button type="submit" class="btn primary">Add Hospital</button>
+            </form>
+        </section>
+
+        <!-- ========== USERS ========== -->
+        <section id="users" class="card">
+            <h2>Registered Users</h2>
+
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Appointments</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <?php while ($u = $users->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= $u['username'] ?></td>
+                            <td><?= $u['email'] ?></td>
+                            <td>
+                                <a class="table-btn info" href="view_users_appointments.php?user_id=<?= $u['user_id'] ?>">View</a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ========== PSYCHOLOGISTS ========== -->
+        <section id="view-psychologist" class="card">
+            <h2>Psychologists</h2>
+
+            <table class="styled-table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -173,25 +162,33 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         <th>Action</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <?php
-                    $psychologists = $conn->query("SELECT p_id, username, email, specialization, location FROM psychologist");
-                    while ($psychologist = $psychologists->fetch_assoc()): ?>
+                    $list = $conn->query("SELECT p_id, username, email, specialization, location FROM psychologist");
+                    while ($p = $list->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo $psychologist['username']; ?></td>
-                            <td><?php echo $psychologist['email']; ?></td>
-                            <td><?php echo $psychologist['specialization']; ?></td>
-                            <td><?php echo $psychologist['location']; ?></td>
+                            <td><?= $p['username'] ?></td>
+                            <td><?= $p['email'] ?></td>
+                            <td><?= $p['specialization'] ?></td>
+                            <td><?= $p['location'] ?></td>
                             <td>
-                                <a href="remove_psychologist.php?p_id=<?php echo $psychologist['p_id']; ?>">Remove</a>
-                                <a href="update_psychologist.php?p_id=<?php echo $psychologist['p_id']; ?>">Edit</a>
+                                <a class="table-btn danger" href="remove_psychologist.php?p_id=<?= $p['p_id'] ?>">Remove</a>
+                                <a class="table-btn warning" href="update_psychologist.php?p_id=<?= $p['p_id'] ?>">Edit</a>
                             </td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
-        </div>
-    </div>
+        </section>
+
+    </main>
+
+    <script>
+        let MenuBtn = document.getElementById("MenuBtn");
+        MenuBtn.onclick = () => document.body.classList.toggle("open");
+    </script>
+
 </body>
 
 </html>

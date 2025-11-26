@@ -1,241 +1,182 @@
-/* General Styles */
-* {
-    scroll-behavior: smooth;
-}
-
+/* GENERAL */
 body {
     margin: 0;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
+    background: #f4f6ff;
     display: flex;
-    height: 100vh;
-    scroll-behavior: smooth;
 }
 
-/* Sidebar */
+/* SIDEBAR */
 .sidebar {
-    width: 250px;
-    background: #2c3e50;
-    color: #ecf0f1;
+    width: 240px;
+    background: #3d44ff;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    padding: 25px 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.3s ease-in-out;
+    box-shadow: 3px 0 15px rgba(0,0,0,0.1);
 }
 
-.sidebar h2 {
+.sidebar .logo {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 35px;
     text-align: center;
-    margin: 20px 0;
 }
 
 .sidebar nav a {
-    color: #ecf0f1;
-    padding: 15px 20px;
     display: block;
-    text-decoration: none;
-    font-size: 16px;
-}
-
-.sidebar nav a:hover {
-    color: #81ecec;
-}
-
-.sidebar .footer {
-    text-align: center;
-    font-size: 12px;
-    padding: 10px;
-    border-top: 1px solid #34495e;
-}
-
-/* Main Content */
-.main-content {
-    flex: 1;
-    background: #ecf0f1;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.main-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #3498db;
     color: white;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 5px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+    background: #ffffff33;
+}
+
+/* MOBILE TOGGLE */
+.menu-btn {
+    font-size: 26px;
+    display: none;
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    cursor: pointer;
+}
+
+/* MAIN CONTENT */
+.main {
+    margin-left: 260px;
+    padding: 30px;
+    width: 100%;
 }
 
 .main-header h1 {
-    margin: 0;
+    margin-top: 0;
+    color: #333;
 }
 
-.main-content section {
+/* CARDS */
+.card {
     background: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 25px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.1);
 }
 
-section h3 {
-    margin: 0 0 15px;
+.card h2 {
+    margin-top: 0;
+    color: #3d44ff;
 }
 
-/* Tables */
-table {
+/* GRID FORM */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+input {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #d6d6ff;
+    font-size: 15px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #3d44ff;
+}
+
+.btn {
+    grid-column: span 2;
+    padding: 13px 0;
+    border-radius: 10px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn.primary {
+    background: #3d44ff;
+    color: white;
+}
+
+/* TABLES */
+.styled-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-top: 15px;
 }
 
-table th,
-table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
+.styled-table th, .styled-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
 }
 
-table th {
-    background: #3498db;
+.styled-table th {
+    background: #eef0ff;
+    font-weight: 600;
+}
+
+.table-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    margin-right: 5px;
+}
+
+.table-btn.danger {
+    background: #ff4b4b;
     color: white;
 }
 
-/* Buttons */
-.btn {
-    background: #3498db;
+.table-btn.warning {
+    background: #ffaa2b;
     color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
 }
 
-.btn:hover {
-    background: #2980b9;
-}
-
-/* Form */
-form {
-    margin: 20px 0;
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="time"],
-button {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    background-color: #357ab8;
+.table-btn.info {
+    background: #3d44ff;
     color: white;
-    border: none;
-    cursor: pointer;
 }
 
-button:hover {
-    background-color: #357ab8;
-}
-
-/* Responsive Design */
-#MenuBtn {
-    position: fixed;
-    top: 5px;
-    right: 34px;
-    font-size: 20px;
-    width: 40px;
-    height: 40px;
-    color: white;
-    background-color: rgb(9, 241, 71);
-    text-align: center;
-    line-height: 42px;
-    border-radius: 50%;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    z-index: 999;
-    display: none;
-}
-
-/* Mobile Navigation */
-@media only screen and (max-width: 1050px) {
-    .main-header {
-        margin-top: 30px;
+/* RESPONSIVE */
+@media screen and (max-width: 900px) {
+    body.open .sidebar {
+        left: 0;
     }
 
     .sidebar {
-        display: none;
+        left: -260px;
+        transition: 0.3s;
     }
 
-    #MenuBtn {
+    .menu-btn {
         display: block;
     }
 
-    table th,
-    table td {
-        width: 100%;
+    .main {
+        margin-left: 0;
+        padding: 20px;
     }
 
-    .mobile-nav-active .sidebar {
-        display: flex;
-        flex-direction: column;
-        background-color: #2C3A47;
-        color: white;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-        position: fixed;
-        align-items: center;
-        top: 0;
-        left: 0;
-        width: 50%;
-        height: 98vh;
-        padding: 20px 10px;
-        z-index: 1000;
-        transform: translateX(0);
-    }
-}
-
-/* Tablet View */
-@media (max-width: 768px) {
-    .main-header {
-        flex-direction: column;
-        text-align: center;
-        margin-top: 30px;
+    .form-grid {
+        grid-template-columns: 1fr;
     }
 
-    .sidebar {
-        width: 200px;
-    }
-
-    table th,
-    table td {
-        width: 100%;
-    }
-
-}
-
-/* Mobile View */
-@media (max-width: 480px) {
-    .sidebar nav a {
-        font-size: 14px;
-    }
-
-    table th,
-    table td {
-        font-size: 12px;
-
-    }
-
-
-    input,
-    button {
-        font-size: 14px;
+    .btn {
+        grid-column: span 1;
     }
 }
