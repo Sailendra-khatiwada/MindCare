@@ -1,4 +1,4 @@
-/* Reset basic styling */
+/* Global Reset */
 * {
     margin: 0;
     padding: 0;
@@ -7,193 +7,170 @@
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #E3EFD3;
-
+    background: #f5f7fa;
+    padding: 40px;
+    color: #333;
 }
 
+/* Page Title */
 h2 {
-    margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #1a1a1a;
 }
 
-/* Filter Options */
-
+/* Filters */
 .filter-options {
     display: flex;
+    justify-content: center;
     gap: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
 }
 
 .filter-options a {
-    text-decoration: none;
-    color: #333;
-    padding: 5px 10px;
-    border-bottom: 2px solid transparent;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.filter-options a.active {
-    color: #007bff;
-    border-color: #007bff;
-}
-
-
-/* Search Bar */
-#search-location {
-    width: 350px;
-    padding: 10px;
-    font-size: 15px;
-    font-family: 'Poppins' sans-serif;
-    margin-bottom: 20px;
-    border: 1px solid black;
-    border-radius: 30px;
-}
-
-
-/* Psychologist Cards */
-.psychologist-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-.card {
-    background-color: #fff;
+    padding: 8px 16px;
+    background: #eaeaea;
     border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 350px;
-    padding: 20px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    transition: 0.25s ease;
 }
 
+.filter-options a.active,
+.filter-options a:hover {
+    background: #4a90e2;
+    color: white;
+}
+
+/* Search Box */
+#search-location {
+    display: block;
+    margin: 0 auto 30px;
+    padding: 10px 15px;
+    width: 50%;
+    min-width: 280px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+/* Psychologist Card Grid */
+.psychologist-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 25px;
+}
+
+/* Card */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+/* Card Header */
 .card-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 15px;
+    margin-bottom: 15px;
 }
 
 .profile-pic {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     object-fit: cover;
 }
 
-.card-title {
-    font-size: 16px;
-}
-
 .card-title h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    font-size: 20px;
+    margin-bottom: 4px;
+    font-weight: 600;
 }
 
 .verified {
-    color: #007bff;
+    font-size: 15px;
+    color: #4a90e2;
 }
 
 .specialization {
     font-size: 14px;
-    color: #666;
+    color: #555;
 }
 
+/* Card Details */
 .card-details p {
-    margin: 5px 0;
     font-size: 14px;
-    color: #333;
+    margin: 6px 0;
+    color: #444;
 }
 
-.card-details strong {
-    color: #007bff;
-}
-
-/* Appointment Form */
-.appointment-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+/* View More Button */
+.view-more-btn {
     margin-top: 15px;
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    background: #4a90e2;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.25s ease;
 }
 
-.appointment-form input[type="date"],
-.appointment-form input[type="time"] {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.view-more-btn:hover {
+    background: #357ac8;
+}
+
+/* Appointment Form (for details page only) */
+.appointment-form {
+    margin-top: 20px;
+    background: #f0f4ff;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.appointment-form label {
+    display: block;
+    margin: 8px 0 4px;
+    font-weight: 500;
+}
+
+.appointment-form input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
 }
 
 .appointment-form button {
-    padding: 10px;
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px;
+    background: #4a90e2;
     border: none;
-    border-radius: 20px;
-    background-color: #007bff;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: 0.25s ease;
 }
 
 .appointment-form button:hover {
-    background-color: #0056b3;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .filter-options {
-        gap: 10px;
-        justify-content: center;
-    }
-
-    .card {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    h2 {
-        font-size: 18px;
-        margin-bottom: 15px;
-    }
-
-    .filter-options {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-    }
-
-    #search-location {
-        width: 100%;
-    }
-
-    .card {
-        padding: 15px;
-    }
-
-    .profile-pic {
-        width: 60px;
-        height: 60px;
-    }
-
-    .card-title h3 {
-        font-size: 16px;
-    }
-
-    .specialization,
-    .card-details p {
-        font-size: 12px;
-    }
-
-    .appointment-form button {
-        padding: 8px;
-        font-size: 14px;
-    }
+    background: #357ac8;
 }
