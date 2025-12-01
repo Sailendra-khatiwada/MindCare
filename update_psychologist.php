@@ -28,11 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $office_end = trim($_POST['office_end']);
     $contact_info = trim($_POST['contact_info']);
     $description = trim($_POST['description']);
+    $experties = trim($_POST['AreaOfExperties']);
 
     if (
         empty($username) || empty($email) || empty($specialization) || empty($location) ||
         empty($education) || empty($min_fee) || empty($max_fee) ||
-        empty($office_start) || empty($office_end) || empty($contact_info) || empty($description)
+        empty($office_start) || empty($office_end) || empty($contact_info) || empty($description) || empty($experties)
     ) {
         echo "<script>alert('All fields including Description are required!');</script>";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -55,7 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             office_start='$office_start',
             office_end='$office_end',
             contact_info='$contact_info',
-            description='$description'
+            description='$description',
+            AreaOfExperties='$experties'
             WHERE p_id=$p_id
         ";
 
@@ -154,6 +156,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="input-group">
             <label>Description</label>
             <textarea name="description" required><?php echo $psychologist['description']; ?></textarea>
+        </div>
+        <div class="input-group">
+            <label>Are Of Experties</label>
+            <textarea name="AreaOfExperties" required><?php echo $psychologist['AreaOfExperties']; ?></textarea>
         </div>
 
         <button type="submit" class="btn-submit">Update</button>

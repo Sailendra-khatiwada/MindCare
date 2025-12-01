@@ -18,7 +18,7 @@ $psychologist_id = intval($_GET['id']);
 // Fetch Psychologist Info
 $stmt = $conn->prepare("
     SELECT username, profile_picture, specialization, location, education,
-           min_fee, max_fee, office_start, office_end, contact_info, description
+           min_fee, max_fee, office_start, office_end, contact_info, description, email, AreaOfExperties
     FROM psychologist
     WHERE p_id = ?
 ");
@@ -439,6 +439,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </p>
                 <p><strong>Fees:</strong> Rs. <?php echo $psych['min_fee']; ?> - <?php echo $psych['max_fee']; ?></p>
                 <p><strong>Contact:</strong> <?php echo $psych['contact_info']; ?></p>
+                <p><strong>Email:</strong> <?php echo $psych['email']; ?></p>
+
             </div>
         </div>
 
@@ -446,6 +448,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="details-bio">
             <h3>About</h3>
             <p><?php echo nl2br($psych['description']); ?></p>
+            <div>
+                <h3>Area of Experties</h3>
+                <p><?php echo nl2br($psych['AreaOfExperties']); ?></p>           
+            </div>
         </div>
 
         <!-- Appointment Form -->

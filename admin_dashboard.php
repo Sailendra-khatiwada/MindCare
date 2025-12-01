@@ -71,10 +71,10 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 <input type="number" name="min_fee" placeholder="Min Fee" required>
                 <input type="number" name="max_fee" placeholder="Max Fee" required>
                 <input type=textarea name="description" placeholder="Description" required></textarea>
-                <input type="text" name="contact_info" placeholder="Contact Number (10 digits)" pattern="[0-9]{10}" required>
-
+                <input type=textarea name="AreaOfExperties" placeholder=" Area of Experties" required></textarea>
                 <input type="time" name="office_start" required>
                 <input type="time" name="office_end" required>
+                <input type="text" name="contact_info" placeholder="Contact Number (10 digits)" pattern="[0-9]{10}" required>
 
 
                 <button type="submit" class="btn primary">Add Psychologist</button>

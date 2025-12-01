@@ -14,6 +14,7 @@ $psychologists = $conn->query("
 ");
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
