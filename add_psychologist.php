@@ -12,9 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $education = $_POST['education'];
     $min_fee = $_POST['min_fee'];
     $max_fee = $_POST['max_fee'];
+    $contact_info = $_POST['contact_info'];
+    $description = $_POST['description'];
     $office_start = $_POST['office_start'];
     $office_end = $_POST['office_end'];
-    $contact_info = $_POST['contact_info'];
 
     if (!$email) {
         echo "<script>alert('Invalid email address');</script>";
@@ -22,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $stmt = $conn->prepare("INSERT INTO psychologist 
-    (username, email, password, specialization, location, education, min_fee, max_fee, office_start, office_end, contact_info)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    (username, email, password, specialization, location, education, min_fee, max_fee, office_start, office_end, contact_info, description)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     $stmt->bind_param(
-        "ssssssddsss",
+        "ssssssddssss",
         $name,
         $email,
         $password,
@@ -37,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $max_fee,
         $office_start,
         $office_end,
-        $contact_info
+        $contact_info,
+        $description
     );
 
     if ($stmt->execute()) {
