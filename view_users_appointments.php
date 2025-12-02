@@ -33,7 +33,7 @@ $appointments_result = $conn->query("SELECT * FROM appointments WHERE user_id='$
 <head>
     <meta charset="UTF-8">
     <title>View Appointments for <?php echo $user['username']; ?></title>
-    <link rel="stylesheet" href="view_users_appointments.css">
+    <link rel="stylesheet" href="css/view_users_appointments.css">
 </head>
 
 <body>

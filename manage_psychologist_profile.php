@@ -107,7 +107,7 @@ if (isset($_POST['change_password'])) {
 <head>
 <meta charset="UTF-8">
 <title>Manage Profile</title>
-<link rel="stylesheet" href="manage_psychologist_profile.css">
+<link rel="stylesheet" href="css/manage_psychologist_profile.css">
 </head>
 
 <body>

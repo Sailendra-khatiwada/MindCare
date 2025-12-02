@@ -40,7 +40,7 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Manage Medications</title>
-    <link rel="stylesheet" href="medications.css">
+    <link rel="stylesheet" href="css/medications.css">
 </head>
 
 <body>

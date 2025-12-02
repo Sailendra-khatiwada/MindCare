@@ -54,7 +54,8 @@ $psychologists = $conn->query("
 </head>
 
 <body>
-
+    <body>
+    <a href="dashboard.php" class="back-btn">← Back to Dashboard</a>
     <h2>Book an Appointment</h2>
 
     <!-- Filters -->

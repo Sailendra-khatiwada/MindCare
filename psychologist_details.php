@@ -104,14 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Psychologist Details</title>
     <link rel="stylesheet" href="">
     <style>
-        /* psychologist_details.css
-   Modern, accessible, responsive styles for psychologist_details.php
-   - Use Poppins font (Google)
-   - Clean card layout, two-column profile, responsive stacking
-   - Styles for the appointment form, alerts, and back button
-*/
-
-        /* Import font */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
         :root {

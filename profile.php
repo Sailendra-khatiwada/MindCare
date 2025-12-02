@@ -102,7 +102,7 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <title>Profile Settings</title>
-    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="css/profile.css">
 </head>
 
 <body>

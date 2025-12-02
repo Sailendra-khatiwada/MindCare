@@ -237,9 +237,29 @@ body {
     font-weight: bold;
 }
 
-/* ----------------------------- */
-/* RESPONSIVE */
-/* ----------------------------- */
+/* Parent anchor must be relative */
+.notify-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* space between icon and text */
+}
+
+/* Notification bubble */
+.notification-badge {
+    position: absolute;
+    top: 6px;      
+    left: 130px;     
+    background: red;
+    color: white;
+    font-size: 11px;
+    padding: 4px 6px;
+    border-radius: 50%;
+    font-weight: bold;
+    line-height: 1;
+    display: none;
+}
+
 
 @media(max-width: 900px) {
 

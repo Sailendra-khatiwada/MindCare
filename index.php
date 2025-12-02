@@ -6,7 +6,7 @@
   <title>Mental Health Support Platform</title>
 
   <!-- New calm / therapeutic theme CSS -->
-  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="css/index.css" />
 
   <!-- Google fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">

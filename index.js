@@ -1,6 +1,3 @@
-// =========================
-// MOBILE MENU TOGGLE
-// =========================
 const MenuBtn = document.getElementById("MenuBtn");
 const navMenu = document.querySelector("nav ul");
 
@@ -10,7 +7,6 @@ if (MenuBtn) {
     });
 }
 
-// Close menu when clicking outside
 document.addEventListener("click", (event) => {
     if (
         MenuBtn &&
@@ -22,10 +18,6 @@ document.addEventListener("click", (event) => {
     }
 });
 
-
-// =========================
-// LOGIN MODAL
-// =========================
 const modal = document.getElementById("login-modal");
 const searchField = document.getElementById("search-field");
 const closeModalBtn = document.querySelector(".modal-close");
@@ -42,7 +34,6 @@ if (closeModalBtn && modal) {
     });
 }
 
-// Close modal by clicking outside
 document.addEventListener("click", (event) => {
     if (modal && event.target === modal) {
         modal.style.display = "none";

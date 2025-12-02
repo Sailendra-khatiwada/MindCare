@@ -69,7 +69,13 @@ if ($profile_picture_result && $profile_picture_result->num_rows > 0) {
         <ul class="sidebar-menu">
             <li><a href="dashboard.php"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
             <li><a href="appointments.php"><i class="fas fa-calendar-alt"></i> <span>Appointments</span></a></li>
-            <li><a href="chat/messages_list_user.php"><i class="fas fa-comments"></i> <span>Messages</span></a></li>
+            <li>
+                <a href="chat/messages_list_user.php" class="notify-link" id="messagesLink">
+                    <i class="fas fa-comments"></i>
+                    <span class="nav-text">Messages</span>
+                    <span class="notification-badge" id="msgBadge" style="display:none;">0</span>
+                </a>
+            </li>
             <li><a href="medications.php"><i class="fas fa-pills"></i> <span>Medications</span></a></li>
             <li><a href="hospital_suggestions.php"><i class="fas fa-hospital"></i> <span>Hospitals</span></a></li>
             <li><a href="profile.php"><i class="fas fa-user-edit"></i> <span>Profile</span></a></li>
@@ -145,7 +151,7 @@ if ($profile_picture_result && $profile_picture_result->num_rows > 0) {
 
         </section>
     </main>
-
+   
     <script>
         // Calendar Script
         document.addEventListener('DOMContentLoaded', function() {
@@ -190,6 +196,76 @@ if ($profile_picture_result && $profile_picture_result->num_rows > 0) {
         menuBtn.addEventListener("click", () => {
             sidebar.classList.toggle("active");
         });
+
+
+        (function() {
+            const BADGE = document.getElementById('msgBadge');
+            const POPUP = document.getElementById('popupNotification');
+            const POPUP_TITLE = document.getElementById('popupTitle');
+            const POPUP_TEXT = document.getElementById('popupText');
+            const MESSAGES_LINK = document.getElementById('messagesLink');
+
+            let lastUnread = 0;
+            let pollingInterval = 4000; // 5s
+
+
+            async function checkUnread() {
+                try {
+                    const res = await fetch('chat/check_unread_user.php', {
+                        cache: 'no-store'
+                    });
+                    if (!res.ok) {
+                        console.error('Unread check failed:', res.status, res.statusText);
+                        return;
+                    }
+                    const data = await res.json();
+                    if (data && typeof data.unread !== 'undefined') {
+                        const count = parseInt(data.unread, 10) || 0;
+
+                        // update badge
+                        if (BADGE) {
+                            if (count > 0) {
+                                BADGE.textContent = count > 99 ? '99+' : count;
+                                BADGE.style.display = 'inline-block';
+                            } else {
+                                BADGE.style.display = 'none';
+                            }
+                        }
+
+                        // show popup when new messages arrived (count increased)
+                        if (count > lastUnread) {
+                            // optionally show message content or number
+                            const diff = count - lastUnread;
+                        }
+
+                        lastUnread = count;
+                    } else {
+                        console.error('Unexpected response from unread API:', data);
+                    }
+                } catch (err) {
+                    console.error('checkUnread error:', err);
+                }
+            }
+
+            // run immediately and on interval
+            checkUnread();
+            setInterval(checkUnread, pollingInterval);
+
+            // optional: clicking popup or badge navigates to messages
+            if (POPUP) {
+                POPUP.addEventListener('click', () => {
+                    window.location.href = 'chat/messages_list_user.php';
+                });
+            }
+            if (MESSAGES_LINK) {
+                MESSAGES_LINK.addEventListener('click', () => {
+                    // when user opens Messages, we can reset lastUnread to 0 locally
+                    lastUnread = 0;
+                    if (BADGE) BADGE.style.display = 'none';
+                });
+            }
+
+        })();
     </script>
 
 </body>
