@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -14,7 +15,8 @@
   <!-- icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="theme-calm">
+
+<body>
 
   <header class="site-header">
     <div class="container header-inner">
@@ -25,7 +27,7 @@
 
       <nav class="nav" aria-label="Primary">
         <ul class="nav-list">
-          <li><a href="index.php">Home</a></li>
+          <li><a href="#home">Home</a></li>
           <li><a href="#about-us">About</a></li>
           <li><a href="#services">Services</a></li>
           <li><a href="#testimonials">Testimonials</a></li>
@@ -46,7 +48,7 @@
     <div class="hero">
       <div class="container hero-grid">
         <div class="hero-card">
-          <h1>We’re here to help you feel better</h1>
+          <h1>We're here to help you feel better</h1>
           <p class="lead">Accessible, confidential and compassionate mental health care — find a psychologist, book a session, and get support when you need it.</p>
 
           <div class="hero-cta">
@@ -80,7 +82,7 @@
         <form id="search-form" onsubmit="return false;">
           <label for="search-field" class="visually-hidden">Search psychologists</label>
           <input id="search-field" name="q" type="search" placeholder="Search by name, speciality or location…" />
-          <button class="btn btn-search" onclick="openSearch()">Search</button>
+          <button class="btn btn-primary btn-search" onclick="openSearch()">Search</button>
         </form>
       </div>
     </section>
@@ -117,9 +119,18 @@
     <section id="testimonials" class="container testimonials-section">
       <h2>What Our Users Say</h2>
       <div class="testi-grid">
-        <blockquote class="testi">“This platform changed my life. The therapist listened and helped me through a hard time.”</blockquote>
-        <blockquote class="testi">“I found the help I needed quickly and privately.”</blockquote>
-        <blockquote class="testi">“Highly recommended — caring professionals and easy booking.”</blockquote>
+        <blockquote class="testi">
+          <p>"This platform changed my life. The therapist listened and helped me through a hard time."</p>
+          <cite>- Sarah M.</cite>
+        </blockquote>
+        <blockquote class="testi">
+          <p>"I found the help I needed quickly and privately. Highly recommended!"</p>
+          <cite>- James L.</cite>
+        </blockquote>
+        <blockquote class="testi">
+          <p>"Caring professionals and easy booking system made all the difference for me."</p>
+          <cite>- Maria K.</cite>
+        </blockquote>
       </div>
     </section>
 
@@ -146,22 +157,43 @@
       </div>
     </section>
 
-    <section id="contact" class="container contact-section">
-      <h2>Contact & Support</h2>
-      <div class="contact-grid">
-        <div class="contact-form">
-          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSclDnkg-7qJVsjnCVr552m-216SjleTeCZX7GOfMjjl_EENUg/viewform?embedded=true"
-            width="100%" height="520" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-        </div>
+    <section id="contact" class="contact-section">
+      <div class="contact-wrapper">
+        <form action="save_contact.php" method="POST" class="contact-form">
+          <h3>Send Us a Message</h3>
+
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" required>
+
+          <label for="email">Your Email</label>
+          <input type="email" id="email" name="email" required>
+
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" required>
+
+          <label for="message">Your Message</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+
+          <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Send Message</button>
+        </form>
+
         <div class="contact-info">
           <h3>Emergency & Helpline</h3>
           <p>National Helpline for Suicide Prevention: <strong>1166</strong></p>
-          <h4>Contact</h4>
-          <p>Email: support@mentalhealth.com<br/>Phone: +977 9769761449</p>
+          <p>Mental Health Crisis Support: <strong>988</strong></p>
+          
+          <h4>Contact Information</h4>
+          <p>Email: support@mindcare.com<br />Phone: +977 9769761449</p>
+          <p>Address: Basundhara, Kathmandu 44600, Nepal</p>
+          
+          <h4>Business Hours</h4>
+          <p>Monday - Friday: 9:00 AM - 8:00 PM<br />Saturday: 10:00 AM - 4:00 PM<br />Sunday: Emergency Support Only</p>
+          
           <div class="map">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.429463731249!2d85.33100831506106!3d27.705235982793842!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb1900bdaac9d3%3A0x3c8902fa7d70548b!2sBasundhara%2C%20Kathmandu%2044600!5e0!3m2!1sen!2snp!4v1697109398357!5m2!1sen!2snp"
-              width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+              width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" 
+              title="MindCare Location Map"></iframe>
           </div>
         </div>
       </div>
@@ -172,95 +204,182 @@
     <div class="container footer-grid">
       <div class="footer-col">
         <h4>About MindCare</h4>
-        <p>Trusted partner in mental health support — resources and services for emotional well-being.</p>
+        <p>Trusted partner in mental health support — providing accessible resources and professional services for emotional well-being.</p>
       </div>
       <div class="footer-col">
         <h4>Quick Links</h4>
         <ul class="footer-links">
-          <li><a href="index.php">Home</a></li>
-          <li><a href="#about-us">About</a></li>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about-us">About Us</a></li>
           <li><a href="#services">Services</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Contact</h4>
         <ul class="footer-links">
-          <li>Email: support@mentalhealth.com</li>
-          <li>Phone: +977 9769761449</li>
-          <li>Address: Basundhara, Kathmandu</li>
+          <li><i class="fa fa-envelope"></i> support@mindcare.com</li>
+          <li><i class="fa fa-phone"></i> +977 9769761449</li>
+          <li><i class="fa fa-map-marker"></i> Basundhara, Kathmandu</li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom container">
-      <?php echo '&copy; ' . date('Y') . ' MindCare. All rights reserved.'; ?>
+      <p>&copy; <?php echo date('Y'); ?> MindCare. All rights reserved.</p>
     </div>
   </footer>
 
-  <!-- modal and scripts (reused) -->
+  <!-- Login Modal -->
   <div id="login-modal" class="modal" aria-hidden="true">
     <div class="modal-content">
       <button class="modal-close" aria-label="Close">&times;</button>
       <h2>Login Required</h2>
       <p>You need to log in to search for a psychologist.</p>
-      <a class="btn btn-primary" href="login.php">Log In</a>
+      <div style="margin-top: 1.5rem;">
+        <a class="btn btn-primary" href="login.php">Log In</a>
+        <a class="btn btn-outline" href="signup.php">Sign Up</a>
+      </div>
     </div>
   </div>
 
   <script>
     // =========================
-// MOBILE MENU TOGGLE
-// =========================
-const MenuBtn = document.getElementById("MenuBtn");
-const navMenu = document.querySelector(".nav-list");
+    // MOBILE MENU TOGGLE
+    // =========================
+    const menuToggle = document.getElementById("menu-toggle");
+    const navList = document.querySelector(".nav-list");
 
-if (MenuBtn) {
-    MenuBtn.addEventListener("click", () => {
-        document.body.classList.toggle("mobile-nav-active");
-    });
-}
-
-// Close menu when clicking outside
-document.addEventListener("click", (event) => {
-    if (
-        MenuBtn &&
-        !MenuBtn.contains(event.target) &&
-        navMenu &&
-        !navMenu.contains(event.target)
-    ) {
-        document.body.classList.remove("mobile-nav-active");
+    if (menuToggle) {
+      menuToggle.addEventListener("click", () => {
+        navList.classList.toggle("active");
+        menuToggle.innerHTML = navList.classList.contains("active") 
+          ? '<i class="fa fa-times"></i>' 
+          : '<i class="fa fa-bars"></i>';
+      });
     }
-});
 
+    // Close menu when clicking outside
+    document.addEventListener("click", (event) => {
+      if (navList && navList.classList.contains("active")) {
+        if (!navList.contains(event.target) && !menuToggle.contains(event.target)) {
+          navList.classList.remove("active");
+          menuToggle.innerHTML = '<i class="fa fa-bars"></i>';
+        }
+      }
+    });
 
-// =========================
-// LOGIN MODAL
-// =========================
-const modal = document.getElementById("login-modal");
-const searchField = document.getElementById("search-field");
-const closeModalBtn = document.querySelector(".modal-close");
+    // =========================
+    // LOGIN MODAL
+    // =========================
+    const modal = document.getElementById("login-modal");
+    const searchField = document.getElementById("search-field");
+    const searchButton = document.querySelector(".btn-search");
+    const closeModalBtn = document.querySelector(".modal-close");
 
-if (searchField && modal) {
-    searchField.addEventListener("click", () => {
+    function openSearch() {
+      if (modal) {
         modal.style.display = "flex";
-    });
-}
-
-if (closeModalBtn && modal) {
-    closeModalBtn.addEventListener("click", () => {
-        modal.style.display = "none";
-    });
-}
-
-// Close modal by clicking outside
-document.addEventListener("click", (event) => {
-    if (modal && event.target === modal) {
-        modal.style.display = "none";
+      }
     }
-});
 
+    if (searchField && modal) {
+      searchField.addEventListener("click", openSearch);
+    }
 
+    if (searchButton && modal) {
+      searchButton.addEventListener("click", openSearch);
+    }
+
+    if (closeModalBtn && modal) {
+      closeModalBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+    }
+
+    // Close modal by clicking outside
+    document.addEventListener("click", (event) => {
+      if (modal && event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener("keydown", (event) => {
+      if (modal && event.key === "Escape" && modal.style.display === "flex") {
+        modal.style.display = "none";
+      }
+    });
+
+    // =========================
+    // SMOOTH SCROLL
+    // =========================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+          
+          // Close mobile menu if open
+          if (navList && navList.classList.contains("active")) {
+            navList.classList.remove("active");
+            menuToggle.innerHTML = '<i class="fa fa-bars"></i>';
+          }
+        }
+      });
+    });
+
+    // =========================
+    // FORM VALIDATION
+    // =========================
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(e) {
+        const name = this.querySelector('#name');
+        const email = this.querySelector('#email');
+        const subject = this.querySelector('#subject');
+        const message = this.querySelector('#message');
+        
+        let isValid = true;
+        
+        // Simple validation
+        if (!name.value.trim()) {
+          alert('Please enter your name');
+          isValid = false;
+        }
+        
+        if (!email.value.trim() || !email.value.includes('@')) {
+          alert('Please enter a valid email');
+          isValid = false;
+        }
+        
+        if (!subject.value.trim()) {
+          alert('Please enter a subject');
+          isValid = false;
+        }
+        
+        if (!message.value.trim()) {
+          alert('Please enter your message');
+          isValid = false;
+        }
+        
+        if (!isValid) {
+          e.preventDefault();
+        } else {
+          // Show success message
+          alert('Thank you for your message! We will get back to you soon.');
+        }
+      });
+    }
   </script>
 </body>
+
 </html>

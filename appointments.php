@@ -21,7 +21,7 @@ $psychologists = $conn->query("
 <head>
     <meta charset="UTF-8">
     <title>Book an Appointment</title>
-    <link rel="stylesheet" href="appointment.css">
+    <link rel="stylesheet" href="css/appointment.css">
 
     <script>
         // Filter by Location
