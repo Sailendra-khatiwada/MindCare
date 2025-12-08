@@ -1,283 +1,746 @@
-/* Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-
+/* ===========================================
+   CSS Reset & Base Styles
+=========================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: "Poppins", sans-serif;
-    background: #f3f5fa;
-    min-height: 100vh;
-    display: flex;
+:root {
+    /* Color Palette - Calm & Therapeutic */
+    --primary: #4a7b9d;       /* Soft blue */
+    --primary-light: #7ba6c1;
+    --primary-dark: #2c5a78;
+    --secondary: #6a9c89;     /* Sage green */
+    --accent: #e8a87c;        /* Warm peach */
+    --light: #f8f9fa;
+    --light-gray: #e9ecef;
+    --medium-gray: #adb5bd;
+    --dark: #2d3748;
+    --white: #ffffff;
+    --success: #28a745;
+    --warning: #ffc107;
+    --error: #dc3545;
+    --info: #17a2b8;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    --gradient-light: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    --gradient-sidebar: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --gradient-accent: linear-gradient(135deg, var(--accent) 0%, #ff9a8b 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 30px;
+    --radius-full: 50%;
+    
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 3rem;
+    --space-xl: 4rem;
+    
+    /* Sidebar */
+    --sidebar-width: 280px;
+    --sidebar-collapsed: 80px;
 }
 
-/* ----------------------------- */
-/* SIDEBAR */
-/* ----------------------------- */
+html {
+    height: 100%;
+}
 
+body {
+    font-family: 'Inter', 'Poppins', sans-serif;
+    color: var(--dark);
+    background-color: #f5f7fb;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+}
+
+/* ===========================================
+   Sidebar
+=========================================== */
 .sidebar {
-    width: 260px;
+    width: var(--sidebar-width);
+    background: var(--gradient-sidebar);
+    color: var(--white);
     height: 100vh;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(18px);
-    border-right: 1px solid rgba(255, 255, 255, 0.5);
     position: fixed;
     left: 0;
     top: 0;
-    padding: 30px 20px;
-    transition: 0.3s ease-in-out;
-}
-
-.sidebar.active {
-    left: -260px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-lg);
+    overflow-y: auto;
 }
 
 .sidebar-header {
+    padding: var(--space-lg) var(--space-md);
     text-align: center;
-    margin-bottom: 35px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .profile-img {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    border-radius: var(--radius-full);
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: var(--space-sm);
     object-fit: cover;
-    margin-bottom: 10px;
-    border: 3px solid #fff;
-    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.profile-img:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .username {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    color: #333;
+    color: var(--white);
+    margin-bottom: 0;
 }
 
-/* Sidebar Menu */
+.user-role {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: var(--space-xs);
+}
 
 .sidebar-menu {
+    padding: var(--space-md) 0;
     list-style: none;
 }
 
 .sidebar-menu li {
-    margin: 18px 0;
+    margin-bottom: 0.5rem;
 }
 
 .sidebar-menu a {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 15px;
+    padding: 0.875rem var(--space-md);
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    color: #333;
-    font-size: 1rem;
-    border-radius: 12px;
-    transition: 0.25s;
-    font-weight: 500;
-}
-
-.sidebar-menu a i {
-    width: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .sidebar-menu a:hover {
-    background: #4A90E2;
-    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    padding-left: calc(var(--space-md) + 0.5rem);
 }
 
-
-/* ----------------------------- */
-/* MOBILE MENU BUTTON */
-/* ----------------------------- */
-
-.menu-btn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: #4A90E2;
-    color: white;
-    width: 45px;
-    height: 45px;
-    border: none;
-    border-radius: 12px;
-    font-size: 20px;
-    cursor: pointer;
-    display: none;
-    z-index: 2000;
+.sidebar-menu a.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+    border-left: 4px solid var(--accent);
 }
 
+.sidebar-menu i {
+    font-size: 1.25rem;
+    width: 30px;
+    margin-right: var(--space-sm);
+}
 
-/* ----------------------------- */
-/* MAIN CONTENT */
-/* ----------------------------- */
+.sidebar-menu span {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
 
+/* Notification badge */
+.notification-badge {
+    background: var(--accent);
+    color: var(--dark);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    margin-left: auto;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ===========================================
+   Main Content Area
+=========================================== */
 .main-content {
-    margin-left: 260px;
-    width: calc(100% - 260px);
-    padding: 30px;
-    transition: 0.3s;
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 0;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+    background: #f5f7fb;
+}
+
+/* ===========================================
+   Topbar
+=========================================== */
+.topbar {
+    background: var(--white);
+    padding: var(--space-md) var(--space-xl);
+    border-bottom: 1px solid var(--light-gray);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .topbar h2 {
-    font-size: 1.7rem;
-    font-weight: 600;
-    color: #333;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: var(--space-xs);
 }
 
 .tagline {
+    color: var(--medium-gray);
     font-size: 0.95rem;
-    color: #777;
-    margin-top: 4px;
-    margin-bottom: 25px;
 }
 
-/* ----------------------------- */
-/* DASHBOARD GRID */
-/* ----------------------------- */
+.quick-actions {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+}
 
+.quick-action-btn {
+    padding: 0.5rem 1rem;
+    background: var(--light);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius-md);
+    color: var(--dark);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.quick-action-btn:hover {
+    background: var(--primary-light);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+/* ===========================================
+   Dashboard Grid
+=========================================== */
 .dashboard-grid {
+    padding: var(--space-xl);
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--space-lg);
 }
 
-/* ----------------------------- */
-/* CARD DESIGN */
-/* ----------------------------- */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
 
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===========================================
+   Cards
+=========================================== */
 .card {
-    background: white;
-    padding: 25px;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    transition: 0.3s;
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--light-gray);
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
 }
 
 .card h3 {
-    font-size: 1.3rem;
-    margin-bottom: 18px;
+    background: var(--gradient-primary);
+    color: var(--white);
+    padding: var(--space-md);
+    margin: 0;
+    font-size: 1.25rem;
     font-weight: 600;
-    color: #333;
 }
 
-.card-body .item {
-    background: #f9fafc;
-    padding: 15px;
-    border-radius: 14px;
-    margin-bottom: 12px;
-    border-left: 4px solid #4A90E2;
+.card-body {
+    padding: var(--space-md);
 }
 
-.card-body p {
-    margin: 3px 0;
-    color: #555;
+/* ===========================================
+   Appointment Card
+=========================================== */
+.appointment-item {
+    background: var(--light);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+    border-left: 4px solid var(--primary);
+    transition: all 0.3s ease;
 }
 
-/* ----------------------------- */
-/* CALENDAR */
-/* ----------------------------- */
+.appointment-item:hover {
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    transform: translateX(5px);
+}
 
+.appointment-item strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+    margin-bottom: var(--space-xs);
+}
+
+.appointment-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+}
+
+.detail-item i {
+    color: var(--primary);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-scheduled { background: #d4edda; color: #155724; }
+.status-confirmed { background: #d1ecf1; color: #0c5460; }
+.status-completed { background: #d6d8d9; color: #1b1e21; }
+.status-cancelled { background: #f8d7da; color: #721c24; }
+
+/* ===========================================
+   Medication Card
+=========================================== */
+.medication-item {
+    background: linear-gradient(135deg, rgba(106, 156, 137, 0.1), rgba(106, 156, 137, 0.05));
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+    border-left: 4px solid var(--secondary);
+    transition: all 0.3s ease;
+}
+
+.medication-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-sm);
+}
+
+.medication-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.medication-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+.medication-time {
+    background: var(--secondary);
+    color: var(--white);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.medication-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    color: var(--medium-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+/* ===========================================
+   Calendar Card
+=========================================== */
 .calendar-card {
-    padding: 0;
-}
-
-.calendar-card h3 {
-    padding: 25px 25px 0 25px;
+    grid-column: span 1;
 }
 
 .calendar-header {
-    margin: 0 25px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--light-gray);
 }
 
-#month-year {
-    font-size: 1.2rem;
+.calendar-header h4 {
+    color: var(--primary-dark);
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
-.calendar-body {
-    padding: 20px 25px;
+.calendar-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-sm);
+}
+
+.nav-btn {
+    background: var(--light);
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-full);
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: var(--primary);
+    color: var(--white);
 }
 
 .calendar-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.calendar-days span {
+    text-align: center;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: #666;
-    margin-bottom: 10px;
+    color: var(--medium-gray);
+    text-transform: uppercase;
 }
 
 .calendar-dates {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    gap: 0.5rem;
+    padding: var(--space-md);
 }
 
 .calendar-dates div {
-    padding: 12px 0;
-    background: #f4f6fa;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 0.95rem;
-    color: #444;
-}
-
-.current-day {
-    background: #4A90E2 !important;
-    color: white !important;
-    font-weight: bold;
-}
-
-/* Parent anchor must be relative */
-.notify-link {
-    position: relative;
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
-    gap: 8px; /* space between icon and text */
+    justify-content: center;
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-/* Notification bubble */
-.notification-badge {
+.calendar-dates div:hover:not(.empty) {
+    background: var(--light-gray);
+}
+
+.calendar-dates .current-day {
+    background: var(--gradient-primary);
+    color: var(--white);
+    font-weight: 600;
+}
+
+.calendar-dates .appointment-day {
+    position: relative;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.calendar-dates .appointment-day::after {
+    content: '';
     position: absolute;
-    top: 6px;      
-    left: 130px;     
-    background: red;
-    color: white;
-    font-size: 11px;
-    padding: 4px 6px;
-    border-radius: 50%;
-    font-weight: bold;
-    line-height: 1;
-    display: none;
+    bottom: 2px;
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: var(--radius-full);
 }
 
+/* ===========================================
+   Stats Cards
+=========================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
 
-@media(max-width: 900px) {
+.stat-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
 
-    .menu-btn {
-        display: block;
-    }
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
 
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.stat-icon.appointments { background: var(--gradient-primary); }
+.stat-icon.medications { background: linear-gradient(135deg, var(--secondary), #5a8b76); }
+.stat-icon.messages { background: linear-gradient(135deg, var(--accent), #ff9a8b); }
+.stat-icon.sessions { background: linear-gradient(135deg, #6f42c1, #a370f7); }
+
+.stat-info h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 0.25rem;
+}
+
+.stat-info p {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+}
+
+/* ===========================================
+   Mobile Menu Button
+=========================================== */
+.menu-btn {
+    position: fixed;
+    top: var(--space-md);
+    right: var(--space-md);
+    z-index: 1100;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-lg);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+    background: var(--primary-dark);
+    transform: rotate(90deg);
+}
+
+/* ===========================================
+   Responsive Design
+=========================================== */
+@media (max-width: 992px) {
     .sidebar {
-        left: -260px;
+        transform: translateX(-100%);
     }
-
+    
     .sidebar.active {
-        left: 0;
+        transform: translateX(0);
     }
-
+    
     .main-content {
         margin-left: 0;
-        width: 100%;
-        padding: 20px;
     }
+    
+    .menu-btn {
+        display: flex;
+    }
+    
+    .topbar {
+        padding: var(--space-md);
+    }
+    
+    .dashboard-grid {
+        padding: var(--space-md);
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-actions {
+        flex-wrap: wrap;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .appointment-details,
+    .medication-details {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===========================================
+   Animations
+=========================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ===========================================
+   Empty States
+=========================================== */
+.empty-state {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--medium-gray);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+    color: var(--light-gray);
+}
+
+.empty-state h4 {
+    color: var(--medium-gray);
+    margin-bottom: var(--space-sm);
+}
+
+.empty-state p {
+    margin-bottom: var(--space-md);
+}
+
+/* ===========================================
+   Utility Classes
+=========================================== */
+.text-center { text-align: center; }
+.mt-1 { margin-top: var(--space-xs); }
+.mt-2 { margin-top: var(--space-sm); }
+.mt-3 { margin-top: var(--space-md); }
+.mt-4 { margin-top: var(--space-lg); }
+
+/* ===========================================
+   Welcome Card
+=========================================== */
+.welcome-card {
+    grid-column: 1 / -1;
+    background: var(--gradient-primary);
+    color: var(--white);
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-lg);
+}
+
+.welcome-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.welcome-text h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+}
+
+.welcome-text p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 600px;
+}
+
+.welcome-illustration {
+    font-size: 6rem;
+    opacity: 0.8;
+}
+
+/* ===========================================
+   Loading States
+=========================================== */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
