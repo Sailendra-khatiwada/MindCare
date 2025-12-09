@@ -101,381 +101,718 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <head>
     <meta charset="UTF-8">
-    <title>Psychologist Details</title>
-    <link rel="stylesheet" href="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychologist Details | MindCare</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
         :root {
-            --bg: #f4f7fb;
-            --card: #ffffff;
-            --muted: #6b7280;
-            --accent: #4A90E2;
-            --accent-600: #357abd;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --radius-lg: 16px;
+            /* Color Palette */
+            --primary: #4a7b9d;
+            --primary-light: #7ba6c1;
+            --primary-dark: #2c5a78;
+            --secondary: #6a9c89;
+            --accent: #e8a87c;
+            --light: #f8f9fa;
+            --light-gray: #e9ecef;
+            --medium-gray: #adb5bd;
+            --dark: #2d3748;
+            --white: #ffffff;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --gradient-card: linear-gradient(135deg, var(--white) 0%, #fcfdfe 100%);
+            --gradient-header: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
+            
+            /* Border Radius */
+            --radius-sm: 8px;
             --radius-md: 12px;
-            --shadow-1: 0 6px 22px rgba(16, 24, 40, 0.08);
-            --shadow-2: 0 4px 14px rgba(16, 24, 40, 0.06);
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 50%;
+            
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
         }
 
-        /* Reset + base */
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        html,
         body {
-            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fb 0%, #e9ecef 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: var(--space-md);
         }
 
-        body {
-            margin: 0;
-            font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background: linear-gradient(180deg, #f7f9fc 0%, var(--bg) 100%);
-            color: #111827;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            padding: 32px;
-        }
-
-        /* Container (main white card) */
-        .details-container {
-            max-width: 1100px;
+        /* Container */
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: var(--card);
-            border-radius: calc(var(--radius-lg));
-            padding: 28px;
-            box-shadow: var(--shadow-1);
-            border: 1px solid rgba(15, 23, 42, 0.03);
         }
 
-        /* Header area: photo + main info */
-        .details-header {
-            display: grid;
-            grid-template-columns: 160px 1fr;
-            gap: 22px;
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--light-gray);
         }
 
-        /* Profile photo */
-        .details-photo {
-            width: 160px;
-            height: 160px;
-            border-radius: 14px;
-            object-fit: cover;
-            box-shadow: var(--shadow-2);
-            border: 1px solid rgba(15, 23, 42, 0.04);
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+            color: var(--primary-dark);
         }
 
-        /* Info block */
-        .details-info h2 {
-            margin: 0 0 8px 0;
-            font-size: 1.6rem;
+        .brand-mark {
+            font-size: 2rem;
+        }
+
+        .brand-text {
+            font-size: 1.5rem;
             font-weight: 700;
+        }
+
+        .back-link {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        .details-info .verified {
-            color: var(--accent);
-            font-size: 1rem;
-            background: rgba(74, 144, 226, 0.08);
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        /* specialization and metadata */
-        .details-info .specialization {
-            margin: 6px 0 12px;
-            color: var(--muted);
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--primary);
             font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            background: var(--white);
+            border: 1px solid var(--light-gray);
+            transition: all 0.3s ease;
         }
 
-        .meta-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 18px;
+        .back-link:hover {
+            background: var(--light);
+            border-color: var(--primary-light);
         }
 
-        .meta-item {
+        /* Main Layout */
+        .details-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: var(--space-lg);
+        }
+
+        @media (max-width: 1024px) {
+            .details-layout {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--light-gray);
+        }
+
+        .profile-header {
+            background: var(--gradient-header);
+            padding: var(--space-lg);
+            position: relative;
+        }
+
+        .profile-header-content {
             display: flex;
-            gap: 8px;
             align-items: center;
-            background: #fbfdff;
-            border-radius: 10px;
-            padding: 8px 12px;
-            border: 1px solid rgba(15, 23, 42, 0.03);
-            font-size: 0.95rem;
-            color: #374151;
+            gap: var(--space-md);
         }
 
-        /* larger description area */
-        .details-bio {
-            margin-top: 22px;
-            line-height: 1.6;
-            color: #374151;
+        .profile-image {
+            width: 140px;
+            height: 140px;
+            border-radius: var(--radius-full);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+            background: var(--white);
+            padding: 4px;
+            flex-shrink: 0;
         }
 
-        .details-bio h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.1rem;
-            font-weight: 600;
+        .profile-info {
+            flex: 1;
         }
 
-        /* Layout for details + booking side-by-side */
+        .profile-name {
+            color: var(--white);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .verified-badge {
+            background: var(--white);
+            color: var(--primary);
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-full);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .specialization-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Profile Details */
+        .profile-details {
+            padding: var(--space-lg);
+        }
+
         .details-grid {
             display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 22px;
-            margin-top: 22px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
 
-        /* Appointment box (right column) */
-        .appointment-form {
-            background: linear-gradient(180deg, #ffffff, #fbfdff);
-            padding: 18px;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(15, 23, 42, 0.04);
-            box-shadow: var(--shadow-2);
+        .detail-item {
+            background: var(--light);
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--light-gray);
         }
 
-        .appointment-form h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.05rem;
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
 
-        .alert {
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            margin-bottom: 12px;
-        }
-
-        .alert.error {
-            background: rgba(220, 38, 38, 0.08);
-            color: var(--danger);
-            border: 1px solid rgba(220, 38, 38, 0.12);
-        }
-
-        .alert.success {
-            background: rgba(16, 185, 129, 0.08);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.12);
-        }
-
-        /* Form elements */
-        .appointment-form label {
-            display: block;
-            font-weight: 600;
-            margin-top: 10px;
-            font-size: 0.95rem;
-            color: #111827;
-        }
-
-        .input-row {
-            margin-top: 8px;
-        }
-
-        .appointment-form input[type="date"],
-        .appointment-form input[type="time"],
-        .appointment-form select {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            font-size: 0.98rem;
-            background: #fff;
-            outline: none;
-            transition: border-color .15s ease, box-shadow .15s ease;
-        }
-
-        .appointment-form input:focus,
-        .appointment-form select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 6px 18px rgba(74, 144, 226, 0.08);
-        }
-
-        /* submit */
-        .appointment-form button {
-            margin-top: 14px;
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 700;
+        .detail-value {
             font-size: 1rem;
-            color: white;
-            background: linear-gradient(180deg, var(--accent), var(--accent-600));
-            cursor: pointer;
-            transition: transform .12s ease, box-shadow .12s ease;
+            font-weight: 500;
+            color: var(--dark);
+            line-height: 1.5;
         }
 
-        .appointment-form button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 26px rgba(53, 122, 200, 0.18);
-        }
-
-        /* Back link */
-        .view-more-btn,
-        .back-btn {
-            display: inline-block;
-            margin-top: 18px;
-            text-decoration: none;
-            background: transparent;
-            color: var(--accent);
+        .detail-value.highlight {
+            color: var(--primary);
             font-weight: 600;
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: 1px dashed rgba(74, 144, 226, 0.18);
         }
 
-        .view-more-btn:hover,
-        .back-btn:hover {
-            background: rgba(74, 144, 226, 0.06);
+        /* About Sections */
+        .about-section {
+            background: var(--light);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin-top: var(--space-lg);
+            border: 1px solid var(--light-gray);
         }
 
-        /* small utility text */
-        .small {
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-top: 8px;
+        .about-section h3 {
+            font-size: 1.25rem;
+            color: var(--primary-dark);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* Responsive rules */
-        @media (max-width: 980px) {
-            .details-header {
-                grid-template-columns: 120px 1fr;
-                gap: 16px;
+        .about-content {
+            color: var(--dark);
+            line-height: 1.8;
+        }
+
+        /* Appointment Card */
+        .appointment-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--light-gray);
+            position: sticky;
+            top: var(--space-md);
+        }
+
+        .appointment-header {
+            margin-bottom: var(--space-lg);
+        }
+
+        .appointment-header h3 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: var(--space-xs);
+        }
+
+        .appointment-header p {
+            color: var(--medium-gray);
+            font-size: 0.95rem;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            font-weight: 500;
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .alert i {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        /* Form Styles */
+        .appointment-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-md);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 123, 157, 0.1);
+        }
+
+        .submit-btn {
+            background: var(--gradient-primary);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: var(--space-sm);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(74, 123, 157, 0.05);
+            border: 1px solid rgba(74, 123, 157, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .info-box h4 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 1.5rem;
+        }
+
+        .info-box li {
+            margin-bottom: 0.5rem;
+            color: var(--medium-gray);
+            position: relative;
+        }
+
+        .info-box li:before {
+            content: "•";
+            color: var(--primary);
+            position: absolute;
+            left: -1rem;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: var(--space-md);
+            background: var(--light);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: var(--space-sm);
             }
-
-            .details-photo {
+            
+            .page-header {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: flex-start;
+            }
+            
+            .profile-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-image {
                 width: 120px;
                 height: 120px;
-                border-radius: 12px;
             }
-
+            
             .details-grid {
                 grid-template-columns: 1fr;
             }
-
-            .appointment-form {
-                order: 2;
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .appointment-card {
+                position: static;
             }
         }
 
-        @media (max-width: 560px) {
-            body {
-                padding: 20px;
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
             }
-
-            .details-container {
-                padding: 18px;
-                border-radius: 12px;
-            }
-
-            .details-header {
-                grid-template-columns: 96px 1fr;
-                gap: 12px;
-            }
-
-            .details-photo {
-                width: 96px;
-                height: 96px;
-            }
-
-            .meta-list {
-                gap: 10px 12px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        /* small print for office hours & fees */
-        .meta-note {
-            display: inline-block;
-            font-size: 0.92rem;
-            color: var(--muted);
-            margin-top: 8px;
+        .profile-card,
+        .appointment-card {
+            animation: fadeIn 0.5s ease-out;
         }
 
-        /* subtle divider */
-        .hr {
-            height: 1px;
-            background: linear-gradient(90deg, rgba(15, 23, 42, 0.02), rgba(15, 23, 42, 0.04));
-            margin: 18px 0;
-            border-radius: 2px;
+        /* Loading State */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
         }
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <!-- Header -->
+        <header class="page-header">
+            <a href="dashboard.php" class="brand">
+                <span class="brand-mark" aria-hidden="true">🕊️</span>
+                <span class="brand-text">MindCare</span>
+            </a>
+            <a href="appointments.php" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Psychologists
+            </a>
+        </header>
 
-    <div class="details-container">
+        <!-- Main Content -->
+        <div class="details-layout">
+            <!-- Left Column: Profile Details -->
+            <div class="profile-card">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-header-content">
+                        <img src="<?php echo $psych['profile_picture'] ?: 'images/default-profile.jpg'; ?>" 
+                             alt="<?php echo htmlspecialchars($psych['username']); ?>" 
+                             class="profile-image">
+                        <div class="profile-info">
+                            <h1 class="profile-name">
+                                <?php echo htmlspecialchars($psych['username']); ?>
+                                <span class="verified-badge" title="Verified Professional">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </h1>
+                            <span class="specialization-tag">
+                                <?php echo htmlspecialchars($psych['specialization']); ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Profile Section -->
-        <div class="details-header">
-            <img src="<?php echo $psych['profile_picture'] ?: 'images/default-profile.jpg'; ?>" class="details-photo">
+                <!-- Profile Details Grid -->
+                <div class="profile-details">
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Location</div>
+                            <div class="detail-value"><?php echo htmlspecialchars($psych['location']); ?></div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Education</div>
+                            <div class="detail-value"><?php echo htmlspecialchars($psych['education']); ?></div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Office Hours</div>
+                            <div class="detail-value highlight">
+                                <?php echo date('g:i A', strtotime($psych['office_start'])) . " - " . date('g:i A', strtotime($psych['office_end'])); ?>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Session Fee</div>
+                            <div class="detail-value highlight">
+                                Rs. <?php echo number_format($psych['min_fee']); ?> - <?php echo number_format($psych['max_fee']); ?>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Contact</div>
+                            <div class="detail-value"><?php echo htmlspecialchars($psych['contact_info']); ?></div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value"><?php echo htmlspecialchars($psych['email']); ?></div>
+                        </div>
+                    </div>
 
-            <div class="details-info">
-                <h2><?php echo $psych['username']; ?> <span class="verified">&#10004;</span></h2>
-                <p class="specialization"><?php echo $psych['specialization']; ?></p>
-                <p><strong>Location:</strong> <?php echo $psych['location']; ?></p>
-                <p><strong>Education:</strong> <?php echo $psych['education']; ?></p>
-                <p><strong>Office Hours:</strong>
-                    <?php echo date('g:i A', strtotime($psych['office_start']))
-                        . " - " .
-                        date('g:i A', strtotime($psych['office_end'])); ?>
-                </p>
-                <p><strong>Fees:</strong> Rs. <?php echo $psych['min_fee']; ?> - <?php echo $psych['max_fee']; ?></p>
-                <p><strong>Contact:</strong> <?php echo $psych['contact_info']; ?></p>
-                <p><strong>Email:</strong> <?php echo $psych['email']; ?></p>
+                    <!-- About Section -->
+                    <div class="about-section">
+                        <h3><i class="fas fa-user"></i> About</h3>
+                        <div class="about-content">
+                            <?php echo nl2br(htmlspecialchars($psych['description'])); ?>
+                        </div>
+                    </div>
 
+                    <!-- Expertise Section -->
+                    <div class="about-section">
+                        <h3><i class="fas fa-bullseye"></i> Areas of Expertise</h3>
+                        <div class="about-content">
+                            <?php echo nl2br(htmlspecialchars($psych['AreaOfExperties'])); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Appointment Booking -->
+            <div class="appointment-card">
+                <div class="appointment-header">
+                    <h3>Book Appointment</h3>
+                    <p>Select a date and time for your session</p>
+                </div>
+
+                <?php if ($errorMessage): ?>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <?php echo htmlspecialchars($errorMessage); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($appointmentSuccess): ?>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        Appointment booked successfully! You'll receive a confirmation shortly.
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" class="appointment-form">
+                    <div class="form-group">
+                        <label for="appointment_date">
+                            <i class="fas fa-calendar"></i> Appointment Date
+                        </label>
+                        <input type="date" 
+                               id="appointment_date" 
+                               name="appointment_date" 
+                               class="form-control" 
+                               required
+                               min="<?php echo date('Y-m-d'); ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointment_time">
+                            <i class="fas fa-clock"></i> Appointment Time
+                        </label>
+                        <input type="time" 
+                               id="appointment_time" 
+                               name="appointment_time" 
+                               class="form-control" 
+                               required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-calendar-check"></i>
+                        Confirm Appointment
+                    </button>
+                </form>
+
+                <!-- Info Box -->
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> Important Information</h4>
+                    <ul>
+                        <li>Appointments are confirmed via website</li>
+                        <li>Please arrive 10 minutes early</li>
+                        <li>Cancellation policy: 24 hours notice required</li>
+                        <li>Sessions are 50 minutes long</li>
+                    </ul>
+                </div>
             </div>
         </div>
-
-        <!-- Description -->
-        <div class="details-bio">
-            <h3>About</h3>
-            <p><?php echo nl2br($psych['description']); ?></p>
-            <div>
-                <h3>Area of Experties</h3>
-                <p><?php echo nl2br($psych['AreaOfExperties']); ?></p>           
-            </div>
-        </div>
-
-        <!-- Appointment Form -->
-        <div class="appointment-form">
-            <h3>Book Appointment</h3>
-
-            <?php if ($errorMessage): ?>
-                <p style="color:red;"><?php echo $errorMessage; ?></p>
-            <?php endif; ?>
-
-            <?php if ($appointmentSuccess): ?>
-                <script>
-                    alert("Appointment Booked Successfully!");
-                </script>
-            <?php endif; ?>
-
-            <form method="POST">
-                <label>Date:</label>
-                <input type="date" name="appointment_date" required>
-
-                <label>Time:</label>
-                <input type="time" name="appointment_time" required>
-
-                <button type="submit">Confirm Appointment</button>
-            </form>
-        </div>
-
-        <br>
-        <a href="appointments.php" class="view-more-btn">← Back to List</a>
-
     </div>
 
+    <script>
+        // Set minimum date to today
+        document.getElementById('appointment_date').min = new Date().toISOString().split('T')[0];
+        
+        // Set default time to next available hour
+        const now = new Date();
+        const nextHour = new Date(now.getTime() + 60 * 60 * 1000);
+        const formattedTime = nextHour.getHours().toString().padStart(2, '0') + ':00';
+        document.getElementById('appointment_time').value = formattedTime;
+        
+        // Success message handling
+        <?php if ($appointmentSuccess): ?>
+        setTimeout(() => {
+            const alert = document.querySelector('.alert-success');
+            if (alert) {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 500);
+            }
+        }, 5000);
+        <?php endif; ?>
+    </script>
 </body>
-
 </html>

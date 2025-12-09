@@ -1,192 +1,695 @@
-/* Global Reset */
+/* ===========================================
+   CSS Reset & Base Styles
+=========================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+}
+
+:root {
+    /* Color Palette - Calm & Therapeutic */
+    --primary: #4a7b9d;
+    --primary-light: #7ba6c1;
+    --primary-dark: #2c5a78;
+    --secondary: #6a9c89;
+    --accent: #e8a87c;
+    --light: #f8f9fa;
+    --light-gray: #e9ecef;
+    --medium-gray: #adb5bd;
+    --dark: #2d3748;
+    --white: #ffffff;
+    --success: #28a745;
+    --warning: #ffc107;
+    --error: #dc3545;
+    --info: #17a2b8;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    --gradient-light: linear-gradient(135deg, #f5f7fb 0%, #e9ecef 100%);
+    --gradient-card: linear-gradient(135deg, var(--white) 0%, var(--light) 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 50%;
+    
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
 }
 
 body {
-    background: #f5f7fa;
-    padding: 40px;
-    color: #333;
+    font-family: 'Inter', sans-serif;
+    color: var(--dark);
+    background: var(--gradient-light);
+    min-height: 100vh;
+    line-height: 1.6;
+    padding: var(--space-md);
 }
 
-/* Page Title */
-h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 32px;
-    font-weight: 600;
-    color: #1a1a1a;
-}
-
-/* Filters */
-.filter-options {
+/* ===========================================
+   Header & Navigation
+=========================================== */
+.page-header {
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-md);
+    border-bottom: 2px solid var(--light-gray);
 }
 
-.filter-options a {
-    padding: 8px 16px;
-    background: #eaeaea;
-    border-radius: 20px;
-    font-size: 14px;
-    color: #333;
-    text-decoration: none;
-    transition: 0.25s ease;
-}
-
-.filter-options a.active,
-.filter-options a:hover {
-    background: #4a90e2;
-    color: white;
-}
-
-/* Search Box */
-#search-location {
-    display: block;
-    margin: 0 auto 30px;
-    padding: 10px 15px;
-    width: 50%;
-    min-width: 280px;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-}
-
-/* Psychologist Card Grid */
-.psychologist-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-    gap: 25px;
-}
-
-/* Card */
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 18px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-}
-
-/* Card Header */
-.card-header {
+.brand {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--primary-dark);
 }
 
-.profile-pic {
+.brand-mark {
+    font-size: 2rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.brand-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.user-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.nav-link {
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: var(--dark);
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    background: var(--light);
+    color: var(--primary);
+}
+
+.nav-link.active {
+    background: var(--primary);
+    color: var(--white);
+}
+
+/* ===========================================
+   Page Title
+=========================================== */
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: var(--space-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.page-title::after {
+    content: '';
+    flex: 1;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+}
+
+.page-subtitle {
+    color: var(--medium-gray);
+    font-size: 1rem;
+    margin-bottom: var(--space-xl);
+    max-width: 600px;
+}
+
+/* ===========================================
+   Search & Filter Bar
+=========================================== */
+.search-filter-bar {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--light-gray);
+}
+
+.search-container {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.875rem 1.25rem;
+    border: 2px solid var(--light-gray);
+    border-radius: var(--radius-lg);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: var(--light);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(74, 123, 157, 0.1);
+}
+
+.search-btn {
+    background: var(--gradient-primary);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 0.875rem 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.95rem;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ===========================================
+   Filter Options
+=========================================== */
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-md);
+}
+
+.filter-option {
+    padding: 0.6rem 1.2rem;
+    background: var(--light);
+    border: 2px solid var(--light-gray);
+    border-radius: var(--radius-full);
+    color: var(--dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.filter-option:hover {
+    background: var(--primary-light);
+    color: var(--white);
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.filter-option.active {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ===========================================
+   Psychologist Cards Grid - COMPACT VERSION
+=========================================== */
+.psychologist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+}
+
+/* ===========================================
+   Psychologist Card - Compact Design
+=========================================== */
+.psychologist-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--light-gray);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.psychologist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+}
+
+/* Card Header - Compact */
+.card-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    padding: var(--space-md);
+    position: relative;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.profile-image {
     width: 70px;
     height: 70px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
+    border: 3px solid rgba(255, 255, 255, 0.3);
     object-fit: cover;
+    background: var(--white);
+    padding: 3px;
+    flex-shrink: 0;
 }
 
-.card-title h3 {
-    font-size: 20px;
-    margin-bottom: 4px;
+.profile-info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.profile-name {
+    color: var(--white);
+    font-size: 1.1rem;
     font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.verified {
-    font-size: 15px;
-    color: #4a90e2;
+.verified-badge {
+    background: var(--white);
+    color: var(--primary);
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    flex-shrink: 0;
 }
 
 .specialization {
-    font-size: 14px;
-    color: #555;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Card Details */
-.card-details p {
-    font-size: 14px;
-    margin: 6px 0;
-    color: #444;
+/* Card Body - Compact */
+.card-body {
+    padding: var(--space-md);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-/* View More Button */
-.view-more-btn {
-    margin-top: 15px;
-    display: block;
-    width: 100%;
-    padding: 10px 0;
-    background: #4a90e2;
-    color: white;
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-icon {
+    color: var(--primary);
+    font-size: 0.9rem;
+    width: 20px;
+    flex-shrink: 0;
     text-align: center;
-    border-radius: 10px;
-    font-size: 15px;
+    padding-top: 2px;
+}
+
+.detail-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    color: var(--medium-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 0.85rem;
     font-weight: 500;
+    color: var(--dark);
+    line-height: 1.4;
+}
+
+.detail-value.location {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Fees Section - Compact */
+.fees {
+    background: rgba(74, 123, 157, 0.05);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    margin-top: 8px;
+    border: 1px solid rgba(74, 123, 157, 0.1);
+}
+
+.fee-amount {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin: 4px 0;
+}
+
+.fee-period {
+    font-size: 0.75rem;
+    color: var(--medium-gray);
+}
+
+/* Card Footer - Compact */
+.card-footer {
+    padding: var(--space-md);
+    background: var(--light);
+    border-top: 1px solid var(--light-gray);
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
     text-decoration: none;
-    transition: 0.25s ease;
-}
-
-.view-more-btn:hover {
-    background: #357ac8;
-}
-
-/* Appointment Form (for details page only) */
-.appointment-form {
-    margin-top: 20px;
-    background: #f0f4ff;
-    padding: 20px;
-    border-radius: 12px;
-}
-
-.appointment-form label {
-    display: block;
-    margin: 8px 0 4px;
     font-weight: 500;
+    text-align: center;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    min-height: 44px;
 }
 
-.appointment-form input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-}
-
-.appointment-form button {
-    margin-top: 10px;
-    width: 100%;
-    padding: 12px;
-    background: #4a90e2;
+.btn-primary {
+    background: var(--gradient-primary);
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
     border: none;
-    color: white;
-    font-weight: 600;
-    border-radius: 10px;
-    transition: 0.25s ease;
 }
 
-.appointment-form button:hover {
-    background: #357ac8;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
 }
 
-.back-btn {
-    display: inline-block;
-    margin-top: 18px;
-    text-decoration: none;
+.btn-outline {
     background: transparent;
-    color: #4A90E2;
-    font-weight: 600;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px dashed rgba(74, 144, 226, 0.18);
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
 }
 
-.back-btn:hover {
-    background: rgba(74, 144, 226, 0.06);
+.btn-outline:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+/* ===========================================
+   Empty State
+=========================================== */
+.empty-state {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--medium-gray);
+    grid-column: 1 / -1;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--light-gray);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: var(--light-gray);
+    margin-bottom: var(--space-md);
+    opacity: 0.5;
+}
+
+.empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--medium-gray);
+    margin-bottom: var(--space-sm);
+}
+
+.empty-text {
+    color: var(--medium-gray);
+    margin-bottom: var(--space-lg);
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* ===========================================
+   Back Button
+=========================================== */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 500;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+    margin-top: var(--space-lg);
+    background: var(--white);
+    border: 1px solid var(--light-gray);
+    font-size: 0.95rem;
+}
+
+.back-link:hover {
+    background: var(--light);
+    color: var(--primary-dark);
+    gap: var(--space-sm);
+    border-color: var(--primary-light);
+}
+
+/* ===========================================
+   Animations
+=========================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* ===========================================
+   Responsive Design
+=========================================== */
+@media (max-width: 1024px) {
+    .psychologist-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: var(--space-sm);
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: var(--space-md);
+        align-items: flex-start;
+    }
+    
+    .user-nav {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .search-container {
+        flex-direction: column;
+    }
+    
+    .search-btn {
+        justify-content: center;
+    }
+    
+    .filter-options {
+        overflow-x: auto;
+        padding-bottom: var(--space-xs);
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .psychologist-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: var(--space-sm);
+    }
+    
+    .psychologist-card {
+        min-height: 380px;
+    }
+    
+    .profile-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .profile-name {
+        font-size: 1rem;
+    }
+    
+    .detail-value {
+        font-size: 0.82rem;
+    }
+    
+    .action-btn {
+        font-size: 0.82rem;
+        padding: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .psychologist-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .psychologist-card {
+        max-width: 100%;
+        min-height: auto;
+    }
+    
+    .card-footer {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        min-width: calc(50% - 4px);
+        flex: none;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .filter-option {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ===========================================
+   Loading States & Micro-interactions
+=========================================== */
+.search-btn:active,
+.filter-option:active,
+.action-btn:active {
+    transform: scale(0.98);
+}
+
+.psychologist-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Focus states for accessibility */
+.search-input:focus,
+.search-btn:focus,
+.filter-option:focus,
+.action-btn:focus,
+.back-link:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .psychologist-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .card-footer {
+        display: none;
+    }
 }

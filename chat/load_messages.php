@@ -9,7 +9,8 @@ $appointment_id = (int)$_GET['appointment_id'];
 $isUser  = isset($_SESSION['user_id']);
 $isPsych = isset($_SESSION['p_id']) || isset($_SESSION['psychologist_id']) || isset($_SESSION['pid']);
 
-$sql = "SELECT msg_id, sender_type, message, delivered, seen 
+// ADD created_at to the SELECT statement
+$sql = "SELECT msg_id, sender_type, message, delivered, seen, created_at 
         FROM messages 
         WHERE appointment_id = ?
         ORDER BY msg_id ASC";
@@ -45,3 +46,4 @@ if (isset($sql)) {
 
 header("Content-Type: application/json");
 echo json_encode($messages);
+?>
