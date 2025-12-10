@@ -68,8 +68,8 @@ if ($stmt) {
                     <div class="psych-details">
                         <h2><?php echo htmlspecialchars($psych_name); ?></h2>
                         <div class="psych-status">
-                            <span class="online-dot"></span>
-                            <span>Online • Licensed Therapist</span>
+                            
+                            <span> Licensed Therapist</span>
                         </div>
                     </div>
                 </div>

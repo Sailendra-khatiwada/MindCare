@@ -38,705 +38,17 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | MindCare</title>
-    
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
-    
-    <style>
-        :root {
-            /* Color Palette */
-            --primary: #4a7b9d;
-            --primary-light: #7ba6c1;
-            --primary-dark: #2c5a78;
-            --secondary: #6a9c89;
-            --accent: #e8a87c;
-            --light: #f8f9fa;
-            --light-gray: #e9ecef;
-            --medium-gray: #adb5bd;
-            --dark: #2d3748;
-            --white: #ffffff;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --info: #3b82f6;
-            --purple: #8b5cf6;
-            
-            /* Gradients */
-            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            --gradient-sidebar: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-            --gradient-card: linear-gradient(135deg, var(--white) 0%, #fcfdfe 100%);
-            --gradient-success: linear-gradient(135deg, var(--success) 0%, #059669 100%);
-            --gradient-warning: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
-            --gradient-info: linear-gradient(135deg, var(--info) 0%, #1d4ed8 100%);
-            --gradient-purple: linear-gradient(135deg, var(--purple) 0%, #7c3aed 100%);
-            
-            /* Shadows */
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
-            
-            /* Border Radius */
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --radius-full: 50%;
-            
-            /* Spacing */
-            --space-xs: 0.5rem;
-            --space-sm: 1rem;
-            --space-md: 1.5rem;
-            --space-lg: 2rem;
-            --space-xl: 3rem;
-        }
+    <link rel="stylesheet" href="css/admin_dashboard.css">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f5f7fb;
-            color: var(--dark);
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background: var(--gradient-sidebar);
-            color: var(--white);
-            padding: var(--space-lg);
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-            box-shadow: var(--shadow-xl);
-            transition: transform 0.3s ease;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: var(--space-xl);
-            padding-bottom: var(--space-md);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo:before {
-            content: "🕊️";
-            font-size: 1.8rem;
-        }
-
-        .sidebar nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .sidebar nav a {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            padding: 0.875rem 1rem;
-            border-radius: var(--radius-md);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .sidebar nav a:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--white);
-            transform: translateX(5px);
-        }
-
-        .sidebar nav a.active {
-            background: rgba(255, 255, 255, 0.15);
-            color: var(--white);
-            font-weight: 600;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .sidebar nav a i {
-            width: 24px;
-            font-size: 1.1rem;
-        }
-
-        .sidebar footer {
-            margin-top: auto;
-            padding-top: var(--space-lg);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Main Content */
-        .main {
-            flex: 1;
-            margin-left: 280px;
-            padding: var(--space-lg);
-            transition: margin-left 0.3s ease;
-        }
-
-        /* Mobile Menu Button */
-        .menu-btn {
-            display: none;
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            z-index: 1000;
-            background: var(--primary);
-            color: white;
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            cursor: pointer;
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Top Header */
-        .main-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xl);
-            padding-bottom: var(--space-md);
-            border-bottom: 2px solid var(--light-gray);
-        }
-
-        .main-header h1 {
-            font-size: 2rem;
-            color: var(--primary-dark);
-            font-weight: 700;
-        }
-
-        .admin-info {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            background: var(--white);
-            padding: 0.75rem 1.25rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--light-gray);
-        }
-
-        .admin-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-full);
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 600;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
-        }
-
-        .stat-card {
-            background: var(--gradient-card);
-            padding: var(--space-lg);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--light-gray);
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stat-card:nth-child(1) { border-top: 4px solid var(--info); }
-        .stat-card:nth-child(2) { border-top: 4px solid var(--success); }
-        .stat-card:nth-child(3) { border-top: 4px solid var(--purple); }
-        .stat-card:nth-child(4) { border-top: 4px solid var(--warning); }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: var(--white);
-        }
-
-        .stat-card:nth-child(1) .stat-icon { background: var(--gradient-info); }
-        .stat-card:nth-child(2) .stat-icon { background: var(--gradient-success); }
-        .stat-card:nth-child(3) .stat-icon { background: var(--gradient-purple); }
-        .stat-card:nth-child(4) .stat-icon { background: var(--gradient-warning); }
-
-        .stat-content h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-content p {
-            font-size: 0.9rem;
-            color: var(--medium-gray);
-            font-weight: 500;
-        }
-
-        /* Content Cards */
-        .card {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--light-gray);
-            margin-bottom: var(--space-xl);
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .card h2 {
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            margin-bottom: var(--space-lg);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card h2 i {
-            color: var(--primary);
-        }
-
-        /* Tabs Navigation */
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid var(--light-gray);
-            margin-bottom: var(--space-lg);
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            padding: 1rem 2rem;
-            background: none;
-            border: none;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--medium-gray);
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary);
-        }
-
-        .tab-btn.active {
-            color: var(--primary-dark);
-        }
-
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Form Styles */
-        .form-section {
-            margin-bottom: var(--space-xl);
-        }
-
-        .form-section h3 {
-            font-size: 1.25rem;
-            color: var(--primary-dark);
-            margin-bottom: var(--space-md);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--space-md);
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .form-control {
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--light-gray);
-            border-radius: var(--radius-md);
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: var(--white);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(74, 123, 157, 0.1);
-        }
-
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-            grid-column: 1 / -1;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 1rem 2rem;
-            border-radius: var(--radius-md);
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-        }
-
-        /* Tables */
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--light-gray);
-            margin-bottom: var(--space-lg);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-
-        thead {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        th {
-            padding: 1rem 1.25rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid var(--light-gray);
-            transition: background 0.3s ease;
-        }
-
-        tbody tr:hover {
-            background: var(--light);
-        }
-
-        td {
-            padding: 1rem 1.25rem;
-            font-size: 0.95rem;
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .action-btn {
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
-
-        .btn-edit {
-            background: var(--warning);
-            color: var(--white);
-        }
-
-        .btn-edit:hover {
-            background: #d97706;
-        }
-
-        .btn-delete {
-            background: var(--error);
-            color: var(--white);
-        }
-
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-
-        .btn-view {
-            background: var(--info);
-            color: var(--white);
-        }
-
-        .btn-view:hover {
-            background: #2563eb;
-        }
-
-        /* Recent Activity */
-        .recent-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
-        }
-
-        .recent-card {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--light-gray);
-        }
-
-        .recent-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-md);
-        }
-
-        .recent-header h3 {
-            font-size: 1.25rem;
-            color: var(--primary-dark);
-        }
-
-        .recent-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-        }
-
-        .recent-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
-            border-radius: var(--radius-md);
-            background: var(--light);
-            border-left: 4px solid var(--primary);
-        }
-
-        .recent-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-full);
-            background: var(--primary);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .recent-content h4 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .recent-content p {
-            font-size: 0.85rem;
-            color: var(--medium-gray);
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            body.open .sidebar {
-                transform: translateX(0);
-            }
-            
-            .main {
-                margin-left: 0;
-            }
-            
-            .menu-btn {
-                display: flex;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main {
-                padding: var(--space-md);
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .main-header {
-                flex-direction: column;
-                gap: var(--space-md);
-                align-items: flex-start;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .tabs {
-                overflow-x: auto;
-                padding-bottom: var(--space-xs);
-            }
-            
-            .recent-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .table-wrapper {
-                margin: 0 -1rem;
-                border-radius: 0;
-            }
-            
-            .admin-info {
-                align-self: flex-start;
-            }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--light);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-light);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-        }
-    </style>
 </head>
 
 <body>
@@ -746,7 +58,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo">MindCare Admin</div>
-        
+
         <nav>
             <a href="#dashboard" class="active" onclick="switchTab('dashboard')">
                 <i class="fas fa-chart-line"></i> Dashboard
@@ -760,14 +72,14 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
             <a href="#hospitals" onclick="switchTab('hospitals')">
                 <i class="fas fa-hospital"></i> Hospitals
             </a>
-            <a href="#add-psychologist" onclick="switchTab('add-psychologist')">
+            <a href="#addPsychologist" onclick="switchTab('addPsychologist')">
                 <i class="fas fa-user-plus"></i> Add Psychologist
             </a>
             <a href="logout.php">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
         </nav>
-        
+
         <footer>
             &copy; <?= date('Y') ?> MindCare Admin Panel
         </footer>
@@ -798,7 +110,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     <p>Registered Users</p>
                 </div>
             </div>
-            
+
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-user-md"></i>
@@ -808,7 +120,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     <p>Psychologists</p>
                 </div>
             </div>
-            
+
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-hospital"></i>
@@ -818,7 +130,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     <p>Hospitals</p>
                 </div>
             </div>
-            
+
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-calendar-check"></i>
@@ -838,36 +150,36 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     <a href="#users" onclick="switchTab('users')" style="color: var(--primary); font-size: 0.85rem;">View All</a>
                 </div>
                 <div class="recent-list">
-                    <?php while($user = $recent_users->fetch_assoc()): ?>
-                    <div class="recent-item">
-                        <div class="recent-icon">
-                            <i class="fas fa-user"></i>
+                    <?php while ($user = $recent_users->fetch_assoc()): ?>
+                        <div class="recent-item">
+                            <div class="recent-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="recent-content">
+                                <h4><?php echo htmlspecialchars($user['username']); ?></h4>
+                                <p><?php echo htmlspecialchars($user['email']); ?> • <?php echo date('M d', strtotime($user['created_at'])); ?></p>
+                            </div>
                         </div>
-                        <div class="recent-content">
-                            <h4><?php echo htmlspecialchars($user['username']); ?></h4>
-                            <p><?php echo htmlspecialchars($user['email']); ?> • <?php echo date('M d', strtotime($user['created_at'])); ?></p>
-                        </div>
-                    </div>
                     <?php endwhile; ?>
                 </div>
             </div>
-            
+
             <div class="recent-card">
                 <div class="recent-header">
                     <h3><i class="fas fa-calendar-alt"></i> Recent Appointments</h3>
                     <span style="color: var(--primary); font-size: 0.85rem;">Latest 5</span>
                 </div>
                 <div class="recent-list">
-                    <?php while($app = $recent_appointments->fetch_assoc()): ?>
-                    <div class="recent-item">
-                        <div class="recent-icon" style="background: var(--success);">
-                            <i class="fas fa-calendar-check"></i>
+                    <?php while ($app = $recent_appointments->fetch_assoc()): ?>
+                        <div class="recent-item">
+                            <div class="recent-icon" style="background: var(--success);">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="recent-content">
+                                <h4><?php echo htmlspecialchars($app['patient']); ?></h4>
+                                <p>With <?php echo htmlspecialchars($app['psychologist']); ?> • <?php echo date('M d', strtotime($app['appointment_date'])); ?></p>
+                            </div>
                         </div>
-                        <div class="recent-content">
-                            <h4><?php echo htmlspecialchars($app['patient']); ?></h4>
-                            <p>With <?php echo htmlspecialchars($app['psychologist']); ?> • <?php echo date('M d', strtotime($app['appointment_date'])); ?></p>
-                        </div>
-                    </div>
                     <?php endwhile; ?>
                 </div>
             </div>
@@ -879,7 +191,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
             <button class="tab-btn" onclick="switchTab('psychologists')">Psychologists</button>
             <button class="tab-btn" onclick="switchTab('users')">Users</button>
             <button class="tab-btn" onclick="switchTab('hospitals')">Hospitals</button>
-            <button class="tab-btn" onclick="switchTab('add-psychologist')">Add Psychologist</button>
+            <button class="tab-btn" onclick="switchTab('addPsychologist')">Add Psychologist</button>
         </div>
 
         <!-- Dashboard Tab -->
@@ -894,7 +206,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         <div id="psychologistsTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-user-md"></i> Psychologists Management</h2>
-                
+
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -920,9 +232,9 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                                             <a href="update_psychologist.php?p_id=<?= $p['p_id'] ?>" class="action-btn btn-edit">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            <a href="remove_psychologist.php?p_id=<?= $p['p_id'] ?>" 
-                                               class="action-btn btn-delete"
-                                               onclick="return confirm('Are you sure you want to remove this psychologist?')">
+                                            <a href="remove_psychologist.php?p_id=<?= $p['p_id'] ?>"
+                                                class="action-btn btn-delete"
+                                                onclick="return confirm('Are you sure you want to remove this psychologist?')">
                                                 <i class="fas fa-trash"></i> Remove
                                             </a>
                                         </div>
@@ -939,7 +251,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         <div id="usersTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-users"></i> Registered Users</h2>
-                
+
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -951,7 +263,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
+                            <?php
                             // Reset pointer since we used this result earlier
                             $users->data_seek(0);
                             while ($u = $users->fetch_assoc()): ?>
@@ -976,7 +288,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         <div id="hospitalsTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-hospital"></i> Hospital Management</h2>
-                
+
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -1000,9 +312,9 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                                             <a href="update_hospital.php?hospital_id=<?= $h['hospital_id'] ?>" class="action-btn btn-edit">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            <a href="remove_hospital.php?hospital_id=<?= $h['hospital_id'] ?>" 
-                                               class="action-btn btn-delete"
-                                               onclick="return confirm('Are you sure you want to remove this hospital?')">
+                                            <a href="remove_hospital.php?hospital_id=<?= $h['hospital_id'] ?>"
+                                                class="action-btn btn-delete"
+                                                onclick="return confirm('Are you sure you want to remove this hospital?')">
                                                 <i class="fas fa-trash"></i> Remove
                                             </a>
                                         </div>
@@ -1046,7 +358,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         <div id="addPsychologistTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-user-plus"></i> Add New Psychologist</h2>
-                
+
                 <form action="add_psychologist.php" method="POST" class="form-grid" onsubmit="return confirm('Add this psychologist?')">
                     <div class="form-group">
                         <label><i class="fas fa-user"></i> Full Name</label>
@@ -1119,23 +431,23 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         function switchTab(tabName) {
             // Update URL hash
             window.location.hash = tabName;
-            
+
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
+
             // Remove active class from all buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             // Show selected tab
             document.getElementById(tabName + 'Tab').classList.add('active');
-            
+
             // Activate clicked button
             event.currentTarget.classList.add('active');
-            
+
             // Update sidebar active state
             document.querySelectorAll('.sidebar nav a').forEach(link => {
                 link.classList.remove('active');
@@ -1143,7 +455,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     link.classList.add('active');
                 }
             });
-            
+
             // Close mobile menu on tab switch
             if (window.innerWidth <= 1024) {
                 document.body.classList.remove('open');
@@ -1154,7 +466,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         document.addEventListener('DOMContentLoaded', function() {
             const hash = window.location.hash.substring(1) || 'dashboard';
             switchTab(hash);
-            
+
             // Set default times for office hours
             const timeInputs = document.querySelectorAll('input[type="time"]');
             timeInputs.forEach(input => {
@@ -1173,13 +485,13 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
             form.addEventListener('submit', function(e) {
                 const minFee = this.querySelector('input[name="min_fee"]');
                 const maxFee = this.querySelector('input[name="max_fee"]');
-                
+
                 if (minFee && maxFee && parseFloat(minFee.value) > parseFloat(maxFee.value)) {
                     e.preventDefault();
                     alert('Minimum fee cannot be greater than maximum fee.');
                     minFee.focus();
                 }
-                
+
                 // Show loading state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 if (submitBtn) {
@@ -1199,4 +511,5 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         }, 5000);
     </script>
 </body>
+
 </html>

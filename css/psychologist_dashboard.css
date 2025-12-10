@@ -269,6 +269,48 @@ body {
     }
 }
 
+/* Badge styles */
+.badge {
+    background-color: #ff4757;
+    color: white;
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    padding: 0 5px;
+}
+
+.sidebar .badge {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.btn-chat {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-chat .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4757;
+}
+
+.stat-card:nth-child(4) {
+    position: relative;
+}
+
+
 /* Appointment Table */
 .table-card {
     background: var(--white);
