@@ -2,19 +2,16 @@
 session_start();
 include 'db_connect.php';
 
-// Ensure the admin is logged in
 if (!isset($_SESSION['username']) || $_SESSION['username'] != 'admin') {
     header('Location: login.php');
     exit;
 }
 
-// Fetch data with counts
 $users_count = $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'];
 $psychologists_count = $conn->query("SELECT COUNT(*) as count FROM psychologist")->fetch_assoc()['count'];
 $hospitals_count = $conn->query("SELECT COUNT(*) as count FROM hospitals")->fetch_assoc()['count'];
 $appointments_count = $conn->query("SELECT COUNT(*) as count FROM appointments")->fetch_assoc()['count'];
 
-// Recent data
 $recent_users = $conn->query("SELECT username, email, created_at FROM users ORDER BY created_at DESC LIMIT 5");
 $recent_psychologists = $conn->query("SELECT username, specialization, created_at FROM psychologist ORDER BY created_at DESC LIMIT 5");
 $recent_appointments = $conn->query("
@@ -26,39 +23,27 @@ $recent_appointments = $conn->query("
     LIMIT 5
 ");
 
-// Fetch all data for tables
 $users = $conn->query("SELECT * FROM users");
 $psychologists = $conn->query("SELECT * FROM psychologist");
 $hospitals = $conn->query("SELECT * FROM hospitals");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | MindCare</title>
-
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
     <link rel="stylesheet" href="css/admin_dashboard.css">
-
 </head>
-
 <body>
-    <!-- Mobile Menu Button -->
     <i class="fas fa-bars menu-btn" id="MenuBtn"></i>
 
-    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo">MindCare Admin</div>
-
         <nav>
             <a href="#dashboard" class="active" onclick="switchTab('dashboard')">
                 <i class="fas fa-chart-line"></i> Dashboard
@@ -79,15 +64,12 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
         </nav>
-
         <footer>
             &copy; <?= date('Y') ?> MindCare Admin Panel
         </footer>
     </aside>
 
-    <!-- Main Content -->
     <main class="main">
-        <!-- Top Header -->
         <header class="main-header">
             <h1>Admin Dashboard</h1>
             <div class="admin-info">
@@ -99,7 +81,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
             </div>
         </header>
 
-        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -110,7 +91,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     <p>Registered Users</p>
                 </div>
             </div>
-
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-user-md"></i>
@@ -120,7 +100,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     <p>Psychologists</p>
                 </div>
             </div>
-
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-hospital"></i>
@@ -130,7 +109,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     <p>Hospitals</p>
                 </div>
             </div>
-
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-calendar-check"></i>
@@ -141,8 +119,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 </div>
             </div>
         </div>
-
-        <!-- Recent Activity -->
         <div class="recent-grid">
             <div class="recent-card">
                 <div class="recent-header">
@@ -163,7 +139,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                     <?php endwhile; ?>
                 </div>
             </div>
-
             <div class="recent-card">
                 <div class="recent-header">
                     <h3><i class="fas fa-calendar-alt"></i> Recent Appointments</h3>
@@ -184,8 +159,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 </div>
             </div>
         </div>
-
-        <!-- Tabs Navigation -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
             <button class="tab-btn" onclick="switchTab('psychologists')">Psychologists</button>
@@ -193,20 +166,15 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
             <button class="tab-btn" onclick="switchTab('hospitals')">Hospitals</button>
             <button class="tab-btn" onclick="switchTab('addPsychologist')">Add Psychologist</button>
         </div>
-
-        <!-- Dashboard Tab -->
         <div id="dashboardTab" class="tab-content active">
             <div class="card">
                 <h2><i class="fas fa-chart-bar"></i> System Overview</h2>
                 <p>Welcome to MindCare Admin Panel. Here you can manage all aspects of the platform.</p>
             </div>
         </div>
-
-        <!-- Psychologists Tab -->
         <div id="psychologistsTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-user-md"></i> Psychologists Management</h2>
-
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -246,12 +214,9 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 </div>
             </div>
         </div>
-
-        <!-- Users Tab -->
         <div id="usersTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-users"></i> Registered Users</h2>
-
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -264,7 +229,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         </thead>
                         <tbody>
                             <?php
-                            // Reset pointer since we used this result earlier
                             $users->data_seek(0);
                             while ($u = $users->fetch_assoc()): ?>
                                 <tr>
@@ -283,12 +247,9 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 </div>
             </div>
         </div>
-
-        <!-- Hospitals Tab -->
         <div id="hospitalsTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-hospital"></i> Hospital Management</h2>
-
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -324,7 +285,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         </tbody>
                     </table>
                 </div>
-
                 <div class="form-section">
                     <h3><i class="fas fa-plus-circle"></i> Add New Hospital</h3>
                     <form action="add_hospital.php" method="POST" class="form-grid">
@@ -353,8 +313,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 </div>
             </div>
         </div>
-
-        <!-- Add Psychologist Tab -->
         <div id="addPsychologistTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-user-plus"></i> Add New Psychologist</h2>
@@ -423,51 +381,32 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
     </main>
 
     <script>
-        // Mobile Menu Toggle
         const MenuBtn = document.getElementById("MenuBtn");
         MenuBtn.onclick = () => document.body.classList.toggle("open");
 
-        // Tab Switching
         function switchTab(tabName) {
-            // Update URL hash
             window.location.hash = tabName;
-
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-
-            // Remove active class from all buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-
-            // Show selected tab
             document.getElementById(tabName + 'Tab').classList.add('active');
-
-            // Activate clicked button
             event.currentTarget.classList.add('active');
-
-            // Update sidebar active state
             document.querySelectorAll('.sidebar nav a').forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === '#' + tabName) {
                     link.classList.add('active');
                 }
             });
-
-            // Close mobile menu on tab switch
             if (window.innerWidth <= 1024) {
                 document.body.classList.remove('open');
             }
         }
-
-        // Handle initial tab from URL hash
         document.addEventListener('DOMContentLoaded', function() {
             const hash = window.location.hash.substring(1) || 'dashboard';
             switchTab(hash);
-
-            // Set default times for office hours
             const timeInputs = document.querySelectorAll('input[type="time"]');
             timeInputs.forEach(input => {
                 if (!input.value) {
@@ -479,20 +418,15 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 }
             });
         });
-
-        // Form validation
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 const minFee = this.querySelector('input[name="min_fee"]');
                 const maxFee = this.querySelector('input[name="max_fee"]');
-
                 if (minFee && maxFee && parseFloat(minFee.value) > parseFloat(maxFee.value)) {
                     e.preventDefault();
                     alert('Minimum fee cannot be greater than maximum fee.');
                     minFee.focus();
                 }
-
-                // Show loading state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 if (submitBtn) {
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
@@ -500,8 +434,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 }
             });
         });
-
-        // Auto-hide alerts after 5 seconds
         setTimeout(() => {
             document.querySelectorAll('.alert').forEach(alert => {
                 alert.style.opacity = '0';
@@ -511,5 +443,4 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         }, 5000);
     </script>
 </body>
-
 </html>
