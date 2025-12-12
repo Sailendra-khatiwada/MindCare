@@ -9,7 +9,7 @@ if (isset($_GET['hospital_id'])) {
 
     if ($stmt->execute()) {
         echo "<script>alert('Hospital removed successfully');</script>";
-
+        header("Location: admin_dashboard.php#hospitals");
         exit;
     } else {
 

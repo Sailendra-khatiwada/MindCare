@@ -11,7 +11,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -164,7 +163,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
                                 </div>
                             </div>
                             
-                            <?php if (!empty($row['contact'])): ?>
+                            <?php if (!empty($row['contact_info'])): ?>
                             <div class="detail-item">
                                 <i class="fas fa-phone"></i>
                                 <div>
@@ -302,7 +301,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.hospital-card');
             cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
+                card.style.animationDelay = `${index * 0.01}s`;
                 card.classList.add('fade-in');
             });
         });

@@ -274,7 +274,7 @@ body {
 }
 
 .quick-action-btn {
-    padding: 0.5rem 1rem;
+    padding: 1rem 1rem;
     background: var(--light);
     border: 1px solid var(--light-gray);
     border-radius: var(--radius-md);
@@ -740,8 +740,7 @@ body {
 }
 
 .empty-state i {
-    font-size: 3rem;
-    margin-bottom: var(--space-md);
+    font-size: 2rem;
     color: var(--light-gray);
 }
 

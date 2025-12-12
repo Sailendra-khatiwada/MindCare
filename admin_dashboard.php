@@ -250,6 +250,34 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
         <div id="hospitalsTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-hospital"></i> Hospital Management</h2>
+
+                 <div class="form-section">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Hospital</h3>
+                    <form action="add_hospital.php" method="POST" class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-hospital"></i> Hospital Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="Enter hospital name" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                            <input type="text" name="location" class="form-control" placeholder="Enter location" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-stethoscope"></i> Specialization</label>
+                            <input type="text" name="specialization" class="form-control" placeholder="Enter specialization" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Contact Info</label>
+                            <input type="text" name="contact" class="form-control" placeholder="Enter contact number" required>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Hospital
+                            </button>
+                        </div>
+                    </form>
+                </div>
+             
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -285,32 +313,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         </tbody>
                     </table>
                 </div>
-                <div class="form-section">
-                    <h3><i class="fas fa-plus-circle"></i> Add New Hospital</h3>
-                    <form action="add_hospital.php" method="POST" class="form-grid">
-                        <div class="form-group">
-                            <label><i class="fas fa-hospital"></i> Hospital Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Enter hospital name" required>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-map-marker-alt"></i> Location</label>
-                            <input type="text" name="location" class="form-control" placeholder="Enter location" required>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-stethoscope"></i> Specialization</label>
-                            <input type="text" name="specialization" class="form-control" placeholder="Enter specialization" required>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-phone"></i> Contact Info</label>
-                            <input type="text" name="contact" class="form-control" placeholder="Enter contact number" required>
-                        </div>
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Add Hospital
-                            </button>
-                        </div>
-                    </form>
-                </div>
+
             </div>
         </div>
         <div id="addPsychologistTab" class="tab-content">
