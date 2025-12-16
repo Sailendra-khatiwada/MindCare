@@ -60,6 +60,9 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
             <a href="#addPsychologist" onclick="switchTab('addPsychologist')">
                 <i class="fas fa-user-plus"></i> Add Psychologist
             </a>
+             <a href="admin_messages.php">
+                <i class="fas fa-envelope"></i> View Messages
+             </a>
             <a href="logout.php">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
