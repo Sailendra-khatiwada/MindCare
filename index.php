@@ -75,6 +75,7 @@
     </div>
   </header>
 
+
   <main>
     <section class="search-section container">
       <div class="search-inner">
@@ -86,6 +87,7 @@
         </form>
       </div>
     </section>
+
 
     <section id="services" class="container services-section">
       <h2>Our Services</h2>
@@ -177,22 +179,28 @@
           <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Send Message</button>
         </form>
 
+        <?php if (isset($_GET['status']) && $_GET['status'] === 'success'): ?>
+          <script>
+            alert("Message sent successfully! We will contact you soon.");
+          </script>
+        <?php endif; ?>
+
         <div class="contact-info">
           <h3>Emergency & Helpline</h3>
           <p>National Helpline for Suicide Prevention: <strong>1166</strong></p>
           <p>Mental Health Crisis Support: <strong>988</strong></p>
-          
+
           <h4>Contact Information</h4>
           <p>Email: support@mindcare.com<br />Phone: +977 9769761449</p>
           <p>Address: Basundhara, Kathmandu 44600, Nepal</p>
-          
+
           <h4>Business Hours</h4>
           <p>Monday - Friday: 9:00 AM - 8:00 PM<br />Saturday: 10:00 AM - 4:00 PM<br />Sunday: Emergency Support Only</p>
-          
+
           <div class="map">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.429463731249!2d85.33100831506106!3d27.705235982793842!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb1900bdaac9d3%3A0x3c8902fa7d70548b!2sBasundhara%2C%20Kathmandu%2044600!5e0!3m2!1sen!2snp!4v1697109398357!5m2!1sen!2snp"
-              width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" 
+              width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"
               title="MindCare Location Map"></iframe>
           </div>
         </div>
@@ -254,9 +262,9 @@
     if (menuToggle) {
       menuToggle.addEventListener("click", () => {
         navList.classList.toggle("active");
-        menuToggle.innerHTML = navList.classList.contains("active") 
-          ? '<i class="fa fa-times"></i>' 
-          : '<i class="fa fa-bars"></i>';
+        menuToggle.innerHTML = navList.classList.contains("active") ?
+          '<i class="fa fa-times"></i>' :
+          '<i class="fa fa-bars"></i>';
       });
     }
 
@@ -316,18 +324,18 @@
     // SMOOTH SCROLL
     // =========================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
+      anchor.addEventListener('click', function(e) {
         e.preventDefault();
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
-        
+
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
           window.scrollTo({
             top: targetElement.offsetTop - 80,
             behavior: 'smooth'
           });
-          
+
           // Close mobile menu if open
           if (navList && navList.classList.contains("active")) {
             navList.classList.remove("active");
@@ -336,49 +344,6 @@
         }
       });
     });
-
-    // =========================
-    // FORM VALIDATION
-    // =========================
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-      contactForm.addEventListener('submit', function(e) {
-        const name = this.querySelector('#name');
-        const email = this.querySelector('#email');
-        const subject = this.querySelector('#subject');
-        const message = this.querySelector('#message');
-        
-        let isValid = true;
-        
-        // Simple validation
-        if (!name.value.trim()) {
-          alert('Please enter your name');
-          isValid = false;
-        }
-        
-        if (!email.value.trim() || !email.value.includes('@')) {
-          alert('Please enter a valid email');
-          isValid = false;
-        }
-        
-        if (!subject.value.trim()) {
-          alert('Please enter a subject');
-          isValid = false;
-        }
-        
-        if (!message.value.trim()) {
-          alert('Please enter your message');
-          isValid = false;
-        }
-        
-        if (!isValid) {
-          e.preventDefault();
-        } else {
-          // Show success message
-          alert('Thank you for your message! We will get back to you soon.');
-        }
-      });
-    }
   </script>
 </body>
 

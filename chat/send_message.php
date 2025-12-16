@@ -9,6 +9,7 @@ $appointment_id = (int)$_POST['appointment_id'];
 $message = trim($_POST['message']);
 $sender = $_POST['sender'];
 
+
 if ($sender == "user") {
     if (!isset($_SESSION['user_id'])) { die("Not logged in"); }
     $sender_type = "user";
@@ -21,7 +22,7 @@ else {
     die("Invalid sender");
 }
 
-$sql = "INSERT INTO messages (appointment_id, sender_type, message, delivered, seen)
+$sql = "INSERT INTO messages (appointment_id, sender_type,  message, delivered, seen)
         VALUES (?, ?, ?, 0, 0)";
 
 $stmt = $conn->prepare($sql);

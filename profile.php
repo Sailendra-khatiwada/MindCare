@@ -492,7 +492,7 @@ try {
         function checkPasswordStrength(password) {
             let strength = 0;
             const requirements = {
-                length: password.length >= 8,
+                length: password.length >= 6,
                 uppercase: /[A-Z]/.test(password),
                 lowercase: /[a-z]/.test(password),
                 number: /\d/.test(password),
@@ -595,7 +595,7 @@ try {
                     
                     if (newPassword.length < 8) {
                         e.preventDefault();
-                        alert('New password must be at least 8 characters long.');
+                        alert('New password must be at least 6 characters long.');
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                         return;
