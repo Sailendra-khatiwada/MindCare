@@ -1,6 +1,4 @@
-/* ===== VARIABLES & RESET ===== */
 :root {
-    /* Color Palette - Calm & Therapeutic */
     --primary: #4a7b9d;
     --primary-light: #7ba6c1;
     --primary-dark: #2c5a78;
@@ -16,32 +14,27 @@
     --error: #dc3545;
     --info: #17a2b8;
     
-    /* Gradients */
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     --gradient-light: linear-gradient(135deg, #f5f7fb 0%, var(--light-gray) 100%);
     --gradient-card: linear-gradient(135deg, var(--white) 0%, var(--light) 100%);
     
-    /* Shadows */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
     --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
     
-    /* Border Radius */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 20px;
     --radius-full: 50%;
     
-    /* Spacing */
     --space-xs: 0.5rem;
     --space-sm: 0.75rem;
     --space-md: 1rem;
     --space-lg: 1.5rem;
     --space-xl: 2rem;
     
-    /* Transitions */
     --transition: all 0.3s ease;
 }
 
@@ -63,7 +56,6 @@ body {
     min-height: 100vh;
 }
 
-/* ===== NAVIGATION ===== */
 .main-nav {
     background: var(--white);
     box-shadow: var(--shadow-md);
@@ -94,6 +86,7 @@ body {
     color: var(--primary-dark);
     transition: var(--transition);
 }
+
 .brand:hover {
     color: var(--primary);
 }
@@ -134,15 +127,12 @@ body {
     color: var(--white);
 }
 
-
-/* ===== MAIN CONTAINER ===== */
 .container {
     max-width: 1280px;
     margin: var(--space-xl) auto;
     padding: 0 var(--space-xl);
 }
 
-/* ===== PAGE HEADER ===== */
 .page-header {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -188,7 +178,6 @@ body {
     font-size: 1.1rem;
 }
 
-/* ===== SEARCH BOX ===== */
 .search-box {
     position: relative;
     min-width: 300px;
@@ -219,7 +208,6 @@ body {
     box-shadow: 0 0 0 3px rgba(74, 123, 157, 0.1);
 }
 
-/* ===== STATS GRID ===== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -271,7 +259,6 @@ body {
     letter-spacing: 0.05em;
 }
 
-/* ===== FILTERS ===== */
 .filters {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -326,7 +313,6 @@ body {
     box-shadow: 0 0 0 3px rgba(74, 123, 157, 0.1);
 }
 
-/* ===== HOSPITALS GRID ===== */
 .hospitals-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -467,7 +453,6 @@ body {
     border-top: 1px solid var(--light-gray);
 }
 
-/* ===== HOSPITAL ACTIONS ===== */
 .hospital-actions {
     padding: var(--space-md) var(--space-lg) var(--space-lg);
     display: flex;
@@ -511,7 +496,6 @@ body {
     background: #558971;
 }
 
-/* ===== EMPTY STATE ===== */
 .empty-state {
     grid-column: 1 / -1;
     text-align: center;
@@ -546,7 +530,6 @@ body {
     margin: 0 auto;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1024px) {
     .hospitals-grid {
         grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -631,7 +614,6 @@ body {
     }
 }
 
-/* ===== ACCESSIBILITY ===== */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -640,7 +622,6 @@ body {
     }
 }
 
-/* ===== PRINT STYLES ===== */
 @media print {
     .main-nav,
     .search-box,
