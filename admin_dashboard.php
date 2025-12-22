@@ -12,16 +12,21 @@ $psychologists_count = $conn->query("SELECT COUNT(*) as count FROM psychologist"
 $hospitals_count = $conn->query("SELECT COUNT(*) as count FROM hospitals")->fetch_assoc()['count'];
 $appointments_count = $conn->query("SELECT COUNT(*) as count FROM appointments")->fetch_assoc()['count'];
 
-$recent_users = $conn->query("SELECT username, email, created_at FROM users ORDER BY created_at DESC LIMIT 5");
-$recent_psychologists = $conn->query("SELECT username, specialization, created_at FROM psychologist ORDER BY created_at DESC LIMIT 5");
-$recent_appointments = $conn->query("
-    SELECT a.*, u.username as patient, p.username as psychologist 
-    FROM appointments a
-    JOIN users u ON a.user_id = u.user_id
-    JOIN psychologist p ON a.p_id = p.p_id
-    ORDER BY appointment_date DESC, appointment_time DESC 
-    LIMIT 5
-");
+$recent_users = $conn->query(
+    "SELECT username, email, created_at 
+     FROM users 
+     ORDER BY created_at DESC 
+     LIMIT 5"
+);
+
+$recent_appointments = $conn->query(
+    "SELECT a.*, u.username AS patient, p.username AS psychologist
+     FROM appointments a
+     JOIN users u ON a.user_id = u.user_id
+     JOIN psychologist p ON a.p_id = p.p_id
+     ORDER BY appointment_date DESC, appointment_time DESC
+     LIMIT 5"
+);
 
 $users = $conn->query("SELECT * FROM users");
 $psychologists = $conn->query("SELECT * FROM psychologist");
@@ -60,9 +65,9 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
             <a href="#addPsychologist" onclick="switchTab('addPsychologist')">
                 <i class="fas fa-user-plus"></i> Add Psychologist
             </a>
-             <a href="admin_messages.php">
+            <a href="admin_messages.php">
                 <i class="fas fa-envelope"></i> View Messages
-             </a>
+            </a>
             <a href="logout.php">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
@@ -79,49 +84,42 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 <div class="admin-avatar">A</div>
                 <div>
                     <h3 style="font-size: 1rem; margin-bottom: 0.125rem;">Administrator</h3>
-                    <p style="font-size: 0.85rem; color: var(--medium-gray);"><?php echo date('F j, Y'); ?></p>
+                    <p style="font-size: 0.85rem; color: var(--medium-gray);"><?= date('F j, Y'); ?></p>
                 </div>
             </div>
         </header>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
                 <div class="stat-content">
-                    <h3><?php echo $users_count; ?></h3>
+                    <h3><?= $users_count; ?></h3>
                     <p>Registered Users</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-user-md"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-user-md"></i></div>
                 <div class="stat-content">
-                    <h3><?php echo $psychologists_count; ?></h3>
+                    <h3><?= $psychologists_count; ?></h3>
                     <p>Psychologists</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-hospital"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-hospital"></i></div>
                 <div class="stat-content">
-                    <h3><?php echo $hospitals_count; ?></h3>
+                    <h3><?= $hospitals_count; ?></h3>
                     <p>Hospitals</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
                 <div class="stat-content">
-                    <h3><?php echo $appointments_count; ?></h3>
+                    <h3><?= $appointments_count; ?></h3>
                     <p>Appointments</p>
                 </div>
             </div>
         </div>
+
         <div class="recent-grid">
             <div class="recent-card">
                 <div class="recent-header">
@@ -131,17 +129,16 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 <div class="recent-list">
                     <?php while ($user = $recent_users->fetch_assoc()): ?>
                         <div class="recent-item">
-                            <div class="recent-icon">
-                                <i class="fas fa-user"></i>
-                            </div>
+                            <div class="recent-icon"><i class="fas fa-user"></i></div>
                             <div class="recent-content">
-                                <h4><?php echo htmlspecialchars($user['username']); ?></h4>
-                                <p><?php echo htmlspecialchars($user['email']); ?> • <?php echo date('M d', strtotime($user['created_at'])); ?></p>
+                                <h4><?= htmlspecialchars($user['username']); ?></h4>
+                                <p><?= htmlspecialchars($user['email']); ?> • <?= date('M d', strtotime($user['created_at'])); ?></p>
                             </div>
                         </div>
                     <?php endwhile; ?>
                 </div>
             </div>
+
             <div class="recent-card">
                 <div class="recent-header">
                     <h3><i class="fas fa-calendar-alt"></i> Recent Appointments</h3>
@@ -150,18 +147,17 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 <div class="recent-list">
                     <?php while ($app = $recent_appointments->fetch_assoc()): ?>
                         <div class="recent-item">
-                            <div class="recent-icon" style="background: var(--success);">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
+                            <div class="recent-icon" style="background: var(--success);"><i class="fas fa-calendar-check"></i></div>
                             <div class="recent-content">
-                                <h4><?php echo htmlspecialchars($app['patient']); ?></h4>
-                                <p>With <?php echo htmlspecialchars($app['psychologist']); ?> • <?php echo date('M d', strtotime($app['appointment_date'])); ?></p>
+                                <h4><?= htmlspecialchars($app['patient']); ?></h4>
+                                <p>With <?= htmlspecialchars($app['psychologist']); ?> • <?= date('M d', strtotime($app['appointment_date'])); ?></p>
                             </div>
                         </div>
                     <?php endwhile; ?>
                 </div>
             </div>
         </div>
+
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
             <button class="tab-btn" onclick="switchTab('psychologists')">Psychologists</button>
@@ -169,12 +165,14 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
             <button class="tab-btn" onclick="switchTab('hospitals')">Hospitals</button>
             <button class="tab-btn" onclick="switchTab('addPsychologist')">Add Psychologist</button>
         </div>
+
         <div id="dashboardTab" class="tab-content active">
             <div class="card">
                 <h2><i class="fas fa-chart-bar"></i> System Overview</h2>
                 <p>Welcome to MindCare Admin Panel. Here you can manage all aspects of the platform.</p>
             </div>
         </div>
+
         <div id="psychologistsTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-user-md"></i> Psychologists Management</h2>
@@ -193,19 +191,17 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         <tbody>
                             <?php while ($p = $psychologists->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($p['username']) ?></td>
-                                    <td><?= htmlspecialchars($p['email']) ?></td>
-                                    <td><?= htmlspecialchars($p['specialization']) ?></td>
-                                    <td><?= htmlspecialchars($p['location']) ?></td>
-                                    <td>Rs. <?= number_format($p['min_fee']) ?> - <?= number_format($p['max_fee']) ?></td>
+                                    <td><?= htmlspecialchars($p['username']); ?></td>
+                                    <td><?= htmlspecialchars($p['email']); ?></td>
+                                    <td><?= htmlspecialchars($p['specialization']); ?></td>
+                                    <td><?= htmlspecialchars($p['location']); ?></td>
+                                    <td>Rs. <?= number_format($p['min_fee']); ?> - <?= number_format($p['max_fee']); ?></td>
                                     <td>
                                         <div class="table-actions">
-                                            <a href="update_psychologist.php?p_id=<?= $p['p_id'] ?>" class="action-btn btn-edit">
+                                            <a href="update_psychologist.php?p_id=<?= $p['p_id']; ?>" class="action-btn btn-edit">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            <a href="remove_psychologist.php?p_id=<?= $p['p_id'] ?>"
-                                                class="action-btn btn-delete"
-                                                onclick="return confirm('Are you sure you want to remove this psychologist?')">
+                                            <a href="remove_psychologist.php?p_id=<?= $p['p_id']; ?>" class="action-btn btn-delete" onclick="return confirm('Are you sure you want to remove this psychologist?')">
                                                 <i class="fas fa-trash"></i> Remove
                                             </a>
                                         </div>
@@ -217,6 +213,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 </div>
             </div>
         </div>
+
         <div id="usersTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-users"></i> Registered Users</h2>
@@ -231,15 +228,13 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            $users->data_seek(0);
-                            while ($u = $users->fetch_assoc()): ?>
+                            <?php $users->data_seek(0); while ($u = $users->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($u['username']) ?></td>
-                                    <td><?= htmlspecialchars($u['email']) ?></td>
-                                    <td><?= date('M d, Y', strtotime($u['created_at'])) ?></td>
+                                    <td><?= htmlspecialchars($u['username']); ?></td>
+                                    <td><?= htmlspecialchars($u['email']); ?></td>
+                                    <td><?= date('M d, Y', strtotime($u['created_at'])); ?></td>
                                     <td>
-                                        <a href="view_users_appointments.php?user_id=<?= $u['user_id'] ?>" class="action-btn btn-view">
+                                        <a href="view_users_appointments.php?user_id=<?= $u['user_id']; ?>" class="action-btn btn-view">
                                             <i class="fas fa-eye"></i> View Appointments
                                         </a>
                                     </td>
@@ -250,11 +245,11 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                 </div>
             </div>
         </div>
+
         <div id="hospitalsTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-hospital"></i> Hospital Management</h2>
-
-                 <div class="form-section">
+                <div class="form-section">
                     <h3><i class="fas fa-plus-circle"></i> Add New Hospital</h3>
                     <form action="add_hospital.php" method="POST" class="form-grid">
                         <div class="form-group">
@@ -274,13 +269,11 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                             <input type="text" name="contact" class="form-control" placeholder="Enter contact number" required>
                         </div>
                         <div class="form-group" style="grid-column: 1 / -1;">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Add Hospital
-                            </button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Hospital</button>
                         </div>
                     </form>
                 </div>
-             
+
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -295,18 +288,16 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         <tbody>
                             <?php while ($h = $hospitals->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($h['name']) ?></td>
-                                    <td><?= htmlspecialchars($h['location']) ?></td>
-                                    <td><?= htmlspecialchars($h['specialization']) ?></td>
-                                    <td><?= htmlspecialchars($h['contact_info']) ?></td>
+                                    <td><?= htmlspecialchars($h['name']); ?></td>
+                                    <td><?= htmlspecialchars($h['location']); ?></td>
+                                    <td><?= htmlspecialchars($h['specialization']); ?></td>
+                                    <td><?= htmlspecialchars($h['contact_info']); ?></td>
                                     <td>
                                         <div class="table-actions">
-                                            <a href="update_hospital.php?hospital_id=<?= $h['hospital_id'] ?>" class="action-btn btn-edit">
+                                            <a href="update_hospital.php?hospital_id=<?= $h['hospital_id']; ?>" class="action-btn btn-edit">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            <a href="remove_hospital.php?hospital_id=<?= $h['hospital_id'] ?>"
-                                                class="action-btn btn-delete"
-                                                onclick="return confirm('Are you sure you want to remove this hospital?')">
+                                            <a href="remove_hospital.php?hospital_id=<?= $h['hospital_id']; ?>" class="action-btn btn-delete" onclick="return confirm('Are you sure you want to remove this hospital?')">
                                                 <i class="fas fa-trash"></i> Remove
                                             </a>
                                         </div>
@@ -316,13 +307,12 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </div>
+
         <div id="addPsychologistTab" class="tab-content">
             <div class="card">
                 <h2><i class="fas fa-user-plus"></i> Add New Psychologist</h2>
-
                 <form action="add_psychologist.php" method="POST" class="form-grid" onsubmit="return confirm('Add this psychologist?')">
                     <div class="form-group">
                         <label><i class="fas fa-user"></i> Full Name</label>
@@ -377,9 +367,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         <textarea name="AreaOfExperties" class="form-control" placeholder="Enter areas of expertise" required></textarea>
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i> Add Psychologist
-                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add Psychologist</button>
                     </div>
                 </form>
             </div>
@@ -392,61 +380,53 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
 
         function switchTab(tabName) {
             window.location.hash = tabName;
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabName + 'Tab').classList.add('active');
             event.currentTarget.classList.add('active');
             document.querySelectorAll('.sidebar nav a').forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + tabName) {
-                    link.classList.add('active');
-                }
+                if (link.getAttribute('href') === '#' + tabName) link.classList.add('active');
             });
-            if (window.innerWidth <= 1024) {
-                document.body.classList.remove('open');
-            }
+            if (window.innerWidth <= 1024) document.body.classList.remove('open');
         }
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', function () {
             const hash = window.location.hash.substring(1) || 'dashboard';
             switchTab(hash);
-            const timeInputs = document.querySelectorAll('input[type="time"]');
-            timeInputs.forEach(input => {
+
+            document.querySelectorAll('input[type="time"]').forEach(input => {
                 if (!input.value) {
-                    if (input.name === 'office_start') {
-                        input.value = '09:00';
-                    } else if (input.name === 'office_end') {
-                        input.value = '17:00';
+                    if (input.name === 'office_start') input.value = '09:00';
+                    if (input.name === 'office_end') input.value = '17:00';
+                }
+            });
+
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    const minFee = this.querySelector('input[name="min_fee"]');
+                    const maxFee = this.querySelector('input[name="max_fee"]');
+                    if (minFee && maxFee && parseFloat(minFee.value) > parseFloat(maxFee.value)) {
+                        e.preventDefault();
+                        alert('Minimum fee cannot be greater than maximum fee.');
+                        minFee.focus();
                     }
-                }
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                        submitBtn.disabled = true;
+                    }
+                });
             });
+
+            setTimeout(() => {
+                document.querySelectorAll('.alert').forEach(alert => {
+                    alert.style.opacity = '0';
+                    alert.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 5000);
         });
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                const minFee = this.querySelector('input[name="min_fee"]');
-                const maxFee = this.querySelector('input[name="max_fee"]');
-                if (minFee && maxFee && parseFloat(minFee.value) > parseFloat(maxFee.value)) {
-                    e.preventDefault();
-                    alert('Minimum fee cannot be greater than maximum fee.');
-                    minFee.focus();
-                }
-                const submitBtn = this.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                    submitBtn.disabled = true;
-                }
-            });
-        });
-        setTimeout(() => {
-            document.querySelectorAll('.alert').forEach(alert => {
-                alert.style.opacity = '0';
-                alert.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => alert.remove(), 500);
-            });
-        }, 5000);
     </script>
 </body>
 </html>

@@ -17,11 +17,11 @@ $result = $conn->query("
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin Messages | MindCare</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <style>
         body {
             font-family: Inter, Arial, sans-serif;
@@ -46,10 +46,9 @@ $result = $conn->query("
             border-radius: 8px;
             padding: 16px 20px;
             margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             white-space: pre-wrap;
         }
-
 
         .empty {
             background: #fff;
@@ -68,7 +67,8 @@ $result = $conn->query("
 
         .btn {
             padding: 8px 14px;
-            background:#6a9c89;;
+            background: #6a9c89;
+            ;
             color: #fff;
             border-radius: 6px;
             text-decoration: none;
@@ -80,28 +80,25 @@ $result = $conn->query("
         }
     </style>
 </head>
+
 <body>
-
-<div class="container">
-
-    <div class="top-bar">
-        <h1>📩 Contact Messages</h1>
-        <a href="admin_dashboard.php" class="btn">Back to Dashboard</a>
-    </div>
-
-    <?php if ($result && $result->num_rows > 0): ?>
-        <?php while ($row = $result->fetch_assoc()): ?>
-            <div class="message-card">
-                <?= nl2br(htmlspecialchars($row['messages'])) ?>
-            </div>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <div class="empty">
-            No messages found.
+    <div class="container">
+        <div class="top-bar">
+            <h1>📩 Contact Messages</h1>
+            <a href="admin_dashboard.php" class="btn">Back to Dashboard</a>
         </div>
-    <?php endif; ?>
-
-</div>
+        <?php if ($result && $result->num_rows > 0): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <div class="message-card">
+                    <?= nl2br(htmlspecialchars($row['messages'])) ?>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <div class="empty">
+                No messages found.
+            </div>
+        <?php endif; ?>
+    </div>
 
 </body>
 </html>

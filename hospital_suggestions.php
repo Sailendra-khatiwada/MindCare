@@ -16,16 +16,9 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suggested Hospitals | MindCare</title>
     
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- CSS -->
     <link rel="stylesheet" href="css/hospitals.css">
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
 </head>
 
@@ -47,9 +40,7 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
         </div>
     </header>
 
-    <!-- Main Content -->
     <div class="container">
-        <!-- Header -->
         <div class="page-header">
             <div class="header-content">
                 <h1>
@@ -66,7 +57,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
             </div>
         </div>
 
-        <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -97,7 +87,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
             </div>
         </div>
 
-        <!-- Filters -->
         <div class="filters">
             <div class="filter-group">
                 <label for="specializationFilter">
@@ -129,7 +118,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
             </div>
         </div>
 
-        <!-- Hospitals Grid -->
         <div class="hospitals-grid" id="hospitalsContainer">
             <?php if ($hospitals->num_rows > 0): ?>
                 <?php while ($row = $hospitals->fetch_assoc()): ?>
@@ -222,82 +210,63 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
     </div>
 
     <script>
-        // Initialize stats
         function updateStats() {
             const hospitals = document.querySelectorAll('.hospital-card');
             const specializations = new Set();
             const locations = new Set();
-            
             hospitals.forEach(card => {
                 specializations.add(card.dataset.specialization);
                 locations.add(card.dataset.location);
             });
-            
             document.getElementById('totalHospitals').textContent = hospitals.length;
             document.getElementById('totalLocations').textContent = locations.size;
             document.getElementById('totalSpecializations').textContent = specializations.size;
         }
-        
-        // Filter hospitals
+
         function filterHospitals() {
             const searchTerm = document.getElementById('hospitalSearch').value.toLowerCase();
             const specializationFilter = document.getElementById('specializationFilter').value.toLowerCase();
             const sortBy = document.getElementById('sortBy').value;
-            
             const hospitals = Array.from(document.querySelectorAll('.hospital-card'));
-            
             hospitals.forEach(card => {
                 const name = card.dataset.name;
                 const specialization = card.dataset.specialization;
                 const location = card.dataset.location;
-                
                 const matchesSearch = name.includes(searchTerm) || 
                                     specialization.includes(searchTerm) || 
                                     location.includes(searchTerm);
-                
                 const matchesSpecialization = specializationFilter === 'all' || 
                                             specialization === specializationFilter;
-                
                 card.style.display = (matchesSearch && matchesSpecialization) ? 'block' : 'none';
             });
-            
-            // Sort hospitals
+
             const visibleHospitals = hospitals.filter(card => card.style.display !== 'none');
-            
             visibleHospitals.sort((a, b) => {
                 const aName = a.querySelector('h3').textContent;
                 const bName = b.querySelector('h3').textContent;
                 const aSpec = a.dataset.specialization;
                 const bSpec = b.dataset.specialization;
-                
                 switch(sortBy) {
                     case 'name_desc':
                         return bName.localeCompare(aName);
                     case 'specialization':
                         return aSpec.localeCompare(bSpec);
-                    default: // 'name'
+                    default: 
                         return aName.localeCompare(bName);
                 }
             });
-            
-            // Reorder in DOM
+
             const container = document.getElementById('hospitalsContainer');
             visibleHospitals.forEach(card => {
                 container.appendChild(card);
             });
-            
             updateStats();
         }
-        
-        // Event listeners
+
         document.getElementById('hospitalSearch').addEventListener('input', filterHospitals);
         document.getElementById('specializationFilter').addEventListener('change', filterHospitals);
         document.getElementById('sortBy').addEventListener('change', filterHospitals);
-        
-        // Initial stats update
         document.addEventListener('DOMContentLoaded', updateStats);
-        
-        // Add animation to cards on load
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.hospital-card');
             cards.forEach((card, index) => {

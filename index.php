@@ -6,18 +6,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Mental Health Support Platform</title>
 
-  <!-- New calm / therapeutic theme CSS -->
   <link rel="stylesheet" href="css/index.css" />
-
-  <!-- Google fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.php">
@@ -34,7 +28,7 @@
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
-
+      
       <div class="header-actions">
         <a class="btn btn-ghost" href="signup.php">Sign Up</a>
         <a class="btn btn-primary" href="login.php">Log In</a>
@@ -44,12 +38,11 @@
       </div>
     </div>
 
-    <!-- Hero -->
     <div class="hero">
       <div class="container hero-grid">
         <div class="hero-card">
           <h1>We're here to help you feel better</h1>
-          <p class="lead">Accessible, confidential and compassionate mental health care — find a psychologist, book a session, and get support when you need it.</p>
+          <p class="lead">Accessible, confidential and compassionate mental health care find a psychologist, book a session, and get support when you need it.</p>
 
           <div class="hero-cta">
             <a class="btn btn-xl btn-primary" href="signup.php">Get Started</a>
@@ -64,7 +57,6 @@
         </div>
 
         <div class="hero-visual" aria-hidden="true">
-          <!-- Soft illustration / card stack -->
           <div class="card-illustration">
             <div class="card card-1">Counseling</div>
             <div class="card card-2">Appointments</div>
@@ -75,19 +67,16 @@
     </div>
   </header>
 
-
   <main>
     <section class="search-section container">
       <div class="search-inner">
         <h2>Find a psychologist</h2>
         <form id="search-form" onsubmit="return false;">
-          <label for="search-field" class="visually-hidden">Search psychologists</label>
           <input id="search-field" name="q" type="search" placeholder="Search by name, speciality or location…" />
           <button class="btn btn-primary btn-search" onclick="openSearch()">Search</button>
         </form>
       </div>
     </section>
-
 
     <section id="services" class="container services-section">
       <h2>Our Services</h2>
@@ -163,19 +152,14 @@
       <div class="contact-wrapper">
         <form action="save_contact.php" method="POST" class="contact-form">
           <h3>Send Us a Message</h3>
-
           <label for="name">Your Name</label>
           <input type="text" id="name" name="name" required>
-
           <label for="email">Your Email</label>
           <input type="email" id="email" name="email" required>
-
           <label for="subject">Subject</label>
           <input type="text" id="subject" name="subject" required>
-
           <label for="message">Your Message</label>
           <textarea id="message" name="message" rows="5" required></textarea>
-
           <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Send Message</button>
         </form>
 
@@ -212,7 +196,7 @@
     <div class="container footer-grid">
       <div class="footer-col">
         <h4>About MindCare</h4>
-        <p>Trusted partner in mental health support — providing accessible resources and professional services for emotional well-being.</p>
+        <p>Trusted partner in mental health support providing accessible resources and professional services for emotional well-being.</p>
       </div>
       <div class="footer-col">
         <h4>Quick Links</h4>
@@ -239,7 +223,6 @@
     </div>
   </footer>
 
-  <!-- Login Modal -->
   <div id="login-modal" class="modal" aria-hidden="true">
     <div class="modal-content">
       <button class="modal-close" aria-label="Close">&times;</button>
@@ -253,9 +236,6 @@
   </div>
 
   <script>
-    // =========================
-    // MOBILE MENU TOGGLE
-    // =========================
     const menuToggle = document.getElementById("menu-toggle");
     const navList = document.querySelector(".nav-list");
 
@@ -267,8 +247,6 @@
           '<i class="fa fa-bars"></i>';
       });
     }
-
-    // Close menu when clicking outside
     document.addEventListener("click", (event) => {
       if (navList && navList.classList.contains("active")) {
         if (!navList.contains(event.target) && !menuToggle.contains(event.target)) {
@@ -278,9 +256,6 @@
       }
     });
 
-    // =========================
-    // LOGIN MODAL
-    // =========================
     const modal = document.getElementById("login-modal");
     const searchField = document.getElementById("search-field");
     const searchButton = document.querySelector(".btn-search");
@@ -291,38 +266,30 @@
         modal.style.display = "flex";
       }
     }
-
     if (searchField && modal) {
       searchField.addEventListener("click", openSearch);
     }
-
     if (searchButton && modal) {
       searchButton.addEventListener("click", openSearch);
     }
-
     if (closeModalBtn && modal) {
       closeModalBtn.addEventListener("click", () => {
         modal.style.display = "none";
       });
     }
 
-    // Close modal by clicking outside
     document.addEventListener("click", (event) => {
       if (modal && event.target === modal) {
         modal.style.display = "none";
       }
     });
 
-    // Close modal with Escape key
     document.addEventListener("keydown", (event) => {
       if (modal && event.key === "Escape" && modal.style.display === "flex") {
         modal.style.display = "none";
       }
     });
 
-    // =========================
-    // SMOOTH SCROLL
-    // =========================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
         e.preventDefault();
@@ -336,7 +303,6 @@
             behavior: 'smooth'
           });
 
-          // Close mobile menu if open
           if (navList && navList.classList.contains("active")) {
             navList.classList.remove("active");
             menuToggle.innerHTML = '<i class="fa fa-bars"></i>';
