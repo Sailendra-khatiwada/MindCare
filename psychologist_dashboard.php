@@ -261,120 +261,94 @@ $recentQuery = $conn->query("
     </div>
 
     <script>
-        // Auto-update form submission
-        document.querySelectorAll('select[name="status"]').forEach(select => {
-            select.addEventListener('change', function() {
-                // Show loading state
-                const originalText = this.parentElement.querySelector('.btn-update')?.textContent;
-                const btn = this.parentElement.querySelector('.btn-update');
-                if (btn) {
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                    btn.disabled = true;
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // Auto-update form submission
+            document.querySelectorAll('select[name="status"]').forEach(select => {
+                select.addEventListener('change', function() {
+
+                    const btn = this.closest("form")?.querySelector('.btn-update');
+
+                    if (btn) {
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                        btn.disabled = true;
+                    }
+
+                    this.form.submit();
+                });
+            });
+
+            // Update time display
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+
+                const timeElement = document.querySelector('.user-info p');
+                if (timeElement) {
+                    timeElement.innerHTML = `Psychologist • ${timeString}`;
                 }
-
-                // Submit the form
-                this.form.submit();
-            });
-        });
-
-        // Update time display
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
-
-            const timeElement = document.querySelector('.user-info p');
-            if (timeElement) {
-                timeElement.innerHTML = `Psychologist • ${timeString}`;
             }
-        }
 
-        updateTime();
-        setInterval(updateTime, 60000);
+            updateTime();
+            setInterval(updateTime, 60000);
 
-        // Function to check for new unread messages
-        function checkUnreadMessages() {
-            fetch('check_unread_psych.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.unread !== undefined) {
-                        const unreadCount = parseInt(data.unread);
-                        const countElement = document.getElementById('unreadCount');
-                        const sidebarBadge = document.querySelector('.sidebar a.active .badge');
+            // Check unread messages
+            function checkUnreadMessages() {
+                fetch('check_unread_psych.php')
+                    .then(response => response.json())
+                    .then(data => {
 
-                        // Update main counter
-                        if (countElement) {
-                            countElement.textContent = unreadCount;
-                        }
+                        if (data.unread !== undefined) {
+                            const unreadCount = parseInt(data.unread);
+                            const countElement = document.getElementById('unreadCount');
 
-                        // Update sidebar badge
-                        if (unreadCount > 0) {
-                            if (!sidebarBadge) {
-                                // Create badge if it doesn't exist
-                                const badge = document.createElement('span');
-                                badge.className = 'badge';
-                                badge.textContent = unreadCount;
-                                document.querySelector('.sidebar a.active').appendChild(badge);
-                            } else {
-                                // Update existing badge
-                                sidebarBadge.textContent = unreadCount;
+                            if (countElement) {
+                                countElement.textContent = unreadCount;
                             }
-                        } else if (sidebarBadge) {
-                            // Remove badge if no unread messages
-                            sidebarBadge.remove();
+
+                            const statCard = document.querySelector('.stat-card:nth-child(4)');
+                            if (statCard) {
+                                if (unreadCount > 0) {
+                                    statCard.style.position = 'relative';
+                                    statCard.setAttribute('data-has-unread', 'true');
+                                } else {
+                                    statCard.removeAttribute('data-has-unread');
+                                }
+                            }
                         }
+                    })
+                    .catch(error => console.error('Error checking unread messages:', error));
+            }
 
-                        // Show/hide red dot on stat card
-                        const statCard = document.querySelector('.stat-card:nth-child(4)');
-                        if (unreadCount > 0) {
-                            statCard.style.position = 'relative';
-                            statCard.setAttribute('data-has-unread', 'true');
-                        } else {
-                            statCard.removeAttribute('data-has-unread');
-                        }
-                    }
-                })
-                .catch(error => console.error('Error checking unread messages:', error));
-        }
+            checkUnreadMessages();
+            setInterval(checkUnreadMessages, 10000);
 
-        // Check for new messages every 10 seconds
-        checkUnreadMessages();
-        setInterval(checkUnreadMessages, 10000);
+            // Mark messages read when opening chat
+            document.querySelectorAll('.btn-chat').forEach(link => {
+                link.addEventListener('click', function() {
 
-        // Add click handler to mark messages as read when clicking chat link
-        document.querySelectorAll('.btn-chat').forEach(link => {
-            link.addEventListener('click', function() {
-                // Remove badge when clicking chat link
-                const badge = this.querySelector('.badge');
-                if (badge) {
-                    badge.remove();
+                    const badge = this.querySelector('.badge');
+                    if (badge) {
 
-                    // Update unread count
-                    const countElement = document.getElementById('unreadCount');
-                    if (countElement) {
-                        let currentCount = parseInt(countElement.textContent) || 0;
                         let badgeCount = parseInt(badge.textContent) || 1;
-                        countElement.textContent = Math.max(0, currentCount - badgeCount);
-                    }
+                        badge.remove();
 
-                    // Update sidebar badge
-                    const sidebarBadge = document.querySelector('.sidebar a.active .badge');
-                    if (sidebarBadge) {
-                        let sidebarCount = parseInt(sidebarBadge.textContent) || 0;
-                        sidebarCount = Math.max(0, sidebarCount - badgeCount);
-                        if (sidebarCount > 0) {
-                            sidebarBadge.textContent = sidebarCount;
-                        } else {
-                            sidebarBadge.remove();
+                        const countElement = document.getElementById('unreadCount');
+                        if (countElement) {
+                            let currentCount = parseInt(countElement.textContent) || 0;
+                            countElement.textContent = Math.max(0, currentCount - badgeCount);
                         }
                     }
-                }
+                });
             });
+
         });
     </script>
+
 </body>
 
 </html>

@@ -312,23 +312,6 @@ if ($stmt) {
             }
         }
 
-        // Update message status
-        function updateMessageStatus() {
-            document.querySelectorAll('.status.sending').forEach(status => {
-                // In a real app, you would check server for delivery status
-                // For now, simulate delivery
-                setTimeout(() => {
-                    status.innerHTML = '<i class="fas fa-check-double"></i> Delivered';
-                    status.className = 'status delivered';
-                }, 1000);
-
-                // Simulate seen after another delay
-                setTimeout(() => {
-                    status.innerHTML = '<i class="fas fa-eye"></i> Seen';
-                    status.className = 'status seen';
-                }, 300);
-            });
-        }
 
         // Format time
         function formatTime(date) {

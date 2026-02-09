@@ -4,7 +4,7 @@ CREATE TABLE `admin` (
   `admin_id` int(11) NOT NULL AUTO_INCREMENT,
   `messages` text DEFAULT NULL,
   PRIMARY KEY (`admin_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+);
 
 CREATE TABLE `appointments` (
   `appointment_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -18,7 +18,7 @@ CREATE TABLE `appointments` (
   KEY `p_id` (`p_id`),
   CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`p_id`) REFERENCES `psychologist` (`p_id`)
-) 
+);
 
 CREATE TABLE `hospitals` (
   `hospital_id` int(11) NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE `hospitals` (
   `email` varchar(255) DEFAULT NULL,
   `website` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`hospital_id`)
-) 
+);
 
 
 CREATE TABLE `medications` (
@@ -45,7 +45,7 @@ CREATE TABLE `medications` (
   PRIMARY KEY (`m_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `medications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) 
+); 
 
 CREATE TABLE `messages` (
   `msg_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -57,7 +57,7 @@ CREATE TABLE `messages` (
   `seen` tinyint(1) DEFAULT 0,
   `delivered` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`msg_id`)
-) 
+);
 
 CREATE TABLE `psychologist` (
   `p_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -78,7 +78,7 @@ CREATE TABLE `psychologist` (
   `AreaOfExperties` varchar(300) DEFAULT NULL,
   PRIMARY KEY (`p_id`),
   UNIQUE KEY `email` (`email`)
-)
+);
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -88,4 +88,4 @@ CREATE TABLE `users` (
   `profile_picture` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`user_id`)
-)
+);
