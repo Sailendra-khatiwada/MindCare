@@ -182,7 +182,6 @@ $hospitals = $conn->query("SELECT * FROM hospitals ORDER BY name ASC");
                                 </div>
                             </div>
                             <?php endif; ?>  
-        
                         </div>
                         
                         <div class="hospital-actions">

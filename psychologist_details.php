@@ -15,7 +15,6 @@ if (!isset($_GET['id'])) {
 
 $psychologist_id = intval($_GET['id']);
 
-// Fetch Psychologist Info
 $stmt = $conn->prepare("
     SELECT username, profile_picture, specialization, location, education,
            min_fee, max_fee, office_start, office_end, contact_info, description, email, AreaOfExperties
@@ -28,32 +27,23 @@ $result = $stmt->get_result();
 $psych = $result->fetch_assoc();
 $stmt->close();
 
-/* ------------------- HANDLE BOOKING FORM ------------------- */
-
 $appointment_date = $_POST['appointment_date'] ?? '';
 $appointment_time = $_POST['appointment_time'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    // Prevent past dates
     if ($appointment_date < date('Y-m-d')) {
         $errorMessage = "You cannot book an appointment in the past.";
     } else {
-
-        // Get hours
         $stmt = $conn->prepare("SELECT office_start, office_end FROM psychologist WHERE p_id = ?");
         $stmt->bind_param("i", $psychologist_id);
         $stmt->execute();
         $stmt->bind_result($office_start, $office_end);
         $stmt->fetch();
         $stmt->close();
-
         $t = strtotime($appointment_time);
         if ($t < strtotime($office_start) || $t > strtotime($office_end)) {
             $errorMessage = "Appointment is outside office hours.";
         } else {
-
-            // Check conflicts (30 min rule)
             $stmt = $conn->prepare("SELECT appointment_time FROM appointments WHERE p_id=? AND appointment_date=?");
             $stmt->bind_param("is", $psychologist_id, $appointment_date);
             $stmt->execute();
@@ -67,8 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($conflict) {
                 $errorMessage = "This time overlaps another appointment.";
             } else {
-
-                // Max 5 daily
                 $stmt = $conn->prepare("SELECT COUNT(*) FROM appointments WHERE p_id=? AND appointment_date=?");
                 $stmt->bind_param("is", $psychologist_id, $appointment_date);
                 $stmt->execute();
@@ -79,8 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($count >= 5) {
                     $errorMessage = "This psychologist is fully booked for that day.";
                 } else {
-
-                    // Insert Appointment
                     $stmt = $conn->prepare("
                         INSERT INTO appointments (user_id, p_id, appointment_date, appointment_time)
                         VALUES (?, ?, ?, ?)
@@ -98,24 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Psychologist Details | MindCare</title>
-    
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
     
     <style>
         :root {
-            /* Color Palette */
             --primary: #4a7b9d;
             --primary-light: #7ba6c1;
             --primary-dark: #2c5a78;
@@ -129,26 +107,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             --success: #10b981;
             --error: #ef4444;
             --warning: #f59e0b;
-            
-            /* Gradients */
+
             --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             --gradient-card: linear-gradient(135deg, var(--white) 0%, #fcfdfe 100%);
             --gradient-header: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             
-            /* Shadows */
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
             --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
-            
-            /* Border Radius */
+
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 20px;
             --radius-full: 50%;
             
-            /* Spacing */
             --space-xs: 0.5rem;
             --space-sm: 1rem;
             --space-md: 1.5rem;
@@ -170,13 +144,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: var(--space-md);
         }
 
-        /* Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Header */
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -222,7 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-color: var(--primary-light);
         }
 
-        /* Main Layout */
         .details-layout {
             display: grid;
             grid-template-columns: 1fr 400px;
@@ -236,7 +207,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        /* Profile Card */
         .profile-card {
             background: var(--white);
             border-radius: var(--radius-xl);
@@ -305,7 +275,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             backdrop-filter: blur(10px);
         }
 
-        /* Profile Details */
         .profile-details {
             padding: var(--space-lg);
         }
@@ -345,7 +314,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-weight: 600;
         }
 
-        /* About Sections */
         .about-section {
             background: var(--light);
             padding: var(--space-lg);
@@ -368,7 +336,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             line-height: 1.8;
         }
 
-        /* Appointment Card */
         .appointment-card {
             background: var(--white);
             border-radius: var(--radius-xl);
@@ -394,7 +361,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 0.95rem;
         }
 
-        /* Alert Messages */
         .alert {
             padding: var(--space-md);
             border-radius: var(--radius-md);
@@ -422,7 +388,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             flex-shrink: 0;
         }
 
-        /* Form Styles */
         .appointment-form {
             display: flex;
             flex-direction: column;
@@ -480,7 +445,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             box-shadow: var(--shadow-md);
         }
 
-        /* Info Box */
         .info-box {
             background: rgba(74, 123, 157, 0.05);
             border: 1px solid rgba(74, 123, 157, 0.1);
@@ -515,7 +479,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             left: -1rem;
         }
 
-        /* Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -543,7 +506,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-top: 0.25rem;
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             body {
                 padding: var(--space-sm);
@@ -578,7 +540,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        /* Animations */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -595,7 +556,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             animation: fadeIn 0.5s ease-out;
         }
 
-        /* Loading State */
         .skeleton {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
@@ -611,7 +571,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -633,7 +592,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div class="container">
-        <!-- Header -->
         <header class="page-header">
             <a href="dashboard.php" class="brand">
                 <span class="brand-mark" aria-hidden="true">🕊️</span>
@@ -644,12 +602,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 Back to Psychologists
             </a>
         </header>
-
-        <!-- Main Content -->
         <div class="details-layout">
-            <!-- Left Column: Profile Details -->
             <div class="profile-card">
-                <!-- Profile Header -->
                 <div class="profile-header">
                     <div class="profile-header-content">
                         <img src="<?php echo $psych['profile_picture'] ?: 'images/default-profile.jpg'; ?>" 
@@ -668,8 +622,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
                 </div>
-
-                <!-- Profile Details Grid -->
                 <div class="profile-details">
                     <div class="details-grid">
                         <div class="detail-item">
@@ -707,7 +659,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
 
-                    <!-- About Section -->
                     <div class="about-section">
                         <h3><i class="fas fa-user"></i> About</h3>
                         <div class="about-content">
@@ -715,7 +666,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
 
-                    <!-- Expertise Section -->
                     <div class="about-section">
                         <h3><i class="fas fa-bullseye"></i> Areas of Expertise</h3>
                         <div class="about-content">
@@ -725,7 +675,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
 
-            <!-- Right Column: Appointment Booking -->
             <div class="appointment-card">
                 <div class="appointment-header">
                     <h3>Book Appointment</h3>
@@ -769,14 +718,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                class="form-control" 
                                required>
                     </div>
-
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-calendar-check"></i>
                         Confirm Appointment
                     </button>
                 </form>
 
-                <!-- Info Box -->
                 <div class="info-box">
                     <h4><i class="fas fa-info-circle"></i> Important Information</h4>
                     <ul>
@@ -791,16 +738,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        // Set minimum date to today
         document.getElementById('appointment_date').min = new Date().toISOString().split('T')[0];
-        
-        // Set default time to next available hour
         const now = new Date();
         const nextHour = new Date(now.getTime() + 60 * 60 * 1000);
         const formattedTime = nextHour.getHours().toString().padStart(2, '0') + ':00';
         document.getElementById('appointment_time').value = formattedTime;
-        
-        // Success message handling
         <?php if ($appointmentSuccess): ?>
         setTimeout(() => {
             const alert = document.querySelector('.alert-success');

@@ -10,7 +10,6 @@ include 'db_connect.php';
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
-/* Handle Form Submit */
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $medication_name = trim($_POST['medication_name']);
     $dosage = trim($_POST['dosage']);
@@ -18,9 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dosage_time = $_POST['dosage_time'] ?? 'Morning';
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'] ?? null;
-
-    // Calculate total days
     $total_days = 0;
+
     if ($end_date && $start_date) {
         $start = new DateTime($start_date);
         $end = new DateTime($end_date);
@@ -52,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->close();
 }
 
-/* Fetch medication list with proper error handling */
 $medications = [];
 try {
     $sql = "SELECT * FROM medications WHERE user_id = ? ORDER BY start_date DESC, created_at DESC";
@@ -66,7 +63,6 @@ try {
     error_log("Medications fetch error: " . $e->getMessage());
 }
 
-// Calculate medication statistics
 $active_meds = 0;
 $completed_meds = 0;
 $upcoming_meds = 0;
@@ -86,26 +82,16 @@ foreach ($medications as $med) {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medication Manager | MindCare</title>
-
-    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/medications.css">
-
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
 
     <style>
-        /* Additional styles */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -183,8 +169,6 @@ foreach ($medications as $med) {
 </head>
 
 <body>
-
-    <!-- Header -->
     <header class="page-header">
         <a href="dashboard.php" class="brand">
             <span class="brand-mark" aria-hidden="true">🕊️</span>
@@ -211,8 +195,6 @@ foreach ($medications as $med) {
     </header>
 
     <div class="container">
-
-        <!-- Page Title -->
         <div class="page-title">
             <i class="fas fa-pills"></i>
             Medication Manager
@@ -222,7 +204,6 @@ foreach ($medications as $med) {
             Track and manage your medications with reminders and dosage schedules
         </p>
 
-        <!-- Messages -->
         <?php if (isset($_SESSION['message'])): ?>
             <div class="message <?php echo $_SESSION['message_type'] ?? 'success'; ?>">
                 <i class="fas <?php echo ($_SESSION['message_type'] ?? 'success') == 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'; ?>"></i>
@@ -234,7 +215,6 @@ foreach ($medications as $med) {
             </div>
         <?php endif; ?>
 
-        <!-- Statistics -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon active">
@@ -277,16 +257,11 @@ foreach ($medications as $med) {
             </div>
         </div>
 
-        <!-- Main Content Grid -->
         <div class="main-grid">
-
-            <!-- LEFT: Add Medication Form -->
             <div class="card form-card">
                 <h2><i class="fas fa-plus-circle"></i> Add New Medication</h2>
-
                 <div class="card-body">
                     <form method="POST" id="medication-form">
-
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Medication Name <span>*</span></label>
@@ -315,7 +290,7 @@ foreach ($medications as $med) {
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Frequency</label>
+                                <label>Frequency<span>*</span></label>
                                 <select name="frequency">
                                     <option value="Daily">Daily</option>
                                     <option value="Twice Daily">Twice Daily</option>
@@ -327,7 +302,7 @@ foreach ($medications as $med) {
                             </div>
 
                             <div class="form-group">
-                                <label>Preferred Time</label>
+                                <label>Preferred Time<span>*</span></label>
                                 <select name="dosage_time">
                                     <option value="Morning">Morning</option>
                                     <option value="Afternoon">Afternoon</option>
@@ -348,39 +323,12 @@ foreach ($medications as $med) {
                             </div>
 
                             <div class="form-group">
-                                <label>End Date (Optional)</label>
+                                <label>End Date <span>*</span></label>
                                 <input type="date"
                                     name="end_date"
                                     min="<?php echo date('Y-m-d'); ?>">
-                                <small style="display: block; margin-top: 0.5rem; color: var(--medium-gray);">
-                                    Leave empty for ongoing medication
-                                </small>
                             </div>
-                        </div>
-
-                        <!-- Reminder Settings -->
-                        <div class="reminder-settings">
-                            <div class="form-group">
-                                <label style="font-weight: 600;">
-                                    <i class="fas fa-bell"></i> Reminder Settings
-                                </label>
-                                <div class="toggle-switch">
-                                    <label class="switch">
-                                        <input type="checkbox" name="enable_reminders" checked>
-                                        <span class="slider"></span>
-                                    </label>
-                                    <span>Enable dosage reminders</span>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Reminder Time</label>
-                                <input type="time"
-                                    name="reminder_time"
-                                    value="08:00"
-                                    style="max-width: 200px;">
-                            </div>
-                        </div>
+                        </div> 
 
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary btn-full">
@@ -395,10 +343,8 @@ foreach ($medications as $med) {
                 </div>
             </div>
 
-            <!-- RIGHT: Medication List -->
             <div class="card list-card">
                 <h2><i class="fas fa-list-check"></i> Your Medications</h2>
-
                 <div class="card-body">
                     <?php if (!empty($medications)): ?>
                         <div class="medication-list">
@@ -494,11 +440,9 @@ foreach ($medications as $med) {
             </div>
 
         </div>
-
-        <!-- Medication Schedule -->
+    
         <div class="card schedule-card" style="margin-top: var(--space-xl);">
             <h2><i class="fas fa-calendar-alt"></i> Weekly Medication Schedule</h2>
-
             <div class="card-body">
                 <div class="schedule-grid">
                     <?php
@@ -524,19 +468,16 @@ foreach ($medications as $med) {
     </div>
 
     <script>
-        // Form validation
         document.getElementById('medication-form').addEventListener('submit', function(e) {
             const medicationName = this.querySelector('[name="medication_name"]').value.trim();
             const dosage = this.querySelector('[name="dosage"]').value.trim();
             const startDate = this.querySelector('[name="start_date"]').value;
-
             if (!medicationName || !dosage || !startDate) {
                 e.preventDefault();
                 alert('Please fill in all required fields (marked with *)');
                 return;
             }
 
-            // Validate date range if end date is provided
             const endDate = this.querySelector('[name="end_date"]').value;
             if (endDate && new Date(endDate) < new Date(startDate)) {
                 e.preventDefault();
@@ -544,16 +485,13 @@ foreach ($medications as $med) {
                 return;
             }
 
-            // Show loading state
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             submitBtn.disabled = true;
         });
 
-        // Set minimum date for end date based on start date
         const startDateInput = document.querySelector('[name="start_date"]');
         const endDateInput = document.querySelector('[name="end_date"]');
-
         if (startDateInput && endDateInput) {
             startDateInput.addEventListener('change', function() {
                 endDateInput.min = this.value;
@@ -563,7 +501,6 @@ foreach ($medications as $med) {
             });
         }
 
-        // Initialize date inputs with today's date
         window.addEventListener('load', function() {
             const today = new Date().toISOString().split('T')[0];
             if (startDateInput && !startDateInput.value) {
@@ -574,8 +511,6 @@ foreach ($medications as $med) {
             }
         });
 
-
-        // Add floating animation to brand mark
         const brandMark = document.querySelector('.brand-mark');
         if (brandMark) {
             setInterval(() => {
@@ -583,15 +518,12 @@ foreach ($medications as $med) {
             }, 100);
         }
 
-        // Responsive table conversion (for smaller screens)
         function convertTableToCards() {
             if (window.innerWidth < 768) {
-                // Convert table to cards if it exists
                 const table = document.querySelector('table');
                 if (table) {
                     const tbody = table.querySelector('tbody');
                     const rows = Array.from(tbody.querySelectorAll('tr'));
-
                     rows.forEach(row => {
                         const cells = Array.from(row.querySelectorAll('td'));
                         const medicationCard = document.createElement('div');
@@ -625,11 +557,8 @@ foreach ($medications as $med) {
                 }
             }
         }
-
-        // Run on load and resize
         window.addEventListener('load', convertTableToCards);
         window.addEventListener('resize', convertTableToCards);
     </script>
 </body>
-
 </html>

@@ -13,7 +13,6 @@ $success = "";
 $pwd_success = "";
 $pwd_error = "";
 
-// CSRF Token
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -23,14 +22,12 @@ if (!isset($_SESSION['p_id'])) {
     exit;
 }
 
-// Fetch psychologist info
 $stmt = $conn->prepare("SELECT * FROM psychologist WHERE p_id = ?");
 $stmt->bind_param("i", $_SESSION['p_id']);
 $stmt->execute();
 $psychologist = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-// --------- PROFILE UPDATE ---------
 if (isset($_POST['update_profile'])) {
     if ($_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $error = "Invalid CSRF token.";
@@ -47,13 +44,11 @@ if (isset($_POST['update_profile'])) {
         $email = trim($_POST['email'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $AreaOfExperties = trim($_POST['AreaOfExperties'] ?? '');
-
         $profile_picture = $psychologist['profile_picture'];
 
         if ($min_fee > $max_fee) {
             $error = "Minimum fee cannot be greater than maximum fee.";
         } else {
-            // File Upload
             if (!empty($_FILES["profile_picture"]["name"])) {
                 $allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
                 if (in_array($_FILES["profile_picture"]["type"], $allowed)) {
@@ -78,7 +73,6 @@ if (isset($_POST['update_profile'])) {
                 $stmt->close();
 
                 $success = "Profile updated successfully!";
-                // Refresh psychologist data
                 $stmt = $conn->prepare("SELECT * FROM psychologist WHERE p_id = ?");
                 $stmt->bind_param("i", $_SESSION['p_id']);
                 $stmt->execute();
@@ -89,7 +83,6 @@ if (isset($_POST['update_profile'])) {
     }
 }
 
-// --------- CHANGE PASSWORD ---------
 if (isset($_POST['change_password'])) {
     if ($_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $pwd_error = "Invalid CSRF token.";
@@ -116,28 +109,21 @@ if (isset($_POST['change_password'])) {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Profile | MindCare</title>
-    
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
     <link rel="stylesheet" href="css/manage_psychologist_profile.css">
-
 </head>
 
 <body>
     <div class="container">
-        <!-- Header -->
         <header class="page-header">
             <a href="dashboard.php" class="brand">
                 <span class="brand-mark" aria-hidden="true">🕊️</span>
@@ -149,9 +135,7 @@ if (isset($_POST['change_password'])) {
             </a>
         </header>
 
-        <!-- Profile Layout -->
         <div class="profile-layout">
-            <!-- Sidebar Profile Card -->
             <div class="sidebar-card">
                 <img src="<?php echo !empty($psychologist['profile_picture']) ? htmlspecialchars($psychologist['profile_picture']) : 'images/default-profile.jpg'; ?>" 
                      alt="Profile" 
@@ -183,9 +167,7 @@ if (isset($_POST['change_password'])) {
                 </div>
             </div>
 
-            <!-- Main Content Card -->
             <div class="content-card">
-                <!-- Tab Header -->
                 <div class="tab-header">
                     <button class="tab-btn active" onclick="switchTab('profile')">
                         <i class="fas fa-user-edit"></i> Profile Info
@@ -195,7 +177,6 @@ if (isset($_POST['change_password'])) {
                     </button>
                 </div>
 
-                <!-- Profile Tab -->
                 <div id="profileTab" class="tab-content active">
                     <?php if ($error): ?>
                         <div class="alert alert-error">
@@ -215,7 +196,6 @@ if (isset($_POST['change_password'])) {
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                         <input type="hidden" name="update_profile">
 
-                        <!-- Basic Information -->
                         <div class="form-section">
                             <h3><i class="fas fa-id-card"></i> Basic Information</h3>
                             <div class="form-grid">
@@ -257,7 +237,6 @@ if (isset($_POST['change_password'])) {
                             </div>
                         </div>
 
-                        <!-- Contact Information -->
                         <div class="form-section">
                             <h3><i class="fas fa-address-book"></i> Contact Information</h3>
                             <div class="form-grid">
@@ -279,7 +258,6 @@ if (isset($_POST['change_password'])) {
                             </div>
                         </div>
 
-                        <!-- Practice Details -->
                         <div class="form-section">
                             <h3><i class="fas fa-clinic-medical"></i> Practice Details</h3>
                             <div class="form-grid">
@@ -321,7 +299,6 @@ if (isset($_POST['change_password'])) {
                             </div>
                         </div>
 
-                        <!-- About Sections -->
                         <div class="form-section">
                             <h3><i class="fas fa-info-circle"></i> About Sections</h3>
                             <div class="form-grid">
@@ -348,7 +325,6 @@ if (isset($_POST['change_password'])) {
                     </form>
                 </div>
 
-                <!-- Security Tab -->
                 <div id="securityTab" class="tab-content">
                     <?php if ($pwd_error): ?>
                         <div class="alert alert-error">
@@ -409,8 +385,6 @@ if (isset($_POST['change_password'])) {
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Password Requirements -->
                             <div class="password-requirements">
                                 <h4>Password Requirements:</h4>
                                 <ul>
@@ -431,26 +405,19 @@ if (isset($_POST['change_password'])) {
     </div>
 
     <script>
-        // Tab Switching
         function switchTab(tabName) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
-            // Remove active class from all buttons
+
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             
-            // Show selected tab
             document.getElementById(tabName + 'Tab').classList.add('active');
-            
-            // Activate clicked button
             event.currentTarget.classList.add('active');
         }
-        
-        // Image Preview
+
         function previewImage(input) {
             const preview = document.getElementById('profilePreview');
             const file = input.files[0];
@@ -461,7 +428,6 @@ if (isset($_POST['change_password'])) {
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     
-                    // Show animation
                     preview.style.opacity = '0';
                     setTimeout(() => {
                         preview.style.transition = 'opacity 0.3s ease';
@@ -472,8 +438,7 @@ if (isset($_POST['change_password'])) {
                 reader.readAsDataURL(file);
             }
         }
-        
-        // Password Strength Check
+  
         function checkPasswordStrength() {
             const password = document.getElementById('newPassword').value;
             const lengthReq = document.getElementById('req-length');
@@ -487,7 +452,6 @@ if (isset($_POST['change_password'])) {
             }
         }
         
-        // Password Match Check
         function checkPasswordMatch() {
             const password = document.getElementById('newPassword').value;
             const confirm = document.getElementById('confirmPassword').value;
@@ -504,8 +468,7 @@ if (isset($_POST['change_password'])) {
                 matchReq.innerHTML = 'Passwords must match';
             }
         }
-        
-        // Form Submission Loading
+    
         document.getElementById('profileForm').addEventListener('submit', function() {
             const submitBtn = this.querySelector('.submit-btn');
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
@@ -518,12 +481,10 @@ if (isset($_POST['change_password'])) {
             submitBtn.disabled = true;
         });
         
-        // Initialize password checks
         document.addEventListener('DOMContentLoaded', function() {
             checkPasswordStrength();
             checkPasswordMatch();
             
-            // Set minimum time values
             const now = new Date();
             const timeInputs = document.querySelectorAll('input[type="time"]');
             timeInputs.forEach(input => {

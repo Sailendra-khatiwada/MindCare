@@ -9,8 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
     $user_type = isset($_POST['user_type']);
-
-    // Check if fields are empty
     if (empty($username) || empty($email) || empty($password)) {
         $error = "All fields are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -18,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif (strlen($password) < 6) {
         $error = "Password must be at least 6 characters long.";
     } else {
-        // Check if username or email already exists
         $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
         $stmt->bind_param("ss", $username, $email);
         $stmt->execute();
@@ -32,13 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $id_field = 'user_id';
                 $redirect = 'login.php';
             }
-            // Insert into appropriate table
             $stmt = $conn->prepare("INSERT INTO $table (username, email, password) VALUES (?, ?, ?)");
             $stmt->bind_param("sss", $username, $email, $hashed_password);
 
             if ($stmt->execute()) {
                 $success = "Registration successful! You can now <a href='$redirect'>log in</a>.";
-                // Clear form fields
                 $username = $email = '';
             } else {
                 $error = "Error during registration. Please try again.";
@@ -51,22 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account | MindCare</title>
-    
-    <!-- CSS -->
     <link rel="stylesheet" href="css/signup.css">
-    
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
 </head>
 
@@ -82,8 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <form id="signup-form" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
             <h2>Create Your Account</h2>
-
-            <!-- Display error/success messages -->
             <?php if (!empty($error)): ?>
                 <div class="error" role="alert">
                     <?php echo htmlspecialchars($error); ?>
@@ -96,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             <?php endif; ?>
 
-            <!-- Username Field -->
             <div class="form-group">
                 <label for="username">Username <span>*</span></label>
                 <div class="input-wrapper">
@@ -110,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
 
-            <!-- Email Field -->
             <div class="form-group">
                 <label for="email">Email Address <span>*</span></label>
                 <div class="input-wrapper">
@@ -125,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
 
-            <!-- Password Field -->
             <div class="form-group">
                 <label for="password">Password <span>*</span></label>
                 <div class="input-wrapper">
@@ -139,20 +120,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
-                 
-            <!-- Submit Button -->
+  
             <button type="submit" id="signup-button">
                 <i class="fas fa-user-plus"></i>
                 Create Account
             </button>
 
-            <!-- Login Link -->
             <p>
                 Already have an account? 
                 <a href="login.php">Log In Here</a>
             </p>
 
-            <!-- Back to Home -->
             <p style="margin-top: 1rem;">
                 <a href="index.php">
                     <i class="fas fa-arrow-left"></i> Back to Home
@@ -160,7 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </p>
         </form>
 
-        <!-- Security Notice -->
         <div style="text-align: center; margin-top: 2rem; font-size: 0.8rem; color: var(--medium-gray);">
             <i class="fas fa-shield-alt"></i>
             Your information is protected with end-to-end encryption
@@ -168,7 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        // Password visibility toggle
         const passwordToggle = document.getElementById('password-toggle');
         const confirmPasswordToggle = document.getElementById('confirm-password-toggle');
         const passwordInput = document.getElementById('password');
@@ -177,8 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         function togglePasswordVisibility(input, toggleBtn) {
             const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
             input.setAttribute('type', type);
-            
-            // Toggle eye icon
             const icon = toggleBtn.querySelector('i');
             if (type === 'text') {
                 icon.classList.remove('fa-eye');
@@ -195,14 +169,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             passwordToggle.addEventListener('click', () => togglePasswordVisibility(passwordInput, passwordToggle));
         }
         
-    
-        // Form submission
         const signupForm = document.getElementById('signup-form');
         const signupButton = document.getElementById('signup-button');
         
         if (signupForm && signupButton) {
             signupForm.addEventListener('submit', function(e) {
-                // Client-side validation
                 const username = document.getElementById('username').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
@@ -223,8 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     showErrors(errors);
                     return;
                 }
-                
-                // Show loading state
+            
                 signupButton.disabled = true;
                 signupButton.classList.add('btn-loading');
                 signupButton.innerHTML = 'Creating account...';
@@ -232,35 +202,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         function showErrors(errors) {
-            // Remove existing error
             const existingError = document.querySelector('.error');
             if (existingError) {
                 existingError.remove();
             }
-            
-            // Create new error message
+
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error';
             errorDiv.setAttribute('role', 'alert');
             errorDiv.innerHTML = errors.join('<br>');
-            
-            // Insert error after the form header
             const formHeader = signupForm.querySelector('h2');
             if (formHeader) {
                 formHeader.parentNode.insertBefore(errorDiv, formHeader.nextSibling);
             }
-            
-            // Animate the error
             errorDiv.style.animation = 'none';
             setTimeout(() => {
                 errorDiv.style.animation = 'shake 0.5s ease-in-out';
             }, 10);
-            
-            // Scroll to error
+
             errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // Focus first input on page load
         window.addEventListener('load', function() {
             const usernameInput = document.getElementById('username');
             if (usernameInput) {
@@ -268,7 +230,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         });
 
-        // Handle Enter key submission
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.target.matches('textarea, select')) {
                 e.preventDefault();
@@ -279,7 +240,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         });
 
-        // Add floating animation to brand mark
         const brandMark = document.querySelector('.brand-mark');
         if (brandMark) {
             setInterval(() => {
@@ -287,7 +247,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }, 100);
         }
 
-        // Email validation on blur
         const emailInput = document.getElementById('email');
          if (emailInput) {
             emailInput.addEventListener('blur', function() {
@@ -299,5 +258,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </script>
 </body>
-
 </html>

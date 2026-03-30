@@ -213,7 +213,6 @@ $stats_stmt->close();
             });
         }, 5000);
 
-        // Add animation to table rows
         document.addEventListener('DOMContentLoaded', function() {
             const tableRows = document.querySelectorAll('tbody tr');
             tableRows.forEach((row, index) => {

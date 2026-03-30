@@ -149,7 +149,7 @@ $session_count = $session_result->fetch_assoc()['count'];
                     <p class="welcome-time">
                         <?php echo date('l, F j, Y'); ?> • Good
                         <?php date_default_timezone_set('Asia/Kathmandu');
-                        $hour = date('H'); 
+                        $hour = date('H');
                         if ($hour < 12) {
                             echo 'Morning';
                         } elseif ($hour < 17) {
@@ -348,6 +348,7 @@ $session_count = $session_result->fetch_assoc()['count'];
             let currentDate = new Date();
             let currentYear = currentDate.getFullYear();
             let currentMonth = currentDate.getMonth();
+
             function renderCalendar(year = currentYear, month = currentMonth) {
                 daysContainer.innerHTML = "";
                 const firstDay = new Date(year, month, 1).getDay();
@@ -367,7 +368,7 @@ $session_count = $session_result->fetch_assoc()['count'];
                         year === today.getFullYear()) {
                         dateDiv.classList.add("current-day");
                     }
-                    if (Math.random() > 0.8) { 
+                    if (Math.random() > 0.8) {
                         dateDiv.classList.add("appointment-day");
                     }
                     dateDiv.addEventListener('click', () => {
@@ -411,7 +412,7 @@ $session_count = $session_result->fetch_assoc()['count'];
             const MESSAGES_LINK = document.getElementById('messagesLink');
             const POPUP = document.getElementById('popupNotification');
             let lastUnread = 0;
-            let pollingInterval = 5000; 
+            let pollingInterval = 5000;
             async function checkUnread() {
                 try {
                     const res = await fetch('chat/check_unread_user.php', {
@@ -449,6 +450,7 @@ $session_count = $session_result->fetch_assoc()['count'];
                     console.error('checkUnread error:', err);
                 }
             }
+
             function showNotification(newMessages) {
                 if (newMessages > 0) {
                     const toast = document.createElement('div');
@@ -538,4 +540,5 @@ $session_count = $session_result->fetch_assoc()['count'];
     </script>
 
 </body>
+
 </html>

@@ -342,9 +342,9 @@ h3 {
 }
 
 .search-section {
-    margin: calc(var(--space-xl) * -1) auto var(--space-xl);
     position: relative;
-    z-index: 2;
+    z-index: 10;
+    margin-top: -8px; 
 }
 
 .search-inner {

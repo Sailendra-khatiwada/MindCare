@@ -2,22 +2,18 @@
 session_start();
 include 'db_connect.php';
 
-// Ensure the admin is logged in
 if (!isset($_SESSION['username']) || $_SESSION['username'] != 'admin') {
     header('Location: login.php');
     exit;
 }
 
-// Initialize variables
 $hospital = [];
 $errors = [];
 $success = false;
 
-// Get hospital ID from URL with validation
 if (isset($_GET['hospital_id']) && is_numeric($_GET['hospital_id'])) {
     $hospital_id = intval($_GET['hospital_id']);
 
-    // Use prepared statement to prevent SQL injection
     $stmt = $conn->prepare("SELECT * FROM hospitals WHERE hospital_id = ?");
     $stmt->bind_param("i", $hospital_id);
     $stmt->execute();
@@ -35,7 +31,6 @@ if (isset($_GET['hospital_id']) && is_numeric($_GET['hospital_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Sanitize and validate inputs
     $name = trim(filter_input(INPUT_POST, 'name'));
     $location = trim(filter_input(INPUT_POST, 'location'));
     $specialization = trim(filter_input(INPUT_POST, 'specialization', FILTER_SANITIZE_STRING));
@@ -43,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
     $website = trim(filter_input(INPUT_POST, 'website', FILTER_SANITIZE_URL));
 
-    // Validation
     if (empty($name)) {
         $errors['name'] = 'Hospital name is required';
     } elseif (strlen($name) < 3) {
@@ -72,14 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors['website'] = 'Please enter a valid website URL';
     }
 
-    // If no errors, update database
     if (empty($errors)) {
         $stmt = $conn->prepare("UPDATE hospitals SET name=?, location=?, specialization=?, contact_info=?, email=?, website=? WHERE hospital_id=?");
         $stmt->bind_param("ssssssi", $name, $location, $specialization, $contact, $email, $website, $hospital_id);
 
         if ($stmt->execute()) {
             $success = true;
-            // Update local hospital data for form
             $hospital = array_merge($hospital, [
                 'name' => $name,
                 'location' => $location,
@@ -106,27 +98,17 @@ function getFormValue($field, $default = '')
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Hospital | MindCare Admin</title>
-
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- CSS -->
     <link rel="stylesheet" href="css/update_hospital.css">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏥</text></svg>">
 </head>
 
 <body>
-    <!-- Navigation -->
     <nav class="admin-nav">
         <div class="nav-container">
             <a href="admin_dashboard.php" class="brand">
@@ -142,9 +124,7 @@ function getFormValue($field, $default = '')
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="container">
-        <!-- Header -->
         <div class="page-header">
             <div class="header-content">
                 <h1>
@@ -160,8 +140,6 @@ function getFormValue($field, $default = '')
                 </a>
             </div>
         </div>
-
-        <!-- Success Message -->
         <?php if ($success): ?>
             <div class="alert alert-success">
                 <div class="alert-icon">
@@ -176,8 +154,6 @@ function getFormValue($field, $default = '')
                 </a>
             </div>
         <?php endif; ?>
-
-        <!-- Error Messages -->
         <?php if (!empty($errors['database'])): ?>
             <div class="alert alert-error">
                 <div class="alert-icon">
@@ -189,11 +165,8 @@ function getFormValue($field, $default = '')
                 </div>
             </div>
         <?php endif; ?>
-
-        <!-- Update Form -->
         <div class="update-form-container">
             <form id="updateHospitalForm" class="update-form" method="POST" novalidate>
-                <!-- Basic Information Card -->
                 <div class="form-card">
                     <div class="card-header">
                         <h3>
@@ -203,7 +176,6 @@ function getFormValue($field, $default = '')
                     </div>
                     <div class="card-body">
                         <div class="form-grid">
-                            <!-- Hospital Name -->
                             <div class="form-group">
                                 <label for="name" class="form-label">
                                     <i class="fas fa-hospital"></i>
@@ -224,7 +196,6 @@ function getFormValue($field, $default = '')
                                 <?php endif; ?>
                             </div>
 
-                            <!-- Location -->
                             <div class="form-group">
                                 <label for="location" class="form-label">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -235,7 +206,6 @@ function getFormValue($field, $default = '')
                                     name="location"
                                     class="form-input <?php echo isset($errors['location']) ? 'error' : ''; ?>"
                                     value="<?php echo htmlspecialchars($hospital['location'] ?? ''); ?>"
-
                                     placeholder="Enter hospital location">
                                 <?php if (isset($errors['location'])): ?>
                                     <div class="form-error">
@@ -245,7 +215,6 @@ function getFormValue($field, $default = '')
                                 <?php endif; ?>
                             </div>
 
-                            <!-- Contact Field - Updated -->
                             <div class="form-group">
                                 <label for="contact" class="form-label">
                                     <i class="fas fa-phone"></i>
@@ -271,7 +240,6 @@ function getFormValue($field, $default = '')
                                 <?php endif; ?>
                             </div>
 
-                            <!-- Specialization Field - Updated -->
                             <div class="form-group">
                                 <label for="specialization" class="form-label">
                                     <i class="fas fa-stethoscope"></i>
@@ -315,7 +283,7 @@ function getFormValue($field, $default = '')
                             </div>
                         </div>
                     </div>
-                    <!-- Contact Information Card -->
+
                     <div class="form-card">
                         <div class="card-header">
                             <h3>
@@ -325,7 +293,6 @@ function getFormValue($field, $default = '')
                         </div>
                         <div class="card-body">
                             <div class="form-grid">
-                                <!-- Email -->
                                 <div class="form-group">
                                     <label for="email" class="form-label">
                                         <i class="fas fa-envelope"></i>
@@ -345,7 +312,6 @@ function getFormValue($field, $default = '')
                                     <?php endif; ?>
                                 </div>
 
-                                <!-- Website -->
                                 <div class="form-group">
                                     <label for="website" class="form-label">
                                         <i class="fas fa-globe"></i>
@@ -368,7 +334,6 @@ function getFormValue($field, $default = '')
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
                     <div class="form-actions">
                         <a href="admin_dashboard.php" class="btn btn-secondary">
                             <i class="fas fa-times"></i>
@@ -384,7 +349,6 @@ function getFormValue($field, $default = '')
     </div>
 
     <script>
-        // Show error for specific field
         function showFieldError(field, message) {
             field.classList.add('error');
 
@@ -394,14 +358,12 @@ function getFormValue($field, $default = '')
 
             field.parentElement.appendChild(errorDiv);
 
-            // Scroll to error
             errorDiv.scrollIntoView({
                 behavior: 'smooth',
                 block: 'center'
             });
         };
 
-        // Show general form error
         function showFormError(message) {
             const existingAlert = document.querySelector('.alert-error');
             if (existingAlert) {
@@ -423,7 +385,6 @@ function getFormValue($field, $default = '')
             const container = document.querySelector('.container');
             container.insertBefore(alertDiv, container.children[1]);
 
-            // Scroll to alert
             setTimeout(() => {
                 alertDiv.scrollIntoView({
                     behavior: 'smooth',
@@ -432,7 +393,6 @@ function getFormValue($field, $default = '')
             }, 100);
         };
 
-        // Smooth scroll for form cards
         document.querySelectorAll('.form-card .card-header').forEach(header => {
             header.addEventListener('click', function() {
                 const card = this.parentElement;

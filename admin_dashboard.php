@@ -266,10 +266,21 @@ $hospitals = $conn->query("SELECT * FROM hospitals");
                         </div>
                         <div class="form-group">
                             <label><i class="fas fa-phone"></i> Contact Info</label>
-                            <input type="text" name="contact" class="form-control" placeholder="Enter contact number" required>
+                            <input type="text" name="contact" class="form-control" placeholder="Enter contact number" pattern="[0-9]{10}" required>
                         </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email </label>
+                            <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-globe"></i> Website </label>
+                            <input type="website" name="website" class="form-control" placeholder="Enter website" required>
+                        </div>
+
                         <div class="form-group" style="grid-column: 1 / -1;">
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Hospital</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus" onclick="return confirm('Are you sure you want to remove this hospital?')"></i> Add Hospital</button>
                         </div>
                     </form>
                 </div>

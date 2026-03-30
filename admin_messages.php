@@ -99,6 +99,5 @@ $result = $conn->query("
             </div>
         <?php endif; ?>
     </div>
-
 </body>
 </html>

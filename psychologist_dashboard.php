@@ -2,15 +2,12 @@
 session_start();
 include 'db_connect.php';
 
-// Ensure the psychologist is logged in
 if (!isset($_SESSION['username'])) {
     header('Location: login.php');
     exit;
 }
 
 $username = $_SESSION['username'];
-
-// Fetch psychologist info
 $stmt = $conn->prepare("SELECT p_id, profile_picture FROM psychologist WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -24,12 +21,10 @@ if (!$psychologist_id) {
     exit;
 }
 
-// ----- Statistics -----
 $totalAppointments = $conn->query("SELECT COUNT(*) AS c FROM appointments WHERE p_id = '$psychologist_id'")->fetch_assoc()['c'];
 $pending = $conn->query("SELECT COUNT(*) AS c FROM appointments WHERE p_id = '$psychologist_id' AND status='Pending'")->fetch_assoc()['c'];
 $approved = $conn->query("SELECT COUNT(*) AS c FROM appointments WHERE p_id = '$psychologist_id' AND status='Approved'")->fetch_assoc()['c'];
 
-// Get total unread messages from patients
 $unreadQuery = $conn->query("
     SELECT COUNT(*) as unread 
     FROM messages m
@@ -40,8 +35,6 @@ $unreadQuery = $conn->query("
 ");
 $unreadRow = $unreadQuery->fetch_assoc();
 $unreadMessages = $unreadRow['unread'];
-
-// Recent appointments with unread message count
 $recentQuery = $conn->query("
     SELECT a.*, u.username, u.profile_picture as user_pic,
            (SELECT COUNT(*) FROM messages m 
@@ -55,24 +48,16 @@ $recentQuery = $conn->query("
     LIMIT 10
 ");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Psychologist Dashboard | MindCare</title>
-
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
     <link rel="stylesheet" href="css/psychologist_dashboard.css">
 
@@ -91,9 +76,7 @@ $recentQuery = $conn->query("
     </style>
 
 </head>
-
 <body>
-    <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo">MindCare Pro</div>
 
@@ -116,9 +99,7 @@ $recentQuery = $conn->query("
         </a>
     </div>
 
-    <!-- Main Content -->
     <div class="main">
-        <!-- Top Bar -->
         <div class="topbar">
             <div>
                 <h1>Welcome back, Dr. <?php echo htmlspecialchars($username); ?></h1>
@@ -135,7 +116,6 @@ $recentQuery = $conn->query("
             </div>
         </div>
 
-        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -178,14 +158,11 @@ $recentQuery = $conn->query("
             </div>
         </div>
 
-        <!-- Content Grid -->
         <div class="content-grid">
-            <!-- Appointments Table -->
             <div class="table-card">
                 <div class="table-header">
                     <h3>Recent Appointments</h3>
                 </div>
-
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -262,23 +239,17 @@ $recentQuery = $conn->query("
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-
-            // Auto-update form submission
             document.querySelectorAll('select[name="status"]').forEach(select => {
                 select.addEventListener('change', function() {
-
                     const btn = this.closest("form")?.querySelector('.btn-update');
-
                     if (btn) {
                         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                         btn.disabled = true;
                     }
-
                     this.form.submit();
                 });
             });
 
-            // Update time display
             function updateTime() {
                 const now = new Date();
                 const timeString = now.toLocaleTimeString('en-US', {
@@ -295,8 +266,6 @@ $recentQuery = $conn->query("
 
             updateTime();
             setInterval(updateTime, 60000);
-
-            // Check unread messages
             function checkUnreadMessages() {
                 fetch('check_unread_psych.php')
                     .then(response => response.json())
@@ -326,8 +295,6 @@ $recentQuery = $conn->query("
 
             checkUnreadMessages();
             setInterval(checkUnreadMessages, 10000);
-
-            // Mark messages read when opening chat
             document.querySelectorAll('.btn-chat').forEach(link => {
                 link.addEventListener('click', function() {
 
@@ -348,7 +315,5 @@ $recentQuery = $conn->query("
 
         });
     </script>
-
 </body>
-
 </html>

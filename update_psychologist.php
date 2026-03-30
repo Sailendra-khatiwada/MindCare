@@ -2,7 +2,6 @@
 session_start();
 include 'db_connect.php';
 
-// Ensure the admin is logged in
 if (!isset($_SESSION['username']) || $_SESSION['username'] != 'admin') {
     header('Location: login.php');
     exit;
@@ -37,8 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
     $contact_info = trim($_POST['contact_info']);
     $description = trim($_POST['description']);
     $experties = trim($_POST['AreaOfExperties']);
-
-    // Validation
     if (
         empty($username) || empty($email) || empty($specialization) || empty($location) ||
         empty($education) || empty($contact_info) || empty($description) || empty($experties)
@@ -51,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
     } elseif ($min_fee < 0 || $max_fee < 0 || $min_fee > $max_fee) {
         $error = "Invalid fee structure! Minimum fee cannot be greater than maximum fee.";
     } else {
-        // Check if email already exists (excluding current psychologist)
         $check_stmt = $conn->prepare("SELECT p_id FROM psychologist WHERE email = ? AND p_id != ?");
         $check_stmt->bind_param("si", $email, $p_id);
         $check_stmt->execute();
@@ -102,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
 
                 if ($update_stmt->execute()) {
                     $success = "Psychologist updated successfully!";
-                    // Refresh psychologist data
                     $refresh_stmt = $conn->prepare("SELECT * FROM psychologist WHERE p_id = ?");
                     $refresh_stmt->bind_param("i", $p_id);
                     $refresh_stmt->execute();
@@ -121,29 +116,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
 }
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Psychologist | MindCare Admin</title>
-
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
     <link rel="stylesheet" href="css/update_psychologist.css">
-
 </head>
 
 <body>
     <div class="container">
-        <!-- Header -->
         <header class="page-header">
             <a href="dashboard.php" class="brand">
                 <span class="brand-mark" aria-hidden="true">🕊️</span>
@@ -155,9 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
             </a>
         </header>
 
-        <!-- Form Container -->
         <div class="form-container">
-            <!-- Form Header -->
             <div class="form-header">
                 <h2>
                     <i class="fas fa-user-edit"></i>
@@ -166,7 +151,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                 <p>Update the details of this mental health professional</p>
             </div>
 
-            <!-- Alert Messages -->
             <?php if ($error): ?>
                 <div class="alert alert-error" id="errorAlert">
                     <i class="fas fa-exclamation-circle"></i>
@@ -181,7 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                 </div>
             <?php endif; ?>
 
-            <!-- Psychologist Info -->
             <?php if ($psychologist): ?>
                 <div class="psychologist-info">
                     <img src="<?php echo !empty($psychologist['profile_picture']) ? htmlspecialchars($psychologist['profile_picture']) : 'images/default-profile.jpg'; ?>"
@@ -196,10 +179,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                 </div>
             <?php endif; ?>
 
-            <!-- Update Form -->
             <form action="" method="POST" id="updateForm">
                 <div class="form-grid">
-                    <!-- Basic Information -->
                     <div class="form-group">
                         <label for="psychologist_name">
                             <i class="fas fa-user"></i> Full Name
@@ -271,7 +252,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                             placeholder="Enter education">
                     </div>
 
-                    <!-- Time Range -->
                     <div class="form-row full-width">
                         <div class="form-group">
                             <label for="office_start">
@@ -304,7 +284,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                         </div>
                     </div>
 
-                    <!-- Fee Range -->
                     <div class="form-row full-width">
                         <div class="form-group">
                             <label for="min_fee">
@@ -335,7 +314,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                         </div>
                     </div>
 
-                    <!-- Fee Display -->
                     <div class="full-width">
                         <div class="fee-display">
                             <span>Current Fee Range:</span>
@@ -343,7 +321,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                         </div>
                     </div>
 
-                    <!-- Contact Info -->
                     <div class="form-group">
                         <label for="contact_info">
                             <i class="fas fa-phone"></i> Contact Information
@@ -365,7 +342,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                         </div>
                     </div>
 
-                    <!-- Description -->
                     <div class="form-group full-width">
                         <label for="description">
                             <i class="fas fa-file-alt"></i> Professional Description
@@ -378,7 +354,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                             placeholder="Enter professional description"><?php echo htmlspecialchars($psychologist['description'] ?? ''); ?></textarea>
                     </div>
 
-                    <!-- Areas of Expertise -->
                     <div class="form-group full-width">
                         <label for="AreaOfExperties">
                             <i class="fas fa-bullseye"></i> Areas of Expertise
@@ -396,7 +371,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                     </div>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" class="submit-btn" id="submitBtn">
                     <i class="fas fa-save"></i>
                     Update Psychologist
@@ -410,7 +384,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
             const form = document.getElementById('updateForm');
             const submitBtn = document.getElementById('submitBtn');
 
-            // Form submission - just add loading state
             if (form) {
                 form.addEventListener('submit', function() {
                     // Show loading state only
@@ -419,7 +392,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['p_id'])) {
                 });
             }
 
-            // Auto-hide alerts after 5 seconds
             setTimeout(() => {
                 document.querySelectorAll('.alert').forEach(alert => {
                     alert.style.opacity = '0';

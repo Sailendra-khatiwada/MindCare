@@ -112,15 +112,15 @@
       <div class="testi-grid">
         <blockquote class="testi">
           <p>"This platform changed my life. The therapist listened and helped me through a hard time."</p>
-          <cite>- Sarah M.</cite>
+          <cite>- Rama Kh.</cite>
         </blockquote>
         <blockquote class="testi">
           <p>"I found the help I needed quickly and privately. Highly recommended!"</p>
-          <cite>- James L.</cite>
+          <cite>- Anish Ch.</cite>
         </blockquote>
         <blockquote class="testi">
           <p>"Caring professionals and easy booking system made all the difference for me."</p>
-          <cite>- Maria K.</cite>
+          <cite>- Rabi Ra.</cite>
         </blockquote>
       </div>
     </section>

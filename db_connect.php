@@ -1,11 +1,10 @@
 <?php
 $servername = "localhost";
-$username = "root";  
-$password = "";    
-$dbname = "mental_health_db"; 
+$username = "root";
+$password = "";
+$dbname = "mental_health_db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-?>
