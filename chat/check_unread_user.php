@@ -32,3 +32,4 @@ $row = $res->fetch_assoc();
 $unread = (int)$row['unread'];
 
 echo json_encode(['unread' => $unread]);
+?>

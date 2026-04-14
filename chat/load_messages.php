@@ -2,7 +2,6 @@
 session_start();
 include '../db_connect.php';
 
-/* Encryption settings */
 $secret_key = "my_super_secret_key_2026";
 $secret_iv  = "my_secret_iv_2026";
 $encrypt_method = "AES-256-CBC";
@@ -32,9 +31,6 @@ if ($isPsych) {
     $stmt->close();
 }
 
-/* DO NOT update delivered when user loads chat */
-
-/* -------- Fetch Messages -------- */
 $sql = "SELECT msg_id, sender_type, message, delivered, seen, created_at
         FROM messages
         WHERE appointment_id = ?
@@ -48,16 +44,12 @@ $result = $stmt->get_result();
 $messages = [];
 
 while ($row = $result->fetch_assoc()) {
-
-    // Decrypt message
     $row['message'] = openssl_decrypt($row['message'], $encrypt_method, $key, 0, $iv);
-
     $messages[] = $row;
 }
 
 $stmt->close();
 
-/* Output JSON */
 header("Content-Type: application/json");
 echo json_encode($messages);
 ?>

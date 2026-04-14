@@ -225,7 +225,7 @@ body {
 }
 
 .content-grid {
-    display: grid;
+    width: 100%;
     grid-template-columns: 2fr 1fr;
     gap: var(--space-lg);
     margin-bottom: var(--space-xl);
@@ -246,11 +246,18 @@ body {
     padding: 0 5px;
 }
 
-.sidebar .badge {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+.stat-card {
+    position: relative;
+}
+
+.notification-badge {
+    background: #ff4757;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 8px;
 }
 
 .btn-chat {

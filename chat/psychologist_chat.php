@@ -17,7 +17,6 @@ if (!checkAppointment($conn, $appointment_id, null, $p_id)) {
     die("Chat available after appointment approval.");
 }
 
-// Get user name for header
 $user_name = "";
 $sql = "SELECT u.username, u.profile_picture FROM appointments a 
         JOIN users u ON a.user_id = u.user_id 
@@ -42,8 +41,6 @@ if ($stmt) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat | MindCare</title>
-
-    <!-- Styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="s.css">
@@ -51,11 +48,7 @@ if ($stmt) {
 </head>
 
 <body>
-
-    <!-- Chat Container -->
     <div class="chat-container">
-
-        <!-- Chat Header -->
         <div class="chat-header">
             <div class="header-left">
                 <a href="../psychologist_dashboard.php" class="back-btn">
@@ -65,7 +58,7 @@ if ($stmt) {
 
                 <div class="psych-info">
                     <div class="psych-avatar">
-                         <?php echo strtoupper(substr($user_name, 0, 1)); ?>
+                        <?php echo strtoupper(substr($user_name, 0, 1)); ?>
                     </div>
                     <div class="psych-details">
                         <h2><?php echo htmlspecialchars($user_name); ?></h2>
@@ -77,10 +70,7 @@ if ($stmt) {
             </div>
 
         </div>
-
-        <!-- Chat Box -->
         <div id="chatBox" class="chat-box">
-
             <div id="welcomeMessage" class="welcome-message">
                 <div class="welcome-icon">
                     <i class="fas fa-comment-medical"></i>
@@ -94,7 +84,6 @@ if ($stmt) {
 
         </div>
 
-        <!-- Chat Input -->
         <div class="chat-input">
             <div style="flex: 1;">
                 <textarea
@@ -113,56 +102,45 @@ if ($stmt) {
 
     </div>
 
-   <script>
-    // Auto-resize textarea
-    function autoResize(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-    }
+    <script>
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
 
-    // Load chat messages
-    function loadChat() {
-        fetch("load_messages.php?appointment_id=<?php echo $appointment_id; ?>")
-            .then(res => res.json())
-            .then(messages => {
-                let box = document.getElementById("chatBox");
-                let atBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 50;
-
-                // Clear except welcome message
-                Array.from(box.children).forEach(child => {
-                    if (!child.id || child.id !== 'welcomeMessage') {
-                        child.remove();
-                    }
-                });
-
-                // Hide welcome message if we have messages
-                const welcomeMessage = document.getElementById('welcomeMessage');
-                if (messages.length > 0) {
-                    welcomeMessage.style.display = 'none';
-
-                    // Group messages by date
-                    let currentDate = null;
-                    messages.forEach((m) => {
-                        const timestamp = m.created_at ? new Date(m.created_at) : new Date();
-                        const messageDate = timestamp.toDateString();
-
-                        // Add date separator if date changed
-                        if (messageDate !== currentDate) {
-                            currentDate = messageDate;
-                            const dateDiv = document.createElement('div');
-                            dateDiv.className = 'chat-date';
-                            dateDiv.innerHTML = `<span class="date-label">${formatDate(timestamp)}</span>`;
-                            box.appendChild(dateDiv);
+        function loadChat() {
+            fetch("load_messages.php?appointment_id=<?php echo $appointment_id; ?>")
+                .then(res => res.json())
+                .then(messages => {
+                    let box = document.getElementById("chatBox");
+                    let atBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 50;
+                    Array.from(box.children).forEach(child => {
+                        if (!child.id || child.id !== 'welcomeMessage') {
+                            child.remove();
                         }
+                    });
 
-                        // Create message wrapper
-                        let wrapper = document.createElement("div");
-                        wrapper.classList.add("message-wrapper");
+                    const welcomeMessage = document.getElementById('welcomeMessage');
+                    if (messages.length > 0) {
+                        welcomeMessage.style.display = 'none';
+                        let currentDate = null;
+                        messages.forEach((m) => {
+                            const timestamp = m.created_at ? new Date(m.created_at) : new Date();
+                            const messageDate = timestamp.toDateString();
+                            if (messageDate !== currentDate) {
+                                currentDate = messageDate;
+                                const dateDiv = document.createElement('div');
+                                dateDiv.className = 'chat-date';
+                                dateDiv.innerHTML = `<span class="date-label">${formatDate(timestamp)}</span>`;
+                                box.appendChild(dateDiv);
+                            }
+                            let wrapper = document.createElement("div");
+                            wrapper.classList.add("message-wrapper");
 
-                        if (m.sender_type === "psychologist") {
-                            wrapper.classList.add("user");
+                            if (m.sender_type === "psychologist") {
+                                wrapper.classList.add("user");
 
-                            wrapper.innerHTML = `
+                                wrapper.innerHTML = `
                             <div class="msg user-msg">
                                 ${escapeHtml(m.message)}
                                 <div class="message-time">
@@ -175,10 +153,10 @@ if ($stmt) {
                                 ${m.seen==1 ? "Seen" : m.delivered==1 ? "Delivered" : "Sending..."}
                             </div>
                         `;
-                        } else {
-                            wrapper.classList.add("psych");
+                            } else {
+                                wrapper.classList.add("psych");
 
-                            wrapper.innerHTML = `
+                                wrapper.innerHTML = `
                             <div class="msg psych-msg">
                                 ${escapeHtml(m.message)}
                                 <div class="message-time">
@@ -187,92 +165,77 @@ if ($stmt) {
                                 </div>
                             </div>
                         `;
-                        }
+                            }
 
-                        box.appendChild(wrapper);
+                            box.appendChild(wrapper);
+                        });
+                    } else {
+                        welcomeMessage.style.display = 'block';
+                    }
+
+                    if (atBottom) {
+                        setTimeout(() => {
+                            box.scrollTop = box.scrollHeight;
+                        }, 100);
+                    }
+
+                    fetch("mark_seen_psych.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: "appointment_id=<?php echo $appointment_id; ?>"
+                    }).then(() => {
+                        updateMessageStatus();
                     });
-                } else {
-                    welcomeMessage.style.display = 'block';
-                }
+                })
+                .catch(error => {
+                    console.error('Error loading messages:', error);
+                });
+        }
 
-                // Scroll to bottom if user was near bottom
-                if (atBottom) {
-                    setTimeout(() => {
-                        box.scrollTop = box.scrollHeight;
-                    }, 100);
-                }
+        function sendMsg() {
+            let messageInput = document.getElementById("msg");
+            let message = messageInput.value.trim();
 
-                // Mark patient messages as seen
-                fetch("mark_seen_psych.php", {
+            if (message === "") return;
+            const sendButton = document.getElementById('sendButton');
+            const originalIcon = sendButton.innerHTML;
+            sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            sendButton.disabled = true;
+            const tempId = Date.now();
+            addTemporaryMessage(message, tempId);
+            fetch("send_message.php", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
-                    body: "appointment_id=<?php echo $appointment_id; ?>"
-                }).then(() => {
-                    // Update status indicators
-                    updateMessageStatus();
+                    body: "appointment_id=<?php echo $appointment_id; ?>&sender=psychologist&message=" + encodeURIComponent(message)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        messageInput.value = "";
+                        messageInput.style.height = 'auto';
+                        removeTemporaryMessage(tempId);
+                        setTimeout(loadChat, 500);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    updateTemporaryMessageStatus(tempId, 'error');
+                })
+                .finally(() => {
+                    sendButton.innerHTML = originalIcon;
+                    sendButton.disabled = false;
                 });
-            })
-            .catch(error => {
-                console.error('Error loading messages:', error);
-            });
-    }
+        }
 
-    // Send message
-    function sendMsg() {
-        let messageInput = document.getElementById("msg");
-        let message = messageInput.value.trim();
-
-        if (message === "") return;
-
-        // Disable send button and show sending state
-        const sendButton = document.getElementById('sendButton');
-        const originalIcon = sendButton.innerHTML;
-        sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        sendButton.disabled = true;
-
-        // Add temporary message to UI
-        const tempId = Date.now();
-        addTemporaryMessage(message, tempId);
-
-        fetch("send_message.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: "appointment_id=<?php echo $appointment_id; ?>&sender=psychologist&message=" + encodeURIComponent(message)
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Clear input
-                    messageInput.value = "";
-                    messageInput.style.height = 'auto';
-
-                    // Remove temporary message
-                    removeTemporaryMessage(tempId);
-
-                    // Reload messages
-                    setTimeout(loadChat, 500);
-                }
-            })
-            .catch(error => {
-                console.error('Error sending message:', error);
-                updateTemporaryMessageStatus(tempId, 'error');
-            })
-            .finally(() => {
-                sendButton.innerHTML = originalIcon;
-                sendButton.disabled = false;
-            });
-    }
-
-    // Add temporary message to UI
-    function addTemporaryMessage(message, tempId) {
-        const box = document.getElementById("chatBox");
-        const wrapper = document.createElement("div");
-        wrapper.id = `temp-${tempId}`;
-        wrapper.className = "message-wrapper user";
-        wrapper.innerHTML = `
+        function addTemporaryMessage(message, tempId) {
+            const box = document.getElementById("chatBox");
+            const wrapper = document.createElement("div");
+            wrapper.id = `temp-${tempId}`;
+            wrapper.className = "message-wrapper user";
+            wrapper.innerHTML = `
             <div class="msg user-msg">
                 ${escapeHtml(message)}
                 <div class="message-time">
@@ -285,97 +248,87 @@ if ($stmt) {
                 Sending...
             </div>
         `;
-        box.appendChild(wrapper);
-        box.scrollTop = box.scrollHeight;
-    }
-
-    // Remove temporary message
-    function removeTemporaryMessage(tempId) {
-        const element = document.getElementById(`temp-${tempId}`);
-        if (element) {
-            element.remove();
+            box.appendChild(wrapper);
+            box.scrollTop = box.scrollHeight;
         }
-    }
 
-    // Update temporary message status
-    function updateTemporaryMessageStatus(tempId, status) {
-        const element = document.getElementById(`temp-${tempId}`);
-        if (element) {
-            const statusDiv = element.querySelector('.status');
-            if (status === 'error') {
-                statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to send';
-                statusDiv.className = 'status sending';
-                statusDiv.style.color = '#dc3545';
+        function removeTemporaryMessage(tempId) {
+            const element = document.getElementById(`temp-${tempId}`);
+            if (element) {
+                element.remove();
             }
         }
-    }
 
-    // Update message status
-    function updateMessageStatus() {
-        document.querySelectorAll('.status.sending').forEach(status => {
-            setTimeout(() => {
-                status.innerHTML = '<i class="fas fa-check-double"></i> Delivered';
-                status.className = 'status delivered';
-            }, 1000);
+        function updateTemporaryMessageStatus(tempId, status) {
+            const element = document.getElementById(`temp-${tempId}`);
+            if (element) {
+                const statusDiv = element.querySelector('.status');
+                if (status === 'error') {
+                    statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to send';
+                    statusDiv.className = 'status sending';
+                    statusDiv.style.color = '#dc3545';
+                }
+            }
+        }
 
-            setTimeout(() => {
-                status.innerHTML = '<i class="fas fa-eye"></i> Seen';
-                status.className = 'status seen';
-            }, 3000);
-        });
-    }
+        function updateMessageStatus() {
+            document.querySelectorAll('.status.sending').forEach(status => {
+                setTimeout(() => {
+                    status.innerHTML = '<i class="fas fa-check-double"></i> Delivered';
+                    status.className = 'status delivered';
+                }, 1000);
 
-    // Format time
-    function formatTime(date) {
-        return date.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
-
-    // Format date
-    function formatDate(date) {
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-
-        if (date.toDateString() === today.toDateString()) {
-            return 'Today';
-        } else if (date.toDateString() === yesterday.toDateString()) {
-            return 'Yesterday';
-        } else {
-            return date.toLocaleDateString([], {
-                weekday: 'long',
-                month: 'short',
-                day: 'numeric'
+                setTimeout(() => {
+                    status.innerHTML = '<i class="fas fa-eye"></i> Seen';
+                    status.className = 'status seen';
+                }, 3000);
             });
         }
-    }
 
-    // Escape HTML to prevent XSS
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // Send message on Enter key (Shift+Enter for new line)
-    document.getElementById('msg').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMsg();
+        function formatTime(date) {
+            return date.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
-    });
 
-    // Initial load
-    loadChat();
+        function formatDate(date) {
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
 
-    setInterval(loadChat, 400);
+            if (date.toDateString() === today.toDateString()) {
+                return 'Today';
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return 'Yesterday';
+            } else {
+                return date.toLocaleDateString([], {
+                    weekday: 'long',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+        }
 
-    // Focus input on load
-    window.addEventListener('load', () => {
-        document.getElementById('msg').focus();
-    });
-</script>
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.getElementById('msg').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMsg();
+            }
+        });
+
+        loadChat();
+        setInterval(loadChat, 400);
+        window.addEventListener('load', () => {
+            document.getElementById('msg').focus();
+        });
+    </script>
 </body>
+
 </html>

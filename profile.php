@@ -13,6 +13,9 @@ $error = '';
 $success = '';
 $user = [];
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -28,11 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $error = "Security token mismatch!";
     } else {
-
         $action = $_POST['action'] ?? 'update_profile';
+
         if ($action === 'update_profile') {
             $new_username = trim($_POST['username']);
             $email = trim($_POST['email']);
+
             if (empty($new_username)) {
                 $error = "Username cannot be empty.";
             } else {
@@ -46,35 +50,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->close();
 
                 if (empty($error)) {
-
                     $profile_picture = $user['profile_picture'];
-                    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
-                        $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                        $file_type = mime_content_type($_FILES['profile_picture']['tmp_name']);
-                        if (!in_array($file_type, $allowed)) {
-                            $error = "Invalid image type.";
-                        } elseif ($_FILES['profile_picture']['size'] > 5 * 1024 * 1024) {
+
+                    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+                        $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        $file_tmp = $_FILES['profile_picture']['tmp_name'];
+                        $file_type = mime_content_type($file_tmp);
+                        $file_size = $_FILES['profile_picture']['size'];
+
+                        if (!in_array($file_type, $allowed_types)) {
+                            $error = "Invalid image type. Only JPG, PNG, GIF, and WebP are allowed.";
+                        } elseif ($file_size > 5 * 1024 * 1024) {
                             $error = "Image must be under 5MB.";
                         } else {
                             $upload_dir = "uploads/profile_pictures/";
                             if (!is_dir($upload_dir)) {
-                                mkdir($upload_dir, 0755, true);
-                            }
-                            $ext = pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION);
-                            $filename = "profile_" . $user_id . "_" . time() . "." . $ext;
-                            $destination = $upload_dir . $filename;
-
-                            if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $destination)) {
-                                if ($profile_picture && file_exists($profile_picture)) {
-                                    unlink($profile_picture);
+                                if (!mkdir($upload_dir, 0755, true)) {
+                                    $error = "Failed to create upload directory.";
                                 }
-                                $profile_picture = $destination;
+                            }
+
+                            if (empty($error)) {
+                                $file_extension = pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION);
+                                $new_filename = "profile_" . $user_id . "_" . time() . "." . $file_extension;
+                                $destination = $upload_dir . $new_filename;
+
+                                if (move_uploaded_file($file_tmp, $destination)) {
+                                    if (!empty($profile_picture) && file_exists($profile_picture)) {
+                                        @unlink($profile_picture);
+                                    }
+                                    $profile_picture = $destination;
+                                } else {
+                                    $error = "Failed to upload image. Please check folder permissions.";
+                                }
                             }
                         }
+                    } elseif (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] !== UPLOAD_ERR_NO_FILE) {
+                        $upload_errors = [
+                            UPLOAD_ERR_INI_SIZE => "File exceeds upload_max_filesize.",
+                            UPLOAD_ERR_FORM_SIZE => "File exceeds MAX_FILE_SIZE.",
+                            UPLOAD_ERR_PARTIAL => "File was only partially uploaded.",
+                            UPLOAD_ERR_NO_TMP_DIR => "Missing temporary folder.",
+                            UPLOAD_ERR_CANT_WRITE => "Failed to write file to disk.",
+                            UPLOAD_ERR_EXTENSION => "File upload stopped by extension."
+                        ];
+                        $error_code = $_FILES['profile_picture']['error'];
+                        $error = isset($upload_errors[$error_code]) ? $upload_errors[$error_code] : "Unknown upload error.";
                     }
+
                     if (empty($error)) {
                         $stmt = $conn->prepare("UPDATE users SET username=?, email=?, profile_picture=? WHERE user_id=?");
                         $stmt->bind_param("sssi", $new_username, $email, $profile_picture, $user_id);
+
                         if ($stmt->execute()) {
                             $_SESSION['username'] = $new_username;
                             $success = "Profile updated successfully!";
@@ -84,13 +111,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         } else {
                             $error = "Update failed: " . $stmt->error;
                         }
-
                         $stmt->close();
                     }
                 }
             }
-        }
-            elseif ($action === 'change_password') {
+        } elseif ($action === 'change_password') {
             $current = $_POST['current_password'];
             $new = $_POST['new_password'];
             $confirm = $_POST['confirm_password'];
@@ -110,9 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->close();
 
                 if (password_verify($current, $data['password'])) {
-
                     $hashed = password_hash($new, PASSWORD_BCRYPT);
-
                     $stmt = $conn->prepare("UPDATE users SET password=? WHERE user_id=?");
                     $stmt->bind_param("si", $hashed, $user_id);
 
@@ -121,7 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     } else {
                         $error = "Password update failed.";
                     }
-
                     $stmt->close();
                 } else {
                     $error = "Current password incorrect.";
@@ -145,7 +167,6 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $medication_count = $stmt->get_result()->fetch_assoc()['total'];
 $stmt->close();
-
 ?>
 
 <!DOCTYPE html>
@@ -176,7 +197,6 @@ $stmt->close();
                 <a href="profile.php" class="nav-link active">
                     <i class="fas fa-user"></i> Profile
                 </a>
-
             </div>
         </div>
     </header>
@@ -215,9 +235,8 @@ $stmt->close();
                                     : 'images/default-profile.jpg'; ?>"
                         alt="Profile Picture">
 
-                    <label class="upload-overlay" for="photoUpload" title="Change Profile Picture">
+                    <label class="upload-overlay" for="photoUploadInput" title="Change Profile Picture">
                         <i class="fas fa-camera"></i>
-                        <input type="file" id="photoUpload" name="profile_picture" accept="image/*">
                     </label>
                 </div>
 
@@ -260,6 +279,8 @@ $stmt->close();
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="action" value="update_profile">
 
+                        <input type="file" id="photoUploadInput" name="profile_picture" accept="image/*" style="display: none;">
+
                         <h3 class="section-title">
                             <i class="fas fa-user"></i>
                             Personal Information
@@ -294,7 +315,6 @@ $stmt->close();
                         </div>
 
                         <div class="form-row">
-
                             <div class="form-group">
                                 <label>Member Since</label>
                                 <div class="input-with-icon">
@@ -380,7 +400,6 @@ $stmt->close();
                             </button>
                         </div>
                     </form>
-
                 </div>
 
                 <div class="danger-zone">
@@ -392,13 +411,11 @@ $stmt->close();
                     </button>
                 </div>
             </div>
-
         </div>
 
         <a href="dashboard.php" class="back-link">
             <i class="fas fa-arrow-left"></i> Back to Dashboard
         </a>
-
     </div>
 
     <script>
@@ -412,7 +429,17 @@ $stmt->close();
             });
         });
 
-        document.getElementById('photoUpload').addEventListener('change', function() {
+        const uploadLabel = document.querySelector('.upload-overlay');
+        const fileInput = document.getElementById('photoUploadInput');
+
+        if (uploadLabel && fileInput) {
+            uploadLabel.addEventListener('click', function(e) {
+                e.preventDefault();
+                fileInput.click();
+            });
+        }
+
+        fileInput.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -421,11 +448,13 @@ $stmt->close();
                     this.value = '';
                     return;
                 }
+
                 if (file.size > 5 * 1024 * 1024) {
                     alert('File size must be less than 5MB.');
                     this.value = '';
                     return;
                 }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('previewImg').src = e.target.result;
@@ -437,7 +466,7 @@ $stmt->close();
         function checkPasswordStrength(password) {
             let strength = 0;
             const requirements = {
-                length: password.length >= 6,
+                length: password.length >= 8,
                 uppercase: /[A-Z]/.test(password),
                 lowercase: /[a-z]/.test(password),
                 number: /\d/.test(password),
@@ -447,6 +476,7 @@ $stmt->close();
             Object.values(requirements).forEach(met => {
                 if (met) strength += 20;
             });
+
             const strengthMeter = document.getElementById('strength-meter-fill');
             const strengthText = document.getElementById('strength-text');
 
@@ -487,6 +517,7 @@ $stmt->close();
                 message.style.display = 'block';
             }
         }
+
         const newPasswordInput = document.getElementById('new-password');
         const confirmPasswordInput = document.getElementById('confirm-password');
 
@@ -508,13 +539,13 @@ $stmt->close();
                 const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
                 submitBtn.disabled = true;
+
                 setTimeout(() => {
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 }, 5000);
 
                 if (this.id === 'security-form') {
-                    const currentPassword = document.getElementById('current-password').value;
                     const newPassword = document.getElementById('new-password').value;
                     const confirmPassword = document.getElementById('confirm-password').value;
 
@@ -528,7 +559,7 @@ $stmt->close();
 
                     if (newPassword.length < 8) {
                         e.preventDefault();
-                        alert('New password must be at least 6 characters long.');
+                        alert('New password must be at least 8 characters long.');
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                         return;
@@ -539,59 +570,15 @@ $stmt->close();
 
         document.getElementById('deleteAccountBtn').addEventListener('click', function() {
             if (confirm('⚠️ WARNING: This will permanently delete your account and all associated data.\n\nThis action cannot be undone. Are you sure you want to proceed?')) {
-                if (confirm('To confirm, please type "DELETE" to proceed:')) {
-                    const userInput = prompt('Type "DELETE" to confirm account deletion:');
-                    if (userInput === 'DELETE') {
-                        alert('Account deletion initiated. This feature would delete your account in a real application.');
-                        // window.location.href = 'delete_account.php';
-                    } else {
-                        alert('Account deletion cancelled.');
-                    }
+                const userInput = prompt('Type "DELETE" to confirm account deletion:');
+                if (userInput === 'DELETE') {
+                    alert('Account deletion initiated. This feature would delete your account in a real application.');
+                    // window.location.href = 'delete_account.php';
+                } else {
+                    alert('Account deletion cancelled.');
                 }
             }
         });
-        const brandMark = document.querySelector('.brand-mark');
-        if (brandMark) {
-            setInterval(() => {
-                brandMark.style.animation = 'float 3s ease-in-out infinite';
-            }, 100);
-        }
-        let saveTimeout;
-        document.querySelectorAll('.form-control').forEach(input => {
-            input.addEventListener('input', function() {
-                clearTimeout(saveTimeout);
-                saveTimeout = setTimeout(() => {
-                    const indicator = document.createElement('div');
-                    indicator.style.cssText = `
-                        position: fixed;
-                        bottom: 20px;
-                        right: 20px;
-                        background: var(--success);
-                        color: white;
-                        padding: 0.5rem 1rem;
-                        border-radius: var(--radius-md);
-                        box-shadow: var(--shadow-md);
-                        z-index: 1000;
-                        animation: fadeIn 0.3s ease-out;
-                    `;
-                    indicator.textContent = 'Auto-saving...';
-                    document.body.appendChild(indicator);
-
-                    setTimeout(() => {
-                        indicator.style.animation = 'fadeOut 0.3s ease-out forwards';
-                        setTimeout(() => indicator.remove(), 300);
-                    }, 2000);
-                }, 2000);
-            });
-        });
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                from { opacity: 1; transform: translateY(0); }
-                to { opacity: 0; transform: translateY(20px); }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 

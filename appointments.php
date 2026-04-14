@@ -54,7 +54,7 @@ $psychologists = $conn->query("
 
         <div class="search-filter-bar">
             <div class="search-container">
-                <input type="text" id="search-location" class="search-input" placeholder="Search by city, state, or zip code..." onkeyup="filterLocation()">
+                <input type="text" id="search-location" class="search-input" placeholder="Search by locations..." onkeyup="filterLocation()">
                 <button class="search-btn" onclick="filterLocation()">
                     <i class="fas fa-search"></i> Search
                 </button>

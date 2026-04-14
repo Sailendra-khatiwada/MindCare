@@ -11,6 +11,7 @@ if (!isset($_GET['appointment_id'])) {
     die("Appointment missing.");
 }
 
+
 $appointment_id = $_GET['appointment_id'];
 $user_id = $_SESSION['user_id'];
 
@@ -18,7 +19,6 @@ if (!checkAppointment($conn, $appointment_id, $user_id, null)) {
     die("Chat available after appointment approval.");
 }
 
-// Get psychologist name for header
 $psych_name = "";
 $sql = "SELECT p.username FROM appointments a JOIN psychologist p ON a.p_id = p.p_id WHERE a.appointment_id = ? AND a.user_id = ?";
 $stmt = $conn->prepare($sql);
@@ -35,13 +35,10 @@ if ($stmt) {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat | MindCare</title>
-
-    <!-- Styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="s.css">
@@ -49,11 +46,7 @@ if ($stmt) {
 </head>
 
 <body>
-
-    <!-- Chat Container -->
     <div class="chat-container">
-
-        <!-- Chat Header -->
         <div class="chat-header">
             <div class="header-left">
                 <a href="messages_list_user.php" class="back-btn">
@@ -76,10 +69,7 @@ if ($stmt) {
             </div>
 
         </div>
-
-        <!-- Chat Box -->
         <div id="chatBox" class="chat-box">
-
             <div id="welcomeMessage" class="welcome-message">
                 <div class="welcome-icon">
                     <i class="fas fa-comment-medical"></i>
@@ -93,7 +83,6 @@ if ($stmt) {
 
         </div>
 
-        <!-- Chat Input -->
         <div class="chat-input">
             <div style="flex: 1;">
                 <textarea
@@ -113,40 +102,28 @@ if ($stmt) {
     </div>
 
     <script>
-        // Auto-resize textarea
         function autoResize(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
         }
-
-        // Load chat messages
         function loadChat() {
             fetch("load_messages.php?appointment_id=<?php echo $appointment_id; ?>")
                 .then(res => res.json())
                 .then(messages => {
                     let box = document.getElementById("chatBox");
                     let atBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 50;
-
-                    // Clear except welcome message and typing indicator
                     Array.from(box.children).forEach(child => {
                         if (!child.id || !['welcomeMessage', 'typingIndicator'].includes(child.id)) {
                             child.remove();
                         }
                     });
-
-                    // Hide welcome message if we have messages
                     const welcomeMessage = document.getElementById('welcomeMessage');
                     if (messages.length > 0) {
                         welcomeMessage.style.display = 'none';
-
-                        // Group messages by date
                         let currentDate = null;
                         messages.forEach((m, index) => {
-                            // Use created_at timestamp from database
                             const timestamp = m.created_at ? new Date(m.created_at) : new Date();
                             const messageDate = timestamp.toDateString();
-
-                            // Add date separator if date changed
                             if (messageDate !== currentDate) {
                                 currentDate = messageDate;
                                 const dateDiv = document.createElement('div');
@@ -154,8 +131,6 @@ if ($stmt) {
                                 dateDiv.innerHTML = `<span class="date-label">${formatDate(timestamp)}</span>`;
                                 box.appendChild(dateDiv);
                             }
-
-                            // Create message wrapper
                             let wrapper = document.createElement("div");
                             wrapper.classList.add("message-wrapper");
 
@@ -194,15 +169,12 @@ if ($stmt) {
                     } else {
                         welcomeMessage.style.display = 'block';
                     }
-
-                    // Scroll to bottom if user was near bottom
                     if (atBottom) {
                         setTimeout(() => {
                             box.scrollTop = box.scrollHeight;
                         }, 100);
                     }
 
-                    // Mark psychologist messages as seen
                     fetch("mark_seen.php", {
                         method: "POST",
                         headers: {
@@ -210,7 +182,6 @@ if ($stmt) {
                         },
                         body: "appointment_id=<?php echo $appointment_id; ?>"
                     }).then(() => {
-                        // Update status indicators
                         updateMessageStatus();
                     });
                 })
@@ -219,20 +190,15 @@ if ($stmt) {
                 });
         }
 
-        // Send message
         function sendMsg() {
             let messageInput = document.getElementById("msg");
             let message = messageInput.value.trim();
 
             if (message === "") return;
-
-            // Disable send button and show sending state
             const sendButton = document.getElementById('sendButton');
             const originalIcon = sendButton.innerHTML;
             sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             sendButton.disabled = true;
-
-            // Add temporary message to UI
             const tempId = Date.now();
             addTemporaryMessage(message, tempId);
 
@@ -245,30 +211,21 @@ if ($stmt) {
                 })
                 .then(response => {
                     if (response.ok) {
-                        // Clear input
                         messageInput.value = "";
                         messageInput.style.height = 'auto';
-
-                        // Remove temporary message
                         removeTemporaryMessage(tempId);
-
-                        // Reload messages to get actual message with ID
                         setTimeout(loadChat, 500);
                     }
                 })
                 .catch(error => {
                     console.error('Error sending message:', error);
-                    // Update temporary message status to error
                     updateTemporaryMessageStatus(tempId, 'error');
                 })
                 .finally(() => {
-                    // Re-enable send button
                     sendButton.innerHTML = originalIcon;
                     sendButton.disabled = false;
                 });
         }
-
-        // Add temporary message to UI
         function addTemporaryMessage(message, tempId) {
             const box = document.getElementById("chatBox");
             const wrapper = document.createElement("div");
@@ -290,16 +247,12 @@ if ($stmt) {
             box.appendChild(wrapper);
             box.scrollTop = box.scrollHeight;
         }
-
-        // Remove temporary message
         function removeTemporaryMessage(tempId) {
             const element = document.getElementById(`temp-${tempId}`);
             if (element) {
                 element.remove();
             }
         }
-
-        // Update temporary message status
         function updateTemporaryMessageStatus(tempId, status) {
             const element = document.getElementById(`temp-${tempId}`);
             if (element) {
@@ -312,8 +265,6 @@ if ($stmt) {
             }
         }
 
-
-        // Format time
         function formatTime(date) {
             return date.toLocaleTimeString([], {
                 hour: '2-digit',
@@ -321,7 +272,6 @@ if ($stmt) {
             });
         }
 
-        // Format date
         function formatDate(date) {
             const today = new Date();
             const yesterday = new Date(today);
@@ -339,15 +289,12 @@ if ($stmt) {
                 });
             }
         }
-
-        // Escape HTML to prevent XSS
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Send message on Enter key (Shift+Enter for new line)
         document.getElementById('msg').addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -355,25 +302,17 @@ if ($stmt) {
             }
         });
 
-        // Initial load
         loadChat();
 
         setInterval(loadChat, 400);
-
-        // Focus input on load
         window.addEventListener('load', () => {
             document.getElementById('msg').focus();
         });
-
-        // Add scroll to bottom button when scrolled up
         let scrollTimeout;
         const chatBox = document.getElementById('chatBox');
         chatBox.addEventListener('scroll', () => {
             clearTimeout(scrollTimeout);
-
-            // Show scroll to bottom button if not near bottom
             if (chatBox.scrollTop + chatBox.clientHeight < chatBox.scrollHeight - 200) {
-                // You could add a "scroll to bottom" button here
             }
         });
     </script>

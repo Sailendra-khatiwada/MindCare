@@ -1,11 +1,11 @@
 <?php
 session_start();
-header('Content-Type: application/json');
-
 include '../db_connect.php';
 
+header('Content-Type: application/json');
+
 if (!isset($_SESSION['p_id'])) {
-    echo json_encode(['error' => 'not_logged_in']);
+    echo json_encode(['unread' => 0]);
     exit;
 }
 
@@ -21,10 +21,6 @@ $sql = "
 ";
 
 $stmt = $conn->prepare($sql);
-if (!$stmt) {
-    echo json_encode(['error' => 'sql_prepare_failed', 'details' => $conn->error]);
-    exit;
-}
 $stmt->bind_param("i", $p_id);
 $stmt->execute();
 $res = $stmt->get_result();

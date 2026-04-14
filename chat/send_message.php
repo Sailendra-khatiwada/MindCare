@@ -2,7 +2,7 @@
 session_start();
 include '../db_connect.php';
 
-$secret_key = "my_super_secret_key_2026";  
+$secret_key = "my_super_secret_key_2026";
 $secret_iv  = "my_secret_iv_2026";
 $encrypt_method = "AES-256-CBC";
 
@@ -18,16 +18,18 @@ $message = trim($_POST['message']);
 $sender = $_POST['sender'];
 
 if ($sender == "user") {
-    if (!isset($_SESSION['user_id'])) { die("Not logged in"); }
+    if (!isset($_SESSION['user_id'])) {
+        die("Not logged in");
+    }
     $sender_type = "user";
     $sender_id   = $_SESSION['user_id'];
-}
-elseif ($sender == "psychologist") {
-    if (!isset($_SESSION['p_id'])) { die("Not logged in"); }
+} elseif ($sender == "psychologist") {
+    if (!isset($_SESSION['p_id'])) {
+        die("Not logged in");
+    }
     $sender_type = "psychologist";
     $sender_id   = $_SESSION['p_id'];
-}
-else {
+} else {
     die("Invalid sender");
 }
 
@@ -44,4 +46,3 @@ if ($stmt->execute()) {
 } else {
     echo "ERROR: " . $stmt->error;
 }
-?>

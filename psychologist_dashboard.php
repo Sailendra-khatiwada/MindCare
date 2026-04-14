@@ -35,6 +35,7 @@ $unreadQuery = $conn->query("
 ");
 $unreadRow = $unreadQuery->fetch_assoc();
 $unreadMessages = $unreadRow['unread'];
+
 $recentQuery = $conn->query("
     SELECT a.*, u.username, u.profile_picture as user_pic,
            (SELECT COUNT(*) FROM messages m 
@@ -57,24 +58,90 @@ $recentQuery = $conn->query("
     <title>Psychologist Dashboard | MindCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
     <link rel="stylesheet" href="css/psychologist_dashboard.css">
 
     <style>
-        .stat-card:nth-child(4)::after {
+        .notification-badge {
+            background: #ff4757;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .stat-card {
+            position: relative;
+        }
+        
+        .stat-card.has-unread::after {
             content: '';
             position: absolute;
             top: 10px;
             right: 10px;
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             background-color: #ff4757;
             border-radius: 50%;
-            display: <?php echo $unreadMessages > 0 ? 'block' : 'none'; ?>;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+            cursor: pointer;
+            border-left: 4px solid #4a7b9d;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .notification-toast button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0 0.5rem;
+        }
+        
+        .notification-toast button:hover {
+            color: #2c3e50;
+        }
+        
+        .new-message-row {
+            animation: highlight 1s ease-out;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: rgba(74, 123, 157, 0.2); }
+            100% { background-color: transparent; }
         }
     </style>
-
 </head>
 <body>
     <div class="sidebar">
@@ -83,9 +150,7 @@ $recentQuery = $conn->query("
         <a href="psychologist_dashboard.php" class="active">
             <i class="fas fa-chart-line"></i>
             <span>Dashboard</span>
-            <?php if ($unreadMessages > 0): ?>
-                <span class="badge"><?php echo $unreadMessages; ?></span>
-            <?php endif; ?>
+            </span>
         </a>
 
         <a href="manage_psychologist_profile.php">
@@ -103,7 +168,7 @@ $recentQuery = $conn->query("
         <div class="topbar">
             <div>
                 <h1>Welcome back, Dr. <?php echo htmlspecialchars($username); ?></h1>
-                <p style="color: var(--medium-gray); margin-top: 0.25rem;">Here's what's happening with your practice today</p>
+                <p style="color: #6c757d; margin-top: 0.25rem;">Here's what's happening with your practice today</p>
             </div>
 
             <div class="user-profile">
@@ -147,7 +212,7 @@ $recentQuery = $conn->query("
                 </div>
             </div>
 
-            <div class="stat-card">
+            <div class="stat-card" id="unreadStatCard">
                 <div class="stat-icon">
                     <i class="fas fa-comments"></i>
                 </div>
@@ -177,7 +242,7 @@ $recentQuery = $conn->query("
                         <tbody>
                             <?php if ($recentQuery->num_rows > 0): ?>
                                 <?php while ($row = $recentQuery->fetch_assoc()): ?>
-                                    <tr>
+                                    <tr id="appointment-<?= $row['appointment_id']; ?>">
                                         <td>
                                             <div class="user-cell">
                                                 <img src="<?php echo !empty($row['user_pic']) ? htmlspecialchars($row['user_pic']) : 'images/default-user.jpg'; ?>"
@@ -205,11 +270,12 @@ $recentQuery = $conn->query("
 
                                                 <?php if (strtolower(trim($row['status'])) === 'approved'): ?>
                                                     <a href="chat/psychologist_chat.php?appointment_id=<?= $row['appointment_id']; ?>"
-                                                        class="action-btn btn-chat">
+                                                        class="action-btn btn-chat" data-appointment="<?= $row['appointment_id']; ?>">
                                                         <i class="fas fa-comments"></i> Chat
-                                                        <?php if ($row['unread_count'] > 0): ?>
-                                                            <span class="badge" id="badge-<?= $row['appointment_id']; ?>"><?= $row['unread_count']; ?></span>
-                                                        <?php endif; ?>
+                                                        <span class="notification-badge chat-badge" id="badge-<?= $row['appointment_id']; ?>" 
+                                                              style="display: <?= $row['unread_count'] > 0 ? 'inline-block' : 'none'; ?>">
+                                                            <?= $row['unread_count']; ?>
+                                                        </span>
                                                     </a>
                                                 <?php endif; ?>
                                             </div>
@@ -233,87 +299,213 @@ $recentQuery = $conn->query("
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll('select[name="status"]').forEach(select => {
-                select.addEventListener('change', function() {
-                    const btn = this.closest("form")?.querySelector('.btn-update');
-                    if (btn) {
-                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                        btn.disabled = true;
+   <script>
+    (function() {
+        const MESSAGE_COUNT = document.getElementById('unreadCount');
+        const STAT_CARD = document.getElementById('unreadStatCard');
+        let lastUnread = <?php echo $unreadMessages; ?>;
+        let pollingInterval = 3000; // Check every 3 seconds
+        
+        // Store initial unread counts for each conversation
+        let previousUnreadCounts = {};
+        document.querySelectorAll('.chat-badge').forEach(badge => {
+            const appointmentId = badge.id.replace('badge-', '');
+            previousUnreadCounts[appointmentId] = parseInt(badge.textContent) || 0;
+        });
+
+        async function checkUnread() {
+            try {
+                const res = await fetch('check_unread_psych.php', {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache'
                     }
-                    this.form.submit();
                 });
-            });
-
-            function updateTime() {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
-                });
-
-                const timeElement = document.querySelector('.user-info p');
-                if (timeElement) {
-                    timeElement.innerHTML = `Psychologist • ${timeString}`;
+                
+                if (!res.ok) {
+                    console.error('Unread check failed:', res.status);
+                    return;
                 }
-            }
-
-            updateTime();
-            setInterval(updateTime, 60000);
-            function checkUnreadMessages() {
-                fetch('check_unread_psych.php')
-                    .then(response => response.json())
-                    .then(data => {
-
-                        if (data.unread !== undefined) {
-                            const unreadCount = parseInt(data.unread);
-                            const countElement = document.getElementById('unreadCount');
-
-                            if (countElement) {
-                                countElement.textContent = unreadCount;
-                            }
-
-                            const statCard = document.querySelector('.stat-card:nth-child(4)');
-                            if (statCard) {
-                                if (unreadCount > 0) {
-                                    statCard.style.position = 'relative';
-                                    statCard.setAttribute('data-has-unread', 'true');
-                                } else {
-                                    statCard.removeAttribute('data-has-unread');
-                                }
-                            }
+                
+                const data = await res.json();
+                
+                if (data && typeof data.unread !== 'undefined') {
+                    const count = parseInt(data.unread, 10) || 0;
+                    
+                    // Update stat card count
+                    if (MESSAGE_COUNT) {
+                        MESSAGE_COUNT.textContent = count;
+                    }
+                    
+                    // Update stat card indicator
+                    if (STAT_CARD) {
+                        if (count > 0) {
+                            STAT_CARD.classList.add('has-unread');
+                        } else {
+                            STAT_CARD.classList.remove('has-unread');
                         }
-                    })
-                    .catch(error => console.error('Error checking unread messages:', error));
+                    }
+                    
+                    // Show notification for new messages
+                    if (count > lastUnread) {
+                        showNotification(count - lastUnread);
+                    }
+                    
+                    // If new messages arrived, reload the page data via AJAX
+                    if (count !== lastUnread) {
+                        refreshAppointmentsTable();
+                    }
+                    
+                    lastUnread = count;
+                }
+            } catch (err) {
+                console.error('checkUnread error:', err);
             }
+        }
 
-            checkUnreadMessages();
-            setInterval(checkUnreadMessages, 10000);
+        async function refreshAppointmentsTable() {
+            try {
+                const res = await fetch('get_recent_appointments.php', {
+                    cache: 'no-store'
+                });
+                
+                if (!res.ok) return;
+                
+                const html = await res.text();
+                const tbody = document.querySelector('table tbody');
+                if (tbody) {
+                    tbody.innerHTML = html;
+                    
+                    // Re-attach event listeners to new chat buttons
+                    attachChatButtonListeners();
+                    
+                    // Re-store unread counts
+                    document.querySelectorAll('.chat-badge').forEach(badge => {
+                        const appointmentId = badge.id.replace('badge-', '');
+                        previousUnreadCounts[appointmentId] = parseInt(badge.textContent) || 0;
+                    });
+                }
+            } catch (err) {
+                console.error('refreshAppointmentsTable error:', err);
+            }
+        }
+
+        function showNotification(newMessages) {
+            if (newMessages > 0) {
+                const toast = document.createElement('div');
+                toast.className = 'notification-toast';
+                toast.innerHTML = `
+                    <i class="fas fa-comment-dots"></i>
+                    <div>
+                        <strong>${newMessages} new message${newMessages > 1 ? 's' : ''}</strong>
+                        <small>Click to refresh</small>
+                    </div>
+                    <button onclick="this.parentElement.remove()">×</button>
+                `;
+                
+                toast.addEventListener('click', () => {
+                    location.reload();
+                });
+                
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.style.animation = 'slideOutRight 0.3s ease-out';
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, 5000);
+            }
+        }
+
+        function attachChatButtonListeners() {
             document.querySelectorAll('.btn-chat').forEach(link => {
                 link.addEventListener('click', function() {
-
-                    const badge = this.querySelector('.badge');
+                    const badge = this.querySelector('.chat-badge');
                     if (badge) {
-
-                        let badgeCount = parseInt(badge.textContent) || 1;
-                        badge.remove();
-
-                        const countElement = document.getElementById('unreadCount');
-                        if (countElement) {
-                            let currentCount = parseInt(countElement.textContent) || 0;
-                            countElement.textContent = Math.max(0, currentCount - badgeCount);
+                        const appointmentId = this.dataset.appointment;
+                        const badgeCount = parseInt(badge.textContent) || 0;
+                        
+                        lastUnread = Math.max(0, lastUnread - badgeCount);
+                        previousUnreadCounts[appointmentId] = 0;
+                        
+                        if (MESSAGE_COUNT) {
+                            MESSAGE_COUNT.textContent = lastUnread;
                         }
+                        
+                        if (lastUnread === 0 && STAT_CARD) {
+                            STAT_CARD.classList.remove('has-unread');
+                        }
+                        
+                        badge.style.display = 'none';
                     }
                 });
             });
+        }
 
-        });
-    </script>
+        // Start polling
+        checkUnread();
+        setInterval(checkUnread, pollingInterval);
+        
+        // Initial attachment of listeners
+        attachChatButtonListeners();
+        
+        // Add styles for notification
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            .notification-toast {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                padding: 1rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+                cursor: pointer;
+                border-left: 4px solid #4a7b9d;
+            }
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            .notification-toast button {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: #6c757d;
+                padding: 0 0.5rem;
+            }
+            .stat-card.has-unread::after {
+                content: '';
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 10px;
+                height: 10px;
+                background-color: #ff4757;
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.5; transform: scale(1.2); }
+            }
+        `;
+        document.head.appendChild(style);
+    })();
+</script>
 </body>
 </html>

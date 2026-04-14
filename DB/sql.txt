@@ -6,6 +6,37 @@ CREATE TABLE `admin` (
   PRIMARY KEY (`admin_id`)
 );
 
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `profile_picture` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`user_id`)
+);
+
+CREATE TABLE `psychologist` (
+  `p_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `profile_picture` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `specialization` varchar(255) DEFAULT NULL,
+  `contact_info` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `education` varchar(255) DEFAULT NULL,
+  `min_fee` decimal(8,2) DEFAULT NULL,
+  `max_fee` decimal(8,2) DEFAULT NULL,
+  `office_start` time DEFAULT NULL,
+  `office_end` time DEFAULT NULL,
+  `AreaOfExperties` varchar(300) DEFAULT NULL,
+  PRIMARY KEY (`p_id`),
+  UNIQUE KEY `email` (`email`)
+);
+
 CREATE TABLE `appointments` (
   `appointment_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
@@ -59,33 +90,5 @@ CREATE TABLE `messages` (
   PRIMARY KEY (`msg_id`)
 );
 
-CREATE TABLE `psychologist` (
-  `p_id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `profile_picture` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `specialization` varchar(255) DEFAULT NULL,
-  `contact_info` varchar(255) DEFAULT NULL,
-  `description` text DEFAULT NULL,
-  `location` varchar(255) DEFAULT NULL,
-  `education` varchar(255) DEFAULT NULL,
-  `min_fee` decimal(8,2) DEFAULT NULL,
-  `max_fee` decimal(8,2) DEFAULT NULL,
-  `office_start` time DEFAULT NULL,
-  `office_end` time DEFAULT NULL,
-  `AreaOfExperties` varchar(300) DEFAULT NULL,
-  PRIMARY KEY (`p_id`),
-  UNIQUE KEY `email` (`email`)
-);
 
-CREATE TABLE `users` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `profile_picture` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`user_id`)
-);
+

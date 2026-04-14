@@ -10,7 +10,14 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = (int)$_SESSION['user_id'];
 
 $sql = "
-  SELECT a.appointment_id, p.p_id, p.username
+  SELECT 
+    a.appointment_id, 
+    p.p_id, 
+    p.username,
+    (SELECT COUNT(*) FROM messages m 
+     WHERE m.appointment_id = a.appointment_id 
+     AND m.sender_type = 'psychologist' 
+     AND m.seen = 0) as unread_count
   FROM appointments a
   JOIN psychologist p ON a.p_id = p.p_id
   WHERE a.user_id = ? AND a.status = 'approved'
@@ -24,7 +31,16 @@ if (!$stmt) {
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $res = $stmt->get_result();
+
+// Calculate total unread
+$total_unread = 0;
+$conversations = [];
+while ($row = $res->fetch_assoc()) {
+  $conversations[] = $row;
+  $total_unread += $row['unread_count'];
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,16 +48,12 @@ $res = $stmt->get_result();
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Messages | MindCare</title>
-  
-  <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
-  <!-- Header -->
   <div class="header">
     <div class="header-content">
       <a href="../dashboard.php" class="back-btn">
@@ -53,11 +65,11 @@ $res = $stmt->get_result();
         My Messages
       </div>
     </div>
-    
+
     <div class="message-stats">
       <div class="stat-item">
         <i class="fas fa-user-md"></i>
-        <span class="stat-number"><?php echo $res->num_rows; ?> Therapists</span>
+        <span class="stat-number"><?php echo count($conversations); ?> Therapists</span>
       </div>
       <div class="stat-item">
         <i class="fas fa-clock"></i>
@@ -66,28 +78,26 @@ $res = $stmt->get_result();
     </div>
   </div>
 
-  <!-- Main Container -->
   <div class="container">
-
-    <!-- Welcome Card -->
     <div class="welcome-card">
       <div class="welcome-icon">
         <i class="fas fa-comment-dots"></i>
       </div>
       <h1 class="welcome-title">Your Therapy Conversations</h1>
       <p class="welcome-text">
-        Connect with your therapists in a safe, confidential space. 
+        Connect with your therapists in a safe, confidential space.
         Your messages are encrypted and protected by professional standards.
       </p>
     </div>
 
-    <!-- Chat List -->
     <div class="chat-list">
       <div class="chat-header">
         <h2>
           <i class="fas fa-user-md"></i>
           Active Conversations
-          <span class="unread-count" id="totalUnread">0 New</span>
+          <span class="unread-count" id="totalUnread" style="background: <?php echo $total_unread > 0 ? 'var(--accent)' : 'var(--success)'; ?>">
+            <?php echo $total_unread > 0 ? $total_unread . ' New' : 'All Read'; ?>
+          </span>
         </h2>
         <div class="chat-info">
           <small style="color: rgba(255,255,255,0.8);">
@@ -96,29 +106,22 @@ $res = $stmt->get_result();
         </div>
       </div>
 
-      <?php if ($res->num_rows > 0): ?>
-        <?php while ($row = $res->fetch_assoc()): ?>
-          <?php 
-            $initial = strtoupper(substr($row['username'], 0, 1));
-            // Simulate some chat data (in real app, you would fetch from database)
-            $lastMessage = "Continue our discussion from last session...";
-            $lastTime = "2 hours ago";
-            $isOnline = rand(0, 1);
-            $hasUnread = rand(0, 1);
-            $newMessages = rand(0, 3);
+      <?php if (count($conversations) > 0): ?>
+        <?php foreach ($conversations as $index => $row): ?>
+          <?php
+          $initial = strtoupper(substr($row['username'], 0, 1));
+          $hasUnread = $row['unread_count'] > 0;
+          $newMessages = $row['unread_count'];
           ?>
-          
-          <a href="user_chat.php?appointment_id=<?php echo $row['appointment_id']; ?>" 
-             class="chat-item <?php echo $hasUnread ? 'new' : ''; ?>"
-             style="text-decoration: none; color: inherit;">
-            
+
+          <a href="user_chat.php?appointment_id=<?php echo $row['appointment_id']; ?>"
+            class="chat-item <?php echo $hasUnread ? 'new' : ''; ?>"
+            style="text-decoration: none; color: inherit;">
+
             <div class="chat-avatar">
               <div class="avatar-circle">
                 <?php echo $initial; ?>
               </div>
-              <?php if ($isOnline): ?>
-                <span class="online-indicator" title="Online now"></span>
-              <?php endif; ?>
             </div>
 
             <div class="chat-content">
@@ -126,45 +129,40 @@ $res = $stmt->get_result();
                 <?php echo htmlspecialchars($row['username']); ?>
                 <span class="badge">Licensed Therapist</span>
               </div>
-              
+
               <div class="chat-preview">
-                <?php echo $lastMessage; ?>
+                <?php echo $hasUnread ? "You have " . $newMessages . " new message" . ($newMessages > 1 ? "s" : "") : "Click to open conversation"; ?>
               </div>
-              
-              <div class="chat-time">
-                <i class="far fa-clock"></i>
-                <?php echo $lastTime; ?>
-                <?php if ($hasUnread && $newMessages > 0): ?>
-                  <span style="color: var(--accent); font-weight: 600; margin-left: 1rem;">
-                    <i class="fas fa-envelope"></i> <?php echo $newMessages; ?> new
-                  </span>
-                <?php endif; ?>
-              </div>
+
+              <?php if ($hasUnread): ?>
+                <div class="chat-time" style="color: var(--accent);">
+                  <i class="fas fa-envelope"></i> <?php echo $newMessages; ?> unread
+                </div>
+              <?php endif; ?>
             </div>
 
             <div class="chat-action">
               <span class="open-chat-btn">
-                Open Chat
+                <?php echo $hasUnread ? 'Read Messages' : 'Open Chat'; ?>
                 <i class="fas fa-arrow-right"></i>
               </span>
             </div>
           </a>
 
-        <?php endwhile; ?>
+        <?php endforeach; ?>
 
       <?php else: ?>
-        <!-- Empty State -->
         <div class="empty-state">
           <div class="empty-icon">
             <i class="fas fa-comment-slash"></i>
           </div>
           <h2 class="empty-title">No Active Conversations</h2>
           <p class="empty-text">
-            You currently don't have any approved appointments with therapists. 
-            Once your appointment is approved by the therapist, you'll be able to 
+            You currently don't have any approved appointments with therapists.
+            Once your appointment is approved by the therapist, you'll be able to
             start messaging here.
           </p>
-          
+
           <div class="action-buttons">
             <a href="../appointments.php" class="action-btn btn-primary">
               <i class="fas fa-calendar-plus"></i>
@@ -180,10 +178,9 @@ $res = $stmt->get_result();
 
     </div>
 
-    <!-- Footer -->
     <div class="footer">
       <p>
-        <i class="fas fa-shield-alt"></i> 
+        <i class="fas fa-shield-alt"></i>
         All conversations are confidential and protected by HIPAA standards
       </p>
     </div>
@@ -191,51 +188,22 @@ $res = $stmt->get_result();
   </div>
 
   <script>
-    // Update unread count dynamically (you would fetch this from your server)
-    function updateUnreadCount() {
-      // This is a simulation - in real app, fetch from your PHP endpoint
-      const chatItems = document.querySelectorAll('.chat-item');
-      let totalUnread = 0;
-      
-      chatItems.forEach(item => {
-        if (item.classList.contains('new')) {
-          totalUnread++;
-        }
-      });
-      
-      const unreadBadge = document.getElementById('totalUnread');
-      if (unreadBadge) {
-        if (totalUnread > 0) {
-          unreadBadge.textContent = `${totalUnread} New`;
-          unreadBadge.style.background = 'var(--accent)';
-        } else {
-          unreadBadge.textContent = 'All Read';
-          unreadBadge.style.background = 'var(--success)';
-        }
-      }
-    }
-
-    // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-      updateUnreadCount();
-      
-      // Add animations to chat items
       const chatItems = document.querySelectorAll('.chat-item');
       chatItems.forEach((item, index) => {
         item.style.animationDelay = `${index * 0.1}s`;
         item.style.animation = 'slideIn 0.5s ease-out forwards';
+        item.style.opacity = '0';
       });
 
-      // Add click animation to chat items
       chatItems.forEach(item => {
         item.addEventListener('click', function(e) {
-          // Add ripple effect
           const ripple = document.createElement('span');
           const rect = this.getBoundingClientRect();
           const size = Math.max(rect.width, rect.height);
           const x = e.clientX - rect.left - size / 2;
           const y = e.clientY - rect.top - size / 2;
-          
+
           ripple.style.cssText = `
             position: absolute;
             border-radius: 50%;
@@ -248,18 +216,17 @@ $res = $stmt->get_result();
             left: ${x}px;
             pointer-events: none;
           `;
-          
+
           this.style.position = 'relative';
           this.style.overflow = 'hidden';
           this.appendChild(ripple);
-          
+
           setTimeout(() => {
             ripple.remove();
           }, 600);
         });
       });
 
-      // Add ripple animation
       const style = document.createElement('style');
       style.textContent = `
         @keyframes ripple {
@@ -268,19 +235,84 @@ $res = $stmt->get_result();
             opacity: 0;
           }
         }
+        
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        .chat-item.new {
+          background: linear-gradient(135deg, rgba(74, 123, 157, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%);
+          border-left: 4px solid var(--accent);
+        }
       `;
       document.head.appendChild(style);
     });
 
-    // Check for new messages periodically (every 30 seconds)
+    // Real-time unread check every 30 seconds
     setInterval(() => {
-      // In a real app, you would make an AJAX call here
-      // For now, we'll just simulate some random updates
-      const shouldUpdate = Math.random() > 0.8;
-      if (shouldUpdate) {
-        updateUnreadCount();
-      }
+      fetch('check_unread.php')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const unreadBadge = document.getElementById('totalUnread');
+            if (data.total_unread > 0) {
+              unreadBadge.textContent = `${data.total_unread} New`;
+              unreadBadge.style.background = 'var(--accent)';
+            } else {
+              unreadBadge.textContent = 'All Read';
+              unreadBadge.style.background = 'var(--success)';
+            }
+
+            // Update individual conversation unread counts
+            if (data.conversations) {
+              data.conversations.forEach(conv => {
+                const chatItem = document.querySelector(`a[href*="appointment_id=${conv.appointment_id}"]`);
+                if (chatItem) {
+                  const preview = chatItem.querySelector('.chat-preview');
+                  const chatTime = chatItem.querySelector('.chat-time');
+
+                  if (conv.unread_count > 0) {
+                    chatItem.classList.add('new');
+                    preview.textContent = `You have ${conv.unread_count} new message${conv.unread_count > 1 ? 's' : ''}`;
+
+                    if (!chatTime) {
+                      const newChatTime = document.createElement('div');
+                      newChatTime.className = 'chat-time';
+                      newChatTime.style.color = 'var(--accent)';
+                      newChatTime.innerHTML = `<i class="fas fa-envelope"></i> ${conv.unread_count} unread`;
+                      chatItem.querySelector('.chat-content').appendChild(newChatTime);
+                    } else {
+                      chatTime.innerHTML = `<i class="fas fa-envelope"></i> ${conv.unread_count} unread`;
+                    }
+
+                    const openBtn = chatItem.querySelector('.open-chat-btn');
+                    openBtn.innerHTML = 'Read Messages <i class="fas fa-arrow-right"></i>';
+                  } else {
+                    chatItem.classList.remove('new');
+                    preview.textContent = 'Click to open conversation';
+
+                    if (chatTime) {
+                      chatTime.remove();
+                    }
+
+                    const openBtn = chatItem.querySelector('.open-chat-btn');
+                    openBtn.innerHTML = 'Open Chat <i class="fas fa-arrow-right"></i>';
+                  }
+                }
+              });
+            }
+          }
+        })
+        .catch(error => console.error('Error:', error));
     }, 30000);
   </script>
 </body>
+
 </html>
