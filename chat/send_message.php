@@ -42,7 +42,9 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("iiss", $appointment_id, $sender_id, $sender_type, $encrypted_message);
 
 if ($stmt->execute()) {
-    echo "OK";
+    $msg_id = $stmt->insert_id;
+    echo json_encode(["status" => "OK", "msg_id" => $msg_id]);
 } else {
-    echo "ERROR: " . $stmt->error;
+    echo json_encode(["status" => "ERROR", "message" => $stmt->error]);
 }
+$stmt->close();

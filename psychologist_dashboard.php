@@ -97,40 +97,84 @@ $recentQuery = $conn->query("
             position: fixed;
             top: 20px;
             right: 20px;
-            background: white;
-            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             gap: 1rem;
             z-index: 10000;
-            animation: slideInRight 0.3s ease-out;
+            animation: slideInRight 0.5s ease-out;
             cursor: pointer;
-            border-left: 4px solid #4a7b9d;
+            border-left: 5px solid #fff;
+            min-width: 300px;
+            font-weight: 500;
         }
         
         @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { 
+                transform: translateX(450px); 
+                opacity: 0;
+            }
+            to { 
+                transform: translateX(0); 
+                opacity: 1;
+            }
         }
         
         @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+            from { 
+                transform: translateX(0); 
+                opacity: 1;
+            }
+            to { 
+                transform: translateX(450px); 
+                opacity: 0;
+            }
+        }
+        
+        .notification-toast i {
+            font-size: 1.5rem;
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .notification-toast div {
+            flex: 1;
+        }
+        
+        .notification-toast div strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .notification-toast div small {
+            display: block;
+            font-size: 0.85rem;
+            opacity: 0.9;
         }
         
         .notification-toast button {
-            background: none;
+            background: rgba(255,255,255,0.2);
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             cursor: pointer;
-            color: #6c757d;
+            color: white;
             padding: 0 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
         }
         
         .notification-toast button:hover {
-            color: #2c3e50;
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
         }
         
         .new-message-row {
@@ -395,29 +439,41 @@ $recentQuery = $conn->query("
 
         function showNotification(newMessages) {
             if (newMessages > 0) {
+                // Update page title to show notification
+                document.title = `(${newMessages}) Psychologist Dashboard | MindCare`;
+                
                 const toast = document.createElement('div');
                 toast.className = 'notification-toast';
                 toast.innerHTML = `
-                    <i class="fas fa-comment-dots"></i>
+                    <i class="fas fa-bell"></i>
                     <div>
                         <strong>${newMessages} new message${newMessages > 1 ? 's' : ''}</strong>
-                        <small>Click to refresh</small>
+                        <small>You have new patient message${newMessages > 1 ? 's' : ''}</small>
                     </div>
                     <button onclick="this.parentElement.remove()">×</button>
                 `;
                 
-                toast.addEventListener('click', () => {
-                    location.reload();
+                toast.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'BUTTON') {
+                        location.reload();
+                    }
                 });
+                
+                // Add sound notification
+                try {
+                    const audio = new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==');
+                    audio.play().catch(e => {}); // Ignore errors from autoplay restrictions
+                } catch (e) {}
                 
                 document.body.appendChild(toast);
                 
+                // Keep notification visible longer (6 seconds)
                 setTimeout(() => {
                     if (toast.parentNode) {
-                        toast.style.animation = 'slideOutRight 0.3s ease-out';
-                        setTimeout(() => toast.remove(), 300);
+                        toast.style.animation = 'slideOutRight 0.4s ease-out forwards';
+                        setTimeout(() => toast.remove(), 400);
                     }
-                }, 5000);
+                }, 6000);
             }
         }
 
@@ -448,7 +504,17 @@ $recentQuery = $conn->query("
 
         // Start polling
         checkUnread();
-        setInterval(checkUnread, pollingInterval);
+        const pollInterval = setInterval(checkUnread, pollingInterval);
+        
+        // Cleanup on page unload
+        window.addEventListener('unload', () => clearInterval(pollInterval));
+        
+        // Resume polling when tab becomes visible
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                checkUnread();
+            }
+        });
         
         // Initial attachment of listeners
         attachChatButtonListeners();

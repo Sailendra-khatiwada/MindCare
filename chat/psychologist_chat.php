@@ -43,9 +43,70 @@ if ($stmt) {
     <title>Chat | MindCare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="s.css">
-
-</head>
+    <style>
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10000;
+            animation: slideInRight 0.5s ease-out;
+            cursor: pointer;
+            border-left: 5px solid #fff;
+            min-width: 300px;
+            font-weight: 500;
+        }
+        
+        @keyframes slideInRight {
+            from { 
+                transform: translateX(450px); 
+                opacity: 0;
+            }
+            to { 
+                transform: translateX(0); 
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from { 
+                transform: translateX(0); 
+                opacity: 1;
+            }
+            to { 
+                transform: translateX(450px); 
+                opacity: 0;
+            }
+        }
+        
+        .notification-toast i {
+            font-size: 1.5rem;
+        }
+        
+        .notification-toast div {
+            flex: 1;
+        }
+        
+        .notification-toast div strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .notification-toast div small {
+            display: block;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+    </style>
+    
 
 <body>
     <div class="chat-container">
@@ -103,6 +164,31 @@ if ($stmt) {
     </div>
 
     <script>
+        let lastMessageTimestamp = new Date().getTime();
+        let previousMessageCount = 0;
+
+        function showNotification(message) {
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.innerHTML = `
+                <i class="fas fa-comment-medical"></i>
+                <div>
+                    <strong>New Message</strong>
+                    <small>${message}</small>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.style.animation = 'slideOutRight 0.4s ease-out forwards';
+                    setTimeout(() => toast.remove(), 400);
+                }
+            }, 4000);
+        }
+
         function autoResize(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
@@ -112,6 +198,19 @@ if ($stmt) {
             fetch("load_messages.php?appointment_id=<?php echo $appointment_id; ?>")
                 .then(res => res.json())
                 .then(messages => {
+                    // Check for new unread user messages and show notification
+                    let newUnreadMessages = 0;
+                    messages.forEach((m) => {
+                        if (m.sender_type === "user" && m.seen == 0 && new Date(m.created_at).getTime() > lastMessageTimestamp) {
+                            newUnreadMessages++;
+                        }
+                    });
+                    
+                    if (newUnreadMessages > 0) {
+                        showNotification(`Patient sent ${newUnreadMessages} message${newUnreadMessages > 1 ? 's' : ''}`);
+                        lastMessageTimestamp = new Date().getTime();
+                    }
+
                     let box = document.getElementById("chatBox");
                     let atBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 50;
                     Array.from(box.children).forEach(child => {
@@ -185,8 +284,6 @@ if ($stmt) {
                             "Content-Type": "application/x-www-form-urlencoded"
                         },
                         body: "appointment_id=<?php echo $appointment_id; ?>"
-                    }).then(() => {
-                        updateMessageStatus();
                     });
                 })
                 .catch(error => {
@@ -212,12 +309,25 @@ if ($stmt) {
                     },
                     body: "appointment_id=<?php echo $appointment_id; ?>&sender=psychologist&message=" + encodeURIComponent(message)
                 })
-                .then(response => {
-                    if (response.ok) {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "OK") {
+                        const msg_id = data.msg_id;
                         messageInput.value = "";
                         messageInput.style.height = 'auto';
                         removeTemporaryMessage(tempId);
                         setTimeout(loadChat, 500);
+                        
+                        // Mark as delivered after 1 second
+                        setTimeout(() => {
+                            fetch("mark_delivered.php", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/x-www-form-urlencoded"
+                                },
+                                body: "msg_id=" + msg_id
+                            }).then(() => loadChat());
+                        }, 1000);
                     }
                 })
                 .catch(error => {
@@ -269,20 +379,6 @@ if ($stmt) {
                     statusDiv.style.color = '#dc3545';
                 }
             }
-        }
-
-        function updateMessageStatus() {
-            document.querySelectorAll('.status.sending').forEach(status => {
-                setTimeout(() => {
-                    status.innerHTML = '<i class="fas fa-check-double"></i> Delivered';
-                    status.className = 'status delivered';
-                }, 1000);
-
-                setTimeout(() => {
-                    status.innerHTML = '<i class="fas fa-eye"></i> Seen';
-                    status.className = 'status seen';
-                }, 3000);
-            });
         }
 
         function formatTime(date) {

@@ -7,23 +7,14 @@ if (!isset($_SESSION['user_id'])) exit;
 if (!isset($_POST['appointment_id'])) exit;
 $appointment_id = (int)$_POST['appointment_id'];
 
+// Mark PSYCHOLOGIST messages as delivered and seen when user views the chat
 $sql = "UPDATE messages
-        SET delivered = 1
+        SET delivered = 1, seen = 1
         WHERE appointment_id = ?
-        AND sender_type = 'user'";
+        AND sender_type = 'psychologist'";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $appointment_id);
 $stmt->execute();
 $stmt->close();
-
-$sql2 = "UPDATE messages
-         SET seen = 1
-         WHERE appointment_id = ?
-         AND sender_type = 'psychologist'";
-
-$stmt2 = $conn->prepare($sql2);
-$stmt2->bind_param("i", $appointment_id);
-$stmt2->execute();
-$stmt2->close();
 ?>

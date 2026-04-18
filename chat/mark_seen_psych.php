@@ -4,14 +4,15 @@ include '../db_connect.php';
 
 if (!isset($_SESSION['p_id'])) exit;
 
-$appointment_id = $_POST['appointment_id'];
+if (!isset($_POST['appointment_id'])) exit;
 
-// Only mark USER messages as seen, not psychologist's own messages
+$appointment_id = (int)$_POST['appointment_id'];
+
+// Mark USER messages as delivered and seen when psychologist views the chat
 $sql = "UPDATE messages
-        SET seen = 1
+        SET delivered = 1, seen = 1
         WHERE appointment_id = ?
-        AND sender_type = 'user'
-        AND seen = 0";
+        AND sender_type = 'user'";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $appointment_id);
