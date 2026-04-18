@@ -11,7 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user_type = isset($_POST['user_type']);
     if (empty($username) || empty($email) || empty($password)) {
         $error = "All fields are required.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    }
+   elseif (!preg_match("/^[a-zA-Z]+$/", $username)) {
+    $error = "Username can only contain letters.";
+}
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email format.";
     } elseif (strlen($password) < 6) {
         $error = "Password must be at least 6 characters long.";
