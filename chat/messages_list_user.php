@@ -32,7 +32,7 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $res = $stmt->get_result();
 
-// Calculate total unread
+
 $total_unread = 0;
 $conversations = [];
 while ($row = $res->fetch_assoc()) {
@@ -255,7 +255,6 @@ while ($row = $res->fetch_assoc()) {
       document.head.appendChild(style);
     });
 
-    // Real-time unread check every 30 seconds
     setInterval(() => {
       fetch('check_unread.php')
         .then(response => response.json())
@@ -270,7 +269,6 @@ while ($row = $res->fetch_assoc()) {
               unreadBadge.style.background = 'var(--success)';
             }
 
-            // Update individual conversation unread counts
             if (data.conversations) {
               data.conversations.forEach(conv => {
                 const chatItem = document.querySelector(`a[href*="appointment_id=${conv.appointment_id}"]`);

@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) exit;
 if (!isset($_POST['appointment_id'])) exit;
 $appointment_id = (int)$_POST['appointment_id'];
 
-// Mark PSYCHOLOGIST messages as delivered and seen when user views the chat
+
 $sql = "UPDATE messages
         SET delivered = 1, seen = 1
         WHERE appointment_id = ?

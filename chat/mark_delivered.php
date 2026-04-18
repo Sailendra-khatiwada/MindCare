@@ -8,7 +8,6 @@ if (!isset($_POST['msg_id'])) {
 
 $msg_id = (int)$_POST['msg_id'];
 
-// Mark specific message as delivered
 $sql = "UPDATE messages SET delivered = 1 WHERE msg_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $msg_id);

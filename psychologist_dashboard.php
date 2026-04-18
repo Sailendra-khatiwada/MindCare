@@ -379,12 +379,10 @@ $recentQuery = $conn->query("
                 if (data && typeof data.unread !== 'undefined') {
                     const count = parseInt(data.unread, 10) || 0;
                     
-                    // Update stat card count
                     if (MESSAGE_COUNT) {
                         MESSAGE_COUNT.textContent = count;
                     }
-                    
-                    // Update stat card indicator
+
                     if (STAT_CARD) {
                         if (count > 0) {
                             STAT_CARD.classList.add('has-unread');
@@ -392,13 +390,11 @@ $recentQuery = $conn->query("
                             STAT_CARD.classList.remove('has-unread');
                         }
                     }
-                    
-                    // Show notification for new messages
+ 
                     if (count > lastUnread) {
                         showNotification(count - lastUnread);
                     }
-                    
-                    // If new messages arrived, reload the page data via AJAX
+ 
                     if (count !== lastUnread) {
                         refreshAppointmentsTable();
                     }
@@ -422,11 +418,9 @@ $recentQuery = $conn->query("
                 const tbody = document.querySelector('table tbody');
                 if (tbody) {
                     tbody.innerHTML = html;
-                    
-                    // Re-attach event listeners to new chat buttons
+
                     attachChatButtonListeners();
                     
-                    // Re-store unread counts
                     document.querySelectorAll('.chat-badge').forEach(badge => {
                         const appointmentId = badge.id.replace('badge-', '');
                         previousUnreadCounts[appointmentId] = parseInt(badge.textContent) || 0;
@@ -439,7 +433,6 @@ $recentQuery = $conn->query("
 
         function showNotification(newMessages) {
             if (newMessages > 0) {
-                // Update page title to show notification
                 document.title = `(${newMessages}) Psychologist Dashboard | MindCare`;
                 
                 const toast = document.createElement('div');
@@ -459,15 +452,13 @@ $recentQuery = $conn->query("
                     }
                 });
                 
-                // Add sound notification
                 try {
                     const audio = new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==');
-                    audio.play().catch(e => {}); // Ignore errors from autoplay restrictions
+                    audio.play().catch(e => {});
                 } catch (e) {}
                 
                 document.body.appendChild(toast);
-                
-                // Keep notification visible longer (6 seconds)
+
                 setTimeout(() => {
                     if (toast.parentNode) {
                         toast.style.animation = 'slideOutRight 0.4s ease-out forwards';
@@ -502,24 +493,19 @@ $recentQuery = $conn->query("
             });
         }
 
-        // Start polling
         checkUnread();
         const pollInterval = setInterval(checkUnread, pollingInterval);
         
-        // Cleanup on page unload
         window.addEventListener('unload', () => clearInterval(pollInterval));
-        
-        // Resume polling when tab becomes visible
+
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
                 checkUnread();
             }
         });
-        
-        // Initial attachment of listeners
+
         attachChatButtonListeners();
         
-        // Add styles for notification
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideOutRight {
