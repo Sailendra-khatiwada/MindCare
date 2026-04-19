@@ -48,7 +48,11 @@ if (isset($_POST['update_profile'])) {
 
         if ($min_fee > $max_fee) {
             $error = "Minimum fee cannot be greater than maximum fee.";
-        } else {
+        }
+        elseif (!preg_match("/^[a-zA-Z]+$/", $username)) {
+        $error = "Username can only contain letters.";
+        } 
+        else {
             if (isset($_FILES["profile_picture"]) && $_FILES["profile_picture"]["error"] === UPLOAD_ERR_OK) {
                 $allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
                 $file_type = mime_content_type($_FILES["profile_picture"]["tmp_name"]);

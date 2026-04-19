@@ -37,6 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_username = trim($_POST['username']);
             $email = trim($_POST['email']);
 
+            if (!preg_match("/^[a-zA-Z]+$/", $new_username)) {
+            $error = "Username can only contain letters.";
+            }
+            
             if (empty($new_username)) {
                 $error = "Username cannot be empty.";
             } else {
